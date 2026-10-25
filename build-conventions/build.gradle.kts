@@ -5,7 +5,14 @@ plugins {
 dependencies {
     // Плагины, которые применяют конвенции, подключаются как зависимости: так их версии
     // задаются здесь, а не в build-файлах модулей
-    implementation(libs.android.gradle.plugin)
-    implementation(libs.ksp.plugin)
-    implementation(libs.hilt.plugin)
+    implementation(plugin(libs.plugins.android.application))
+    implementation(plugin(libs.plugins.android.library))
+    implementation(plugin(libs.plugins.ksp))
+    implementation(plugin(libs.plugins.hilt))
+}
+
+// Плагин из [plugins] каталога как обычная зависимость. Каждый плагин публикуется с артефактом-маркером
+// <id>:<id>.gradle.plugin — по нему же плагин находит и блок plugins {}
+fun plugin(plugin: Provider<PluginDependency>): Provider<String> = plugin.map {
+    "${it.pluginId}:${it.pluginId}.gradle.plugin:${it.version.requiredVersion}"
 }
