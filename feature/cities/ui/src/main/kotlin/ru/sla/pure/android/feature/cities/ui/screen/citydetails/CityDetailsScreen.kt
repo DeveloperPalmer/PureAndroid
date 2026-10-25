@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,19 +26,22 @@ fun CityDetailsScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.safeDrawing)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            text = stringResource(R.string.city_details_title, cityId),
-            style = MaterialTheme.typography.headlineSmall,
-        )
-        Button(onClick = dropUnlessResumed(block = onBack)) {
-            Text(stringResource(R.string.city_details_back))
+    // Surface даёт экрану фон и цвет текста темы: без него сквозь экран видно окно Activity
+    Surface(modifier = modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .windowInsetsPadding(WindowInsets.safeDrawing)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.city_details_title, cityId),
+                style = MaterialTheme.typography.headlineSmall,
+            )
+            Button(onClick = dropUnlessResumed(block = onBack)) {
+                Text(stringResource(R.string.city_details_back))
+            }
         }
     }
 }

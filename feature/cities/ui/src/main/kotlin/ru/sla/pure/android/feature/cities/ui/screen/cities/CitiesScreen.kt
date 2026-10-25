@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,22 +25,25 @@ fun CitiesScreen(
     onCityClick: (cityId: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.safeDrawing)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            text = stringResource(R.string.cities_title),
-            style = MaterialTheme.typography.headlineSmall,
-        )
-        STUB_CITY_IDS.forEach { cityId ->
-            // dropUnlessResumed отбрасывает клик, пока экран не RESUMED, то есть пока идёт
-            // анимация перехода: иначе двойной тап положит в стек два экрана деталей
-            Button(onClick = dropUnlessResumed { onCityClick(cityId) }) {
-                Text(stringResource(R.string.cities_city, cityId))
+    // Surface даёт экрану фон и цвет текста темы: без него сквозь экран видно окно Activity
+    Surface(modifier = modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .windowInsetsPadding(WindowInsets.safeDrawing)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.cities_title),
+                style = MaterialTheme.typography.headlineSmall,
+            )
+            STUB_CITY_IDS.forEach { cityId ->
+                // dropUnlessResumed отбрасывает клик, пока экран не RESUMED, то есть пока идёт
+                // анимация перехода: иначе двойной тап положит в стек два экрана деталей
+                Button(onClick = dropUnlessResumed { onCityClick(cityId) }) {
+                    Text(stringResource(R.string.cities_city, cityId))
+                }
             }
         }
     }
