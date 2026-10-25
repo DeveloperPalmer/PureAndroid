@@ -4,6 +4,6 @@ plugins {
     // все модули делят классы плагинов
     id("android-application-convention") apply false
     id("android-library-convention") apply false
-    alias(libs.plugins.kotlin.compose) apply false
+    id("compose-convention") apply false
     id("hilt-convention") apply false
 }
