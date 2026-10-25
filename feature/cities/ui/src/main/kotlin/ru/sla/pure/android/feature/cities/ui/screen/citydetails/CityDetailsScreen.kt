@@ -28,7 +28,6 @@ import ru.sla.pure.android.feature.cities.ui.R
 @Composable
 fun CityDetailsScreen(
     cityId: Long,
-    onBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CityDetailsViewModel =
         hiltViewModel<CityDetailsViewModel, CityDetailsViewModel.Factory>(
@@ -37,7 +36,7 @@ fun CityDetailsScreen(
 ) {
     CityDetailsContent(
         cityId = viewModel.cityId,
-        onBack = onBack,
+        onBack = viewModel::onBack,
         modifier = modifier,
     )
 }

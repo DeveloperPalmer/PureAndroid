@@ -26,13 +26,12 @@ import ru.sla.pure.android.feature.cities.ui.R
  */
 @Composable
 fun CitiesScreen(
-    onCityClick: (cityId: Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CitiesViewModel = hiltViewModel(),
 ) {
     CitiesContent(
         cityIds = viewModel.cityIds,
-        onCityClick = onCityClick,
+        onCityClick = viewModel::onCityClick,
         modifier = modifier,
     )
 }

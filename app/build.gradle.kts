@@ -29,7 +29,9 @@ dependencies {
 
     implementation(projects.core.routing)
 
+    // Приложение подключает только routing фич: ключи вкладок нужны нижней панели, а записи
+    // и переходы Hilt собирает из их @IntoSet-модулей. Модули ui приходят через routing
+    // транзитивно и в коде приложения недоступны
     implementation(projects.feature.cities.routing)
-    implementation(projects.feature.cities.ui)
     implementation(projects.feature.map.routing)
 }

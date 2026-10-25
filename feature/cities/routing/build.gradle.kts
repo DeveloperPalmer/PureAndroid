@@ -5,3 +5,8 @@ plugins {
 android {
     namespace = "ru.sla.pure.android.feature.cities.routing"
 }
+
+dependencies {
+    implementation(projects.core.routing)
+    implementation(projects.feature.cities.ui)
+}

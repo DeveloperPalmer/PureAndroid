@@ -12,18 +12,12 @@ import ru.sla.pure.android.core.routing.EntryProviderInstaller
 import ru.sla.pure.android.core.routing.FlowEventSource
 import ru.sla.pure.android.core.routing.FlowNode
 import ru.sla.pure.android.core.routing.dispatch
-import ru.sla.pure.android.core.routing.showNavigationBar
-import ru.sla.pure.android.feature.cities.routing.CitiesRoute
-import ru.sla.pure.android.feature.cities.routing.CityDetailsRoute
-import ru.sla.pure.android.feature.cities.ui.screen.cities.CitiesScreen
-import ru.sla.pure.android.feature.cities.ui.screen.citydetails.CityDetailsScreen
 
 /**
  * Навигация приложения: один `NavDisplay` на все экраны. В Navigation 3 стеком владеет само
  * приложение: это обычные списки ключей в [NavigationState], а переходы делает [AppNavigator].
- * Записи фич приходят из их модулей routing через [entryProviderInstallers], записи городов
- * пока объявлены здесь. Переходы по событиям экранов из [flowEventSource] делают
- * [flowNodes].
+ * Экраны приходят из модулей routing фич через [entryProviderInstallers], а переходы делают
+ * их [flowNodes] по событиям экранов из [flowEventSource]. Модули ui приложению не видны.
  * Нижнюю панель декоратор сцен добавляет записям с `showNavigationBar()`.
  */
 @Composable
@@ -40,17 +34,6 @@ fun AppNavigation(
     val navigator = remember(navigationState) { AppNavigator(navigationState) }
 
     val entryProvider = entryProvider<NavKey> {
-        entry<CitiesRoute>(metadata = showNavigationBar()) {
-            CitiesScreen(
-                onCityClick = { cityId -> navigator.navigateTo(CityDetailsRoute(cityId)) }
-            )
-        }
-        entry<CityDetailsRoute> { route ->
-            CityDetailsScreen(
-                cityId = route.cityId,
-                onBack = navigator::navigateBack
-            )
-        }
         entryProviderInstallers.forEach { installer ->
             with(installer) { install() }
         }
