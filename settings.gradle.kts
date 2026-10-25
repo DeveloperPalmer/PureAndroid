@@ -28,4 +28,10 @@ dependencyResolutionManagement {
 rootProject.name = "PureAndroid"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-include(":app")
+include(
+    ":app",
+    ":feature:cities:routing",
+    ":feature:cities:ui",
+    ":feature:map:routing",
+    ":feature:map:ui",
+)
