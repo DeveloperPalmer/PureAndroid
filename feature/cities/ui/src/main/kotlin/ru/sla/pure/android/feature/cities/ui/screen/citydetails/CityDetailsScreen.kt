@@ -16,12 +16,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.dropUnlessResumed
 import ru.sla.pure.android.feature.cities.ui.R
 
-/** Заглушка деталей города: показывает, какой id пришёл в ключе навигации */
+/**
+ * Детали города. [CityDetailsViewModel] создаётся через свою assisted-фабрику: Hilt передаёт её
+ * в `creationCallback`, а экран подставляет `cityId`. Для каждой записи стека — своя ViewModel:
+ * ключ хранилища даёт декоратор ViewModelStore записи
+ */
 @Composable
 fun CityDetailsScreen(
+    cityId: Long,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: CityDetailsViewModel =
+        hiltViewModel<CityDetailsViewModel, CityDetailsViewModel.Factory>(
+            creationCallback = { factory -> factory.create(cityId) },
+        ),
+) {
+    CityDetailsContent(
+        cityId = viewModel.cityId,
+        onBack = onBack,
+        modifier = modifier,
+    )
+}
+
+/** UI деталей без ViewModel: его можно показать в превью и тестах */
+@Composable
+private fun CityDetailsContent(
     cityId: Long,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
@@ -48,6 +71,6 @@ fun CityDetailsScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun CityDetailsScreenPreview() {
-    CityDetailsScreen(cityId = 1L, onBack = {})
+private fun CityDetailsContentPreview() {
+    CityDetailsContent(cityId = 1L, onBack = {})
 }
