@@ -49,9 +49,15 @@ fun rememberNavigationState(
     val topLevelRoute = rememberSerializable(stateSerializer = NavKeySerializer()) {
         mutableStateOf(startRoute)
     }
-    val backStacks = topLevelRoutes.associateWith { route -> rememberNavBackStack(route) }
+    val backStacks = topLevelRoutes.associateWith { route ->
+        rememberNavBackStack(route)
+    }
     return remember(startRoute, topLevelRoutes) {
-        NavigationState(startRoute, topLevelRoute, backStacks)
+        NavigationState(
+            startRoute = startRoute,
+            topLevelRoute = topLevelRoute,
+            backStacks = backStacks
+        )
     }
 }
 
@@ -63,9 +69,7 @@ fun rememberNavigationState(
  *   деталей разных городов получили бы один экземпляр.
  */
 @Composable
-fun NavigationState.toEntries(
-    entryProvider: (NavKey) -> NavEntry<NavKey>,
-): List<NavEntry<NavKey>> {
+fun NavigationState.toEntries(entryProvider: (NavKey) -> NavEntry<NavKey>): List<NavEntry<NavKey>> {
     val decoratedEntries = backStacks.mapValues { (_, backStack) ->
         rememberDecoratedNavEntries(
             backStack = backStack,
