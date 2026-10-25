@@ -1,7 +1,5 @@
 plugins {
     id("android-application-convention")
-    id("compose-convention")
-    id("hilt-convention")
 }
 
 android {
