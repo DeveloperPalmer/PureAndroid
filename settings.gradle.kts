@@ -30,6 +30,8 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 include(
     ":app",
+    ":core:routing",
+    ":core:ui",
     ":feature:cities:routing",
     ":feature:cities:ui",
     ":feature:map:routing",
