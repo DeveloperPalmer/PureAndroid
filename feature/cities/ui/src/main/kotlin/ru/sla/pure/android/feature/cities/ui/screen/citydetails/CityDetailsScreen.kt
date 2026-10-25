@@ -2,8 +2,11 @@ package ru.sla.pure.android.feature.cities.ui.screen.citydetails
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -12,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import ru.sla.pure.android.feature.cities.ui.R
 
 /** Заглушка деталей города: показывает, какой id пришёл в ключе навигации */
@@ -24,6 +28,7 @@ fun CityDetailsScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeDrawing)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -31,7 +36,7 @@ fun CityDetailsScreen(
             text = stringResource(R.string.city_details_title, cityId),
             style = MaterialTheme.typography.headlineSmall,
         )
-        Button(onClick = onBack) {
+        Button(onClick = dropUnlessResumed(block = onBack)) {
             Text(stringResource(R.string.city_details_back))
         }
     }

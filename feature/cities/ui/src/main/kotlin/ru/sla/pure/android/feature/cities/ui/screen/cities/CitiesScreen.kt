@@ -2,8 +2,11 @@ package ru.sla.pure.android.feature.cities.ui.screen.cities
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -12,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import ru.sla.pure.android.feature.cities.ui.R
 
 /** Заглушка списка городов: вместо данных — кнопки, которые открывают детали города */
@@ -23,6 +27,7 @@ fun CitiesScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeDrawing)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -31,7 +36,9 @@ fun CitiesScreen(
             style = MaterialTheme.typography.headlineSmall,
         )
         STUB_CITY_IDS.forEach { cityId ->
-            Button(onClick = { onCityClick(cityId) }) {
+            // dropUnlessResumed отбрасывает клик, пока экран не RESUMED, то есть пока идёт
+            // анимация перехода: иначе двойной тап положит в стек два экрана деталей
+            Button(onClick = dropUnlessResumed { onCityClick(cityId) }) {
                 Text(stringResource(R.string.cities_city, cityId))
             }
         }
