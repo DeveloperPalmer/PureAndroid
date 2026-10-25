@@ -21,6 +21,8 @@ dependencies {
 
     implementation(projects.feature.cities.routing)
     implementation(projects.feature.cities.ui)
+    implementation(projects.feature.map.routing)
+    implementation(projects.feature.map.ui)
 
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
