@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import ru.sla.pure.android.core.routing.showNavigationBar
 import ru.sla.pure.android.feature.cities.routing.CitiesRoute
 import ru.sla.pure.android.feature.cities.routing.CityDetailsRoute
 import ru.sla.pure.android.feature.cities.ui.screen.cities.CitiesScreen
@@ -28,7 +29,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
     val navigator = remember(navigationState) { AppNavigator(navigationState) }
 
     val entryProvider = entryProvider<NavKey> {
-        entry<CitiesRoute>(metadata = NavigationBarSceneDecoratorStrategy.showNavigationBar()) {
+        entry<CitiesRoute>(metadata = showNavigationBar()) {
             CitiesScreen(
                 onCityClick = { cityId -> navigator.navigateTo(CityDetailsRoute(cityId)) }
             )
@@ -39,7 +40,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                 onBack = navigator::navigateBack
             )
         }
-        entry<MapRoute>(metadata = NavigationBarSceneDecoratorStrategy.showNavigationBar(),) {
+        entry<MapRoute>(metadata = showNavigationBar()) {
             MapScreen()
         }
     }

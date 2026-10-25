@@ -14,13 +14,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import androidx.navigation3.runtime.NavMetadataKey
 import androidx.navigation3.runtime.get
-import androidx.navigation3.runtime.metadata
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneDecoratorStrategy
 import androidx.navigation3.scene.SceneDecoratorStrategyScope
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
+import ru.sla.pure.android.core.routing.NavigationBarKey
+import ru.sla.pure.android.core.routing.showNavigationBar
 
 /**
  * Добавляет нижнюю панель к сценам. Navigation 3 показывает записи стека в сценах (`Scene`),
@@ -42,16 +42,7 @@ class NavigationBarSceneDecoratorStrategy<T : Any>(
             scene
         }
     }
-
-    companion object {
-        /** Метаданные записи, которая показывается с нижней панелью */
-        fun showNavigationBar(): Map<String, Any> = metadata {
-            put(NavigationBarKey, true)
-        }
-    }
 }
-
-private object NavigationBarKey : NavMetadataKey<Boolean>
 
 /**
  * Стратегию помним через `remember`: Navigation 3 сравнивает сцены по equals, а сцена хранит
