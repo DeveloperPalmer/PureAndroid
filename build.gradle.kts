@@ -5,6 +5,5 @@ plugins {
     id("android-application-convention") apply false
     id("android-library-convention") apply false
     alias(libs.plugins.kotlin.compose) apply false
-    alias(libs.plugins.ksp) apply false
-    alias(libs.plugins.hilt) apply false
+    id("hilt-convention") apply false
 }
