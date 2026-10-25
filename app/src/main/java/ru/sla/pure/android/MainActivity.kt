@@ -20,8 +20,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import dagger.hilt.android.AndroidEntryPoint
 import ru.sla.pure.android.ui.theme.PureAndroidTheme
 
+/**
+ * `@AndroidEntryPoint` подключает Activity к графу Hilt: для неё создаётся `ActivityComponent`,
+ * дочерний к `SingletonComponent`, а фабрикой ViewModel по умолчанию становится фабрика Hilt —
+ * через неё `hiltViewModel()` создаёт `@HiltViewModel` с зависимостями
+ */
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
