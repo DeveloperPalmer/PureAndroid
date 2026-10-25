@@ -8,5 +8,5 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.ui)
+    api(projects.core.ui)
 }
