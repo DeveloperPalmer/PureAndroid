@@ -15,5 +15,6 @@ android {
 dependencies {
     implementation(platform(libs.findLibrary("androidx.compose.bom").get()))
     implementation(libs.findBundle("compose").get())
+    implementation(libs.findLibrary("androidx.hilt.lifecycle.viewmodel.compose").get())
     debugImplementation(libs.findLibrary("androidx.compose.ui.tooling").get())
 }

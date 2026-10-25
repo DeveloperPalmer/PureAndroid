@@ -6,7 +6,3 @@ plugins {
 android {
     namespace = "ru.sla.pure.android.feature.cities.ui"
 }
-
-dependencies {
-    implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
-}
