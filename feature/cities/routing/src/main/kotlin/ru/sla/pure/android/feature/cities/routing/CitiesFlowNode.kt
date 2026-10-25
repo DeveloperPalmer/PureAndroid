@@ -16,7 +16,7 @@ class CitiesFlowNode @Inject constructor() : FlowNode {
     override fun transition(event: Event): FlowTransition {
         return when (event) {
             is FlowEvent.CityDetailsRequested -> {
-                FlowTransition.NavigateTo(CityDetailsRoute(event.cityId))
+                FlowTransition.NavigateTo(CitiesRoute.CityDetails(event.cityId))
             }
             is FlowEvent.CityDetailsDismissed -> {
                 FlowTransition.Back

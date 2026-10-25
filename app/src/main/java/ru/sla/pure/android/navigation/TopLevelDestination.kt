@@ -23,12 +23,12 @@ enum class TopLevelDestination(
     val label: Int,
 ) {
     Cities(
-        route = CitiesRoute,
+        route = CitiesRoute.Cities,
         icon = R.drawable.ic_list_24,
         label = R.string.tab_cities
     ),
     Map(
-        route = MapRoute,
+        route = MapRoute.Map,
         icon = R.drawable.ic_map_24,
         label = R.string.tab_map
     ),

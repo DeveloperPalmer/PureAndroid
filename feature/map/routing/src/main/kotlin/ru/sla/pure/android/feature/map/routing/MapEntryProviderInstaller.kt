@@ -11,7 +11,7 @@ import javax.inject.Inject
 class MapEntryProviderInstaller @Inject constructor() : EntryProviderInstaller {
 
     override fun EntryProviderScope<NavKey>.install() {
-        entry<MapRoute>(metadata = showNavigationBar()) {
+        entry<MapRoute.Map>(metadata = showNavigationBar()) {
             MapScreen()
         }
     }

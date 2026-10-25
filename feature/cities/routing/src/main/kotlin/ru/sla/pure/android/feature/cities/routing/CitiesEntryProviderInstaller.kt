@@ -12,10 +12,10 @@ import javax.inject.Inject
 class CitiesEntryProviderInstaller @Inject constructor() : EntryProviderInstaller {
 
     override fun EntryProviderScope<NavKey>.install() {
-        entry<CitiesRoute>(metadata = showNavigationBar()) {
+        entry<CitiesRoute.Cities>(metadata = showNavigationBar()) {
             CitiesScreen()
         }
-        entry<CityDetailsRoute> { route ->
+        entry<CitiesRoute.CityDetails> { route ->
             CityDetailsScreen(
                 cityId = route.cityId
             )
