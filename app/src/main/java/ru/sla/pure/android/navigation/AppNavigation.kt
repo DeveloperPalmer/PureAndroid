@@ -7,21 +7,24 @@ import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import ru.sla.pure.android.core.routing.EntryProviderInstaller
 import ru.sla.pure.android.core.routing.showNavigationBar
 import ru.sla.pure.android.feature.cities.routing.CitiesRoute
 import ru.sla.pure.android.feature.cities.routing.CityDetailsRoute
 import ru.sla.pure.android.feature.cities.ui.screen.cities.CitiesScreen
 import ru.sla.pure.android.feature.cities.ui.screen.citydetails.CityDetailsScreen
-import ru.sla.pure.android.feature.map.routing.MapRoute
-import ru.sla.pure.android.feature.map.ui.screen.map.MapScreen
 
 /**
  * Навигация приложения: один `NavDisplay` на все экраны. В Navigation 3 стеком владеет само
  * приложение: это обычные списки ключей в [NavigationState], а переходы делает [AppNavigator].
- * Нижнюю панель декоратор сцен добавляет корням вкладок, детали города открываются без неё.
+ * Записи фич приходят из их модулей routing через [entryProviderInstallers], записи городов
+ * пока объявлены здесь. Нижнюю панель декоратор сцен добавляет записям с `showNavigationBar()`.
  */
 @Composable
-fun AppNavigation(modifier: Modifier = Modifier) {
+fun AppNavigation(
+    entryProviderInstallers: Set<EntryProviderInstaller>,
+    modifier: Modifier = Modifier,
+) {
     val navigationState = rememberNavigationState(
         startRoute = TopLevelDestination.entries.first().route,
         topLevelRoutes = TOP_LEVEL_ROUTES,
@@ -40,8 +43,8 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                 onBack = navigator::navigateBack
             )
         }
-        entry<MapRoute>(metadata = showNavigationBar()) {
-            MapScreen()
+        entryProviderInstallers.forEach { installer ->
+            with(installer) { install() }
         }
     }
 
