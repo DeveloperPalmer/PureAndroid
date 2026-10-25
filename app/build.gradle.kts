@@ -20,15 +20,17 @@ dependencies {
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
-    implementation(projects.feature.cities.routing)
-    implementation(projects.feature.cities.ui)
-    implementation(projects.feature.map.routing)
-    implementation(projects.feature.map.ui)
-
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    implementation(projects.core.routing)
+
+    implementation(projects.feature.cities.routing)
+    implementation(projects.feature.cities.ui)
+    implementation(projects.feature.map.routing)
+    implementation(projects.feature.map.ui)
 }
