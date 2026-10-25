@@ -60,6 +60,9 @@ fun AppNavigation(
             onBack = navigator::navigateBack,
             sceneDecoratorStrategies = listOf(navigationBarDecorator),
             sharedTransitionScope = this,
+            transitionSpec = SlideTransitions.forward(),
+            popTransitionSpec = SlideTransitions.back(),
+            predictivePopTransitionSpec = SlideTransitions.predictiveBack(),
         )
     }
 }
