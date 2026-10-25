@@ -26,5 +26,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "PureAndroid"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 include(":app")
- 
