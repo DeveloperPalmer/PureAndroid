@@ -10,6 +10,7 @@ dependencies {
     implementation(plugin(libs.plugins.ksp))
     implementation(plugin(libs.plugins.hilt))
     implementation(plugin(libs.plugins.kotlin.compose))
+    implementation(plugin(libs.plugins.kotlin.serialization))
 }
 
 // Плагин из [plugins] каталога как обычная зависимость. Каждый плагин публикуется с артефактом-маркером
