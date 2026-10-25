@@ -16,7 +16,7 @@ import ru.sla.pure.android.feature.map.ui.screen.map.MapScreen
 
 /**
  * Навигация приложения: один `NavDisplay` на все экраны. В Navigation 3 стеком владеет само
- * приложение: это обычные списки ключей в [NavigationState], а переходы делает [Navigator].
+ * приложение: это обычные списки ключей в [NavigationState], а переходы делает [AppNavigator].
  * Нижнюю панель декоратор сцен добавляет корням вкладок, детали города открываются без неё.
  */
 @Composable
@@ -25,7 +25,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         startRoute = TopLevelDestination.entries.first().route,
         topLevelRoutes = TOP_LEVEL_ROUTES,
     )
-    val navigator = remember(navigationState) { Navigator(navigationState) }
+    val navigator = remember(navigationState) { AppNavigator(navigationState) }
 
     val entryProvider = entryProvider<NavKey> {
         entry<CitiesRoute>(metadata = NavigationBarSceneDecoratorStrategy.showNavigationBar()) {
