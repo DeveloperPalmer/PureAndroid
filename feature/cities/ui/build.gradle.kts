@@ -10,4 +10,8 @@ android {
 dependencies {
     api(projects.core.ui)
     implementation(projects.uikit)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.orbit.test)
 }
