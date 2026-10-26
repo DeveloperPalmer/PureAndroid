@@ -22,7 +22,6 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.dropUnlessResumed
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -30,18 +29,14 @@ import ru.sla.pure.android.core.resources.R
 import ru.sla.pure.android.uikit.theme.AppTheme
 
 /**
- * Детали города. [CityDetailsViewModel] создаётся через свою assisted-фабрику: Hilt передаёт её
- * в `creationCallback`, а экран подставляет `cityId`. Для каждой записи стека — своя ViewModel:
- * ключ хранилища даёт декоратор ViewModelStore записи. Состояние экран читает через
- * `collectAsState()`, а одноразовые эффекты — через `collectSideEffect { }` из orbit-compose
+ * Детали города. [CityDetailsViewModel] создаёт тот, кто показывает экран (запись роутинга), и
+ * передаёт в неё `cityId`. Состояние экран читает через `collectAsState()`, а одноразовые
+ * эффекты — через `collectSideEffect { }` из orbit-compose
  */
 @Composable
 fun CityDetailsScreen(
-    cityId: Long,
     modifier: Modifier = Modifier,
-    viewModel: CityDetailsViewModel = hiltViewModel<CityDetailsViewModel, CityDetailsViewModel.Factory>(
-        creationCallback = { factory -> factory.create(cityId) },
-    ),
+    viewModel: CityDetailsViewModel,
 ) {
     val state by viewModel.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }

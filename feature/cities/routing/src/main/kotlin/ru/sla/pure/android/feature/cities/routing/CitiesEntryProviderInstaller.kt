@@ -1,11 +1,13 @@
 package ru.sla.pure.android.feature.cities.routing
 
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import ru.sla.pure.android.core.routing.EntryProviderInstaller
 import ru.sla.pure.android.core.routing.showNavigationBar
 import ru.sla.pure.android.feature.cities.ui.screen.cities.CitiesScreen
 import ru.sla.pure.android.feature.cities.ui.screen.citydetails.CityDetailsScreen
+import ru.sla.pure.android.feature.cities.ui.screen.citydetails.CityDetailsViewModel
 import javax.inject.Inject
 
 /** Экраны фичи «Города»: какой экран показать по ключу */
@@ -13,12 +15,13 @@ class CitiesEntryProviderInstaller @Inject constructor() : EntryProviderInstalle
 
     override fun EntryProviderScope<NavKey>.install() {
         entry<CitiesRoute.Cities>(metadata = showNavigationBar()) {
-            CitiesScreen()
+            CitiesScreen(viewModel = hiltViewModel())
         }
         entry<CitiesRoute.CityDetails> { route ->
-            CityDetailsScreen(
-                cityId = route.cityId
-            )
+            val viewModel = hiltViewModel<CityDetailsViewModel, CityDetailsViewModel.Factory> { factory ->
+                factory.create(route.cityId)
+            }
+            CityDetailsScreen(viewModel = viewModel)
         }
     }
 }
