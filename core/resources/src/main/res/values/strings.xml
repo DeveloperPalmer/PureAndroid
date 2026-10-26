@@ -7,4 +7,7 @@
     <string name="city_details_back">Назад</string>
     <string name="city_details_show_message">Показать сообщение</string>
     <string name="city_details_message">Сообщение для города %d</string>
+
+    <!-- Карта -->
+    <string name="map_title">Карта</string>
 </resources>

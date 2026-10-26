@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import ru.sla.pure.android.feature.map.ui.R
+import ru.sla.pure.android.core.resources.R
 
 /** Заглушка карты. Сама карта (Yandex MapKit) сюда не подключается: проверяем только навигацию */
 @Composable
