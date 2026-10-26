@@ -1,11 +1,11 @@
 package ru.sla.pure.android.feature.main.routing
 
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import ru.sla.pure.android.core.routing.EntryProviderInstaller
 import ru.sla.pure.android.core.routing.Navigator
 import ru.sla.pure.android.core.routing.flow
@@ -30,7 +30,7 @@ class MainEntryProviderInstaller @Inject constructor(
             component = { componentFactory.create() },
         ) {
             entry<MainRoute.Main>(metadata = showNavigationBar()) {
-                MainScreen(viewModel = viewModel { mainViewModel() })
+                MainScreen(viewModel = metroViewModel())
             }
         }
     }

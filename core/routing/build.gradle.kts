@@ -9,14 +9,14 @@ android {
 }
 
 dependencies {
+    api(projects.core.domain)
     api(projects.core.ui)
 
-    api(libs.androidx.navigation3.runtime)
-    api(libs.kotlinx.coroutines.core)
-
     api(platform(libs.androidx.compose.bom))
+    api(libs.androidx.navigation3.runtime)
     api(libs.androidx.compose.runtime)
     api(libs.androidx.lifecycle.viewmodel.compose)
+    api(libs.metrox.viewmodel.compose)
 
     testImplementation(libs.junit)
 }

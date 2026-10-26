@@ -1,26 +1,16 @@
 package ru.sla.pure.android.core.routing
 
-import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.NavMetadataKey
 import androidx.navigation3.runtime.get
 import androidx.navigation3.runtime.metadata
 
 /**
- * Ключ метаданных, которым запись указывает свой флоу.
- *
- * Значение — ключ флоу (см. [flowContentKey]). По нему декоратор навигации находит хранилище
- * флоу. Запись без этого ключа ни в какой флоу не входит.
- */
-object FlowKey : NavMetadataKey<String>
-
-/**
  * Ключ флоу с корнем [root].
  *
- * Корневая запись использует его как свой contentKey, а остальные записи флоу хранят его в
- * [FlowKey]. Поэтому у корня и остальных записей одно общее хранилище флоу. Имя класса в ключе
- * нужно, чтобы он не совпал с ключом записи другого типа с таким же `toString()`.
+ * Корневая запись использует его как свой contentKey, а декоратор флоу берёт по нему хранилище
+ * для всех записей флоу. Поэтому у корня и остальных записей одно общее хранилище флоу. Имя класса
+ * в ключе нужно, чтобы он не совпал с ключом записи другого типа с таким же `toString()`.
  *
  * Ставит его [flow], фичам вызывать эту функцию не нужно.
  */
@@ -28,16 +18,22 @@ object FlowKey : NavMetadataKey<String>
 internal fun flowContentKey(root: NavKey): String = "$root:${root::class.qualifiedName}"
 
 /**
- * Метаданные записи [key], которая входит во флоу с корнем [root]: ключ флоу в [FlowKey] и место
- * записи во флоу для [checkFlowRoot].
+ * Метаданные записи [key] во флоу с корнем [root]: по ним декоратор флоу находит хранилище флоу,
+ * собирает в нём граф через [component] и проверяет, что корень лежит в стеке под записью.
  *
  * Ставит их [flow], фичам вызывать эту функцию не нужно.
  */
 @PublishedApi
-internal fun partOfFlow(root: NavKey, key: NavKey): Map<String, Any> = metadata {
-    put(FlowKey, flowContentKey(root))
-    put(FlowPlacementKey, FlowPlacement(root = root, key = key))
+internal fun partOfFlow(
+    root: NavKey,
+    key: NavKey,
+    component: () -> FlowComponent,
+): Map<String, Any> = metadata {
+    put(FlowEntryKey, FlowEntry(root = root, key = key, component = component))
 }
+
+/** Флоу записи из её метаданных или `null`, если запись ни в какой флоу не входит */
+internal fun flowEntry(metadata: Map<String, Any>): FlowEntry? = metadata[FlowEntryKey]
 
 /**
  * Проверяет, что корень флоу записи лежит в [backStack] ниже неё, и падает с ошибкой, если нет.
@@ -49,31 +45,24 @@ internal fun partOfFlow(root: NavKey, key: NavKey): Map<String, Any> = metadata 
  * Проверку сразу проходят запись вне флоу, корень флоу и запись, которой уже нет в стеке: её убрали,
  * а `NavDisplay` ещё показывает её на анимации ухода.
  */
-fun checkFlowRoot(metadata: Map<String, Any>, backStack: List<NavKey>) {
-    val placement = metadata[FlowPlacementKey] ?: return
-    val index = backStack.lastIndexOf(placement.key)
+internal fun checkFlowRoot(metadata: Map<String, Any>, backStack: List<NavKey>) {
+    val flow = flowEntry(metadata) ?: return
+    if (flow.key == flow.root) return
+    val index = backStack.lastIndexOf(flow.key)
     if (index == -1) return
-    check(placement.root in backStack.subList(0, index)) {
-        "Запись ${placement.key} входит во флоу ${placement.root}, но корня флоу нет в стеке под ней"
+    check(flow.root in backStack.subList(0, index)) {
+        "Запись ${flow.key} входит во флоу ${flow.root}, но корня флоу нет в стеке под ней"
     }
 }
 
-/** Ключ метаданных: корень флоу записи и её собственный ключ навигации, нужны [checkFlowRoot] */
-private object FlowPlacementKey : NavMetadataKey<FlowPlacement>
-
-private data class FlowPlacement(
+/**
+ * Место записи во флоу: корень флоу [root], собственный ключ записи [key] и сборка графа флоу
+ * [component]
+ */
+internal class FlowEntry(
     val root: NavKey,
     val key: NavKey,
+    val component: () -> FlowComponent,
 )
 
-/**
- * Хранилище ViewModel флоу для текущей записи.
- *
- * - У записи флоу это хранилище корня флоу: одно на все записи флоу, живёт, пока корень в стеке.
- * - У записи вне флоу это её собственное хранилище.
- *
- * Задаёт его декоратор навигации. Без декоратора обращение к нему падает с ошибкой.
- */
-val LocalFlowViewModelStoreOwner = staticCompositionLocalOf<ViewModelStoreOwner> {
-    error("LocalFlowViewModelStoreOwner не задан: нужен декоратор хранилища флоу")
-}
+private object FlowEntryKey : NavMetadataKey<FlowEntry>

@@ -13,7 +13,6 @@ import ru.sla.pure.android.core.routing.EntryProviderInstaller
 @DependencyGraph(AppScope::class)
 interface AppGraph {
 
-    // allowEmpty: пустой набор в Metro — ошибка, а приложение должно собираться и без фич
     @Multibinds(allowEmpty = true)
     fun entryProviderInstallers(): Set<EntryProviderInstaller>
 }

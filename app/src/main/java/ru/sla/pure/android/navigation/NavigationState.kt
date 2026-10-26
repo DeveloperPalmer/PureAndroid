@@ -16,6 +16,7 @@ import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.runtime.serialization.NavKeySerializer
+import ru.sla.pure.android.core.routing.rememberFlowNavEntryDecorator
 
 /**
  * Состояние вкладок: у каждой вкладки свой стек, и они живут параллельно. Переключение вкладки
@@ -68,8 +69,8 @@ fun rememberNavigationState(
  * - `ViewModelStore` даёт записи своё хранилище ViewModel. ViewModel живёт, пока запись в стеке,
  *   и очищается, когда запись из него уходит. Без него ViewModel жили бы в Activity, и экраны
  *   деталей разных городов получили бы один экземпляр;
- * - хранилище флоу даёт записям флоу общий `ViewModelStore` — хранилище корня флоу. Оно делит с
- *   предыдущим декоратором один `ViewModelStoreProvider`, поэтому видит те же хранилища записей.
+ * - декоратор флоу даёт записям флоу общий DI-граф, который лежит в хранилище корня флоу. Он делит
+ *   с предыдущим декоратором один `ViewModelStoreProvider`, поэтому видит те же хранилища записей.
  */
 @Composable
 fun NavigationState.toEntries(entryProvider: (NavKey) -> NavEntry<NavKey>): List<NavEntry<NavKey>> {
@@ -80,7 +81,7 @@ fun NavigationState.toEntries(entryProvider: (NavKey) -> NavEntry<NavKey>): List
             entryDecorators = listOf(
                 rememberSaveableStateHolderNavEntryDecorator(),
                 rememberViewModelStoreNavEntryDecorator(viewModelStoreProvider),
-                rememberFlowViewModelStoreNavEntryDecorator(backStack, viewModelStoreProvider),
+                rememberFlowNavEntryDecorator(backStack, viewModelStoreProvider),
             ),
             entryProvider = entryProvider,
         )

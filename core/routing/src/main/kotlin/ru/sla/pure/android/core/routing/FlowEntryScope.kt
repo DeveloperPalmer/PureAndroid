@@ -9,9 +9,9 @@ import androidx.navigation3.runtime.NavKey
  * пока этот экран лежит в стеке.
  *
  * - [root] — ключ первого экрана флоу. Его запись объявляется внутри [entries], как и остальные.
- * - [component] — собирает компонент флоу [C]. Вызывается один раз, при первом показе экрана флоу.
- * - [entries] — записи флоу: `entry<…>` для каждого экрана. Внутри записи доступны методы
- *   компонента [C], и все записи флоу получают один и тот же экземпляр.
+ * - [component] — собирает граф флоу. Вызывается один раз, при первом показе экрана флоу.
+ * - [entries] — записи флоу: `entry<…>` для каждого экрана. Внутри записи `metroViewModel()`
+ *   создаёт ViewModel из графа флоу, и все записи флоу берут их из одного и того же графа.
  *
  * Пример:
  *
@@ -21,66 +21,52 @@ import androidx.navigation3.runtime.NavKey
  *     component = { factory.create() },
  * ) {
  *     entry<Route.Main> {
- *         MainScreen(viewModel = viewModel { mainViewModel() })
+ *         MainScreen(viewModel = metroViewModel())
  *     }
  * }
  * ```
  */
-fun <C : FlowComponent> EntryProviderScope<NavKey>.flow(
+fun EntryProviderScope<NavKey>.flow(
     root: NavKey,
-    component: () -> C,
-    entries: FlowEntryScope<C>.() -> Unit,
+    component: () -> FlowComponent,
+    entries: FlowEntryScope.() -> Unit,
 ) {
-    val graph = FlowGraph(
-        key = flowContentKey(root),
-        create = component
-    )
-    FlowEntryScope(this, root, graph).entries()
+    FlowEntryScope(this, root, component).entries()
 }
 
 /**
  * Область внутри [flow], где объявляются экраны флоу через [entry].
  *
- * Метаданные флоу ставятся сами, вручную их задавать не нужно:
- * - корневая запись получает ключ флоу;
- * - остальные записи получают ссылку на корень и свой ключ навигации.
- * По ссылке на корень декоратор навигации находит общее хранилище флоу, в котором живёт его граф,
- * а по обоим ключам проверяет, что корень лежит в стеке под записью ([checkFlowRoot]).
- *
- * Контент записи вызывается на компоненте флоу [C]: его методы, например `mainViewModel()`,
- * доступны внутри `entry<…> { }` без дополнительных вызовов.
+ * Метаданные флоу ставятся сами, вручную их задавать не нужно: каждая запись получает корень флоу,
+ * свой ключ навигации и сборку графа флоу. По ним декоратор флоу ([FlowNavEntryDecorator]) находит
+ * общее хранилище флоу, берёт из него граф и проверяет, что корень лежит в стеке под записью.
+ * Корневая запись вдобавок получает ключ флоу как свой contentKey: так хранилище флоу — это
+ * хранилище корня, и оно очищается, когда корень уходит из стека.
  */
-class FlowEntryScope<C : FlowComponent> @PublishedApi internal constructor(
+class FlowEntryScope internal constructor(
     @PublishedApi
     internal val scope: EntryProviderScope<NavKey>,
     @PublishedApi
     internal val root: NavKey,
     @PublishedApi
-    internal val graph: FlowGraph<C>,
+    internal val component: () -> FlowComponent,
 ) {
 
     inline fun <reified K : NavKey> entry(
         metadata: Map<String, Any> = emptyMap(),
-        noinline content: @Composable C.(K) -> Unit,
+        noinline content: @Composable (K) -> Unit,
     ) {
         if (K::class == root::class) {
             scope.entry<K>(
                 clazzContentKey = ::flowContentKey,
-                metadata = metadata,
-                content = withGraph(content),
+                metadata = { key -> metadata + partOfFlow(root, key, component) },
+                content = content,
             )
         } else {
             scope.entry<K>(
-                metadata = { key -> metadata + partOfFlow(root, key) },
-                content = withGraph(content),
+                metadata = { key -> metadata + partOfFlow(root, key, component) },
+                content = content,
             )
         }
-    }
-
-    // Composable-лямбда создаётся в обычной функции, а не в inline entry: так её обрабатывает
-    // Compose-компилятор этого модуля, а не модуля фичи, куда встраивается entry
-    @PublishedApi
-    internal fun <K : NavKey> withGraph(content: @Composable C.(K) -> Unit): @Composable (K) -> Unit {
-        return { key -> graph.current().content(key) }
     }
 }

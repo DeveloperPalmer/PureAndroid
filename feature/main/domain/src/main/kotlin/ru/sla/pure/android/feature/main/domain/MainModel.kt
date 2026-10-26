@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import ru.sla.pure.android.feature.main.domain.di.MainScope
 
 @SingleIn(MainScope::class)
-class MainModel @Inject constructor() {
+@Inject
+class MainModel {
 
     private val _cityIds = MutableStateFlow(STUB_CITY_IDS)
     val cityIds: StateFlow<List<Long>> = _cityIds.asStateFlow()
