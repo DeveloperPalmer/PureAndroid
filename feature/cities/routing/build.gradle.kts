@@ -8,5 +8,6 @@ android {
 
 dependencies {
     implementation(projects.core.routing)
+    implementation(projects.feature.cities.domain)
     implementation(projects.feature.cities.ui)
 }
