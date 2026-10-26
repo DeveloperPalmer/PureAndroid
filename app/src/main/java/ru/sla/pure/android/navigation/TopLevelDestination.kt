@@ -11,7 +11,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation3.runtime.NavKey
 import ru.sla.pure.android.core.resources.R
-import ru.sla.pure.android.feature.cities.routing.CitiesRoute
+import ru.sla.pure.android.feature.main.routing.MainRoute
 import ru.sla.pure.android.feature.map.routing.MapRoute
 
 /** Вкладки нижней панели. Первая — стартовая */
@@ -22,10 +22,10 @@ enum class TopLevelDestination(
     @param:StringRes
     val label: Int,
 ) {
-    Cities(
-        route = CitiesRoute.Cities,
+    Main(
+        route = MainRoute.Main,
         icon = R.drawable.ic_list_24,
-        label = R.string.tab_cities
+        label = R.string.tab_main
     ),
     Map(
         route = MapRoute.Map,

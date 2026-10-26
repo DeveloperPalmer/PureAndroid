@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Вкладки -->
-    <string name="tab_cities">Города</string>
+    <string name="tab_main">Города</string>
     <string name="tab_map">Карта</string>
 
     <!-- Города -->
     <string name="cities_title">Города</string>
     <string name="cities_city">Город %d</string>
-    <string name="city_details_title">Город %d</string>
-    <string name="city_details_back">Назад</string>
-    <string name="city_details_show_message">Показать сообщение</string>
-    <string name="city_details_message">Сообщение для города %d</string>
 
     <!-- Карта -->
     <string name="map_title">Карта</string>
