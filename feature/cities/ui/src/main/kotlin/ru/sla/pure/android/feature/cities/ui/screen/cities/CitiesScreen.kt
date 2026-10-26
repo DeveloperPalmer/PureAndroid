@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.dropUnlessResumed
 import org.orbitmvi.orbit.compose.collectAsState
-import ru.sla.pure.android.feature.cities.ui.R
+import ru.sla.pure.android.core.resources.R
 
 /**
  * Список городов. ViewModel по умолчанию берётся из Hilt: `hiltViewModel()` находит хранилище

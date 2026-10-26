@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Города -->
     <string name="cities_title">Города</string>
     <string name="cities_city">Город %d</string>
     <string name="city_details_title">Город %d</string>

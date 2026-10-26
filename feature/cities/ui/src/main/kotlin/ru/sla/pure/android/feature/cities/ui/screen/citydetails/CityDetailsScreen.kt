@@ -27,7 +27,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.dropUnlessResumed
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
-import ru.sla.pure.android.feature.cities.ui.R
+import ru.sla.pure.android.core.resources.R
 
 /**
  * Детали города. [CityDetailsViewModel] создаётся через свою assisted-фабрику: Hilt передаёт её
