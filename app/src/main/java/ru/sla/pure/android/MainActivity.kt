@@ -9,7 +9,7 @@ import ru.sla.pure.android.core.routing.EntryProviderInstaller
 import ru.sla.pure.android.core.routing.FlowEventSource
 import ru.sla.pure.android.core.routing.FlowNode
 import ru.sla.pure.android.navigation.AppNavigation
-import ru.sla.pure.android.ui.theme.PureAndroidTheme
+import ru.sla.pure.android.uikit.theme.AppTheme
 import javax.inject.Inject
 
 /**
@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            PureAndroidTheme {
+            AppTheme {
                 AppNavigation(
                     entryProviderInstallers = entryProviderInstallers,
                     flowNodes = flowNodes,
