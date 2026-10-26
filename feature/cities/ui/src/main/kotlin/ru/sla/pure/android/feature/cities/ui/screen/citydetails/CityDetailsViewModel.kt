@@ -1,30 +1,38 @@
 package ru.sla.pure.android.feature.cities.ui.screen.citydetails
 
-import androidx.lifecycle.ViewModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.orbitmvi.orbit.viewmodel.orbitContainer
 import ru.sla.pure.android.core.ui.FlowEventSink
+import ru.sla.pure.android.core.ui.mvi.BaseViewModel
 import ru.sla.pure.android.feature.cities.ui.routing.FlowEvent
 
 /**
- * Состояние деталей города. `cityId` приходит из ключа навигации, а не из графа, поэтому
+ * Детали города на Orbit. `cityId` приходит из ключа навигации, а не из графа, поэтому
  * передаётся через assisted injection: зависимости из графа Hilt подставит сам, а `cityId`
- * передаёт экран через [Factory] при создании ViewModel
+ * передаёт экран через [Factory] при создании ViewModel. Из него собирается начальное состояние
  */
 @HiltViewModel(assistedFactory = CityDetailsViewModel.Factory::class)
 class CityDetailsViewModel @AssistedInject constructor(
-    @Assisted val cityId: Long,
+    @Assisted
+    private val cityId: Long,
     private val eventSink: FlowEventSink,
-) : ViewModel() {
-
-    fun onBack() {
-        eventSink.sendEvent(FlowEvent.CityDetailsDismissed)
-    }
+) : BaseViewModel<ViewState, Nothing>() {
 
     @AssistedFactory
     interface Factory {
         fun create(cityId: Long): CityDetailsViewModel
+    }
+
+    override val container = orbitContainer<ViewState, Nothing>(
+        ViewState(
+            cityId = cityId
+        )
+    )
+
+    fun onBack() = intent {
+        eventSink.sendEvent(FlowEvent.CityDetailsDismissed)
     }
 }

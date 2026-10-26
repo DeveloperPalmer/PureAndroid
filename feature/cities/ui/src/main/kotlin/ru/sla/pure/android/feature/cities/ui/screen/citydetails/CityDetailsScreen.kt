@@ -12,18 +12,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.dropUnlessResumed
+import org.orbitmvi.orbit.compose.collectAsState
 import ru.sla.pure.android.feature.cities.ui.R
 
 /**
  * Детали города. [CityDetailsViewModel] создаётся через свою assisted-фабрику: Hilt передаёт её
  * в `creationCallback`, а экран подставляет `cityId`. Для каждой записи стека — своя ViewModel:
- * ключ хранилища даёт декоратор ViewModelStore записи
+ * ключ хранилища даёт декоратор ViewModelStore записи. Состояние экран читает через
+ * `collectAsState()` из orbit-compose
  */
 @Composable
 fun CityDetailsScreen(
@@ -34,8 +37,10 @@ fun CityDetailsScreen(
             creationCallback = { factory -> factory.create(cityId) },
         ),
 ) {
+    val state by viewModel.collectAsState()
+
     CityDetailsContent(
-        cityId = viewModel.cityId,
+        cityId = state.cityId,
         onBack = viewModel::onBack,
         modifier = modifier,
     )
