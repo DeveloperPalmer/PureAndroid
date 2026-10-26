@@ -2,9 +2,8 @@ package ru.sla.pure.android.di
 
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
+import dev.zacsweers.metro.Multibinds
 import ru.sla.pure.android.core.routing.EntryProviderInstaller
-import ru.sla.pure.android.core.routing.FlowEventSource
-import ru.sla.pure.android.core.routing.FlowNode
 
 /**
  * Корневой граф: живёт столько же, сколько процесс. `@DependencyGraph(AppScope::class)` добавляет
@@ -14,10 +13,7 @@ import ru.sla.pure.android.core.routing.FlowNode
 @DependencyGraph(AppScope::class)
 interface AppGraph {
 
+    // allowEmpty: пустой набор в Metro — ошибка, а приложение должно собираться и без фич
+    @Multibinds(allowEmpty = true)
     fun entryProviderInstallers(): Set<EntryProviderInstaller>
-
-    fun flowNodes(): Set<FlowNode>
-
-    /** События экранов, которые ViewModel отправили через FlowEventSink */
-    fun flowEventSource(): FlowEventSource
 }

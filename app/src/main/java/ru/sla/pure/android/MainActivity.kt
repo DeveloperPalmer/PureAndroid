@@ -8,8 +8,7 @@ import ru.sla.pure.android.navigation.AppNavigation
 import ru.sla.pure.android.uikit.theme.AppTheme
 
 /**
- * Единственная Activity: показывает навигацию приложения. Экраны, переходы и события экранов
- * берёт из графа приложения
+ * Единственная Activity: показывает навигацию приложения. Экраны фич берёт из графа приложения
  */
 class MainActivity : ComponentActivity() {
 
@@ -21,8 +20,6 @@ class MainActivity : ComponentActivity() {
             AppTheme {
                 AppNavigation(
                     entryProviderInstallers = appGraph.entryProviderInstallers(),
-                    flowNodes = appGraph.flowNodes(),
-                    flowEventSource = appGraph.flowEventSource(),
                 )
             }
         }

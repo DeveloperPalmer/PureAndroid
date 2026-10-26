@@ -2,29 +2,23 @@ package ru.sla.pure.android.navigation
 
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import ru.sla.pure.android.core.routing.EntryProviderInstaller
-import ru.sla.pure.android.core.routing.FlowEventSource
-import ru.sla.pure.android.core.routing.FlowNode
-import ru.sla.pure.android.core.routing.dispatch
 
 /**
  * Навигация приложения: один `NavDisplay` на все экраны. В Navigation 3 стеком владеет само
  * приложение: это обычные списки ключей в [NavigationState], а переходы делает [AppNavigator].
- * Экраны приходят из модулей routing фич через [entryProviderInstallers], а переходы делают
- * их [flowNodes] по событиям экранов из [flowEventSource]. Модули ui приложению не видны.
+ * Экраны приходят из модулей routing фич через [entryProviderInstallers], и они же по колбэкам
+ * экранов вызывают переходы [AppNavigator]. Модули ui приложению не видны.
  * Нижнюю панель декоратор сцен добавляет записям с `showNavigationBar()`.
  */
 @Composable
 fun AppNavigation(
     entryProviderInstallers: Set<EntryProviderInstaller>,
-    flowNodes: Set<FlowNode>,
-    flowEventSource: FlowEventSource,
     modifier: Modifier = Modifier,
 ) {
     val navigationState = rememberNavigationState(
@@ -35,13 +29,8 @@ fun AppNavigation(
 
     val entryProvider = entryProvider<NavKey> {
         entryProviderInstallers.forEach { installer ->
-            with(installer) { install() }
+            with(installer) { install(navigator) }
         }
-    }
-
-    // Событие экрана получают узлы роутинга фич по очереди, пока один из них его не примет
-    LaunchedEffect(navigator, flowEventSource, flowNodes) {
-        flowEventSource.events.collect { event -> navigator.dispatch(event, flowNodes) }
     }
 
     // SharedTransitionLayout нужен декоратору: через общий элемент панель стоит на месте,

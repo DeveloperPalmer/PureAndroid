@@ -9,8 +9,8 @@ import org.orbitmvi.orbit.OrbitContainerHost
  * - меняет состояние через `reduce { state.copy(…) }`;
  * - шлёт экрану одноразовый эффект [SE] через `postSideEffect` — снэкбар, скролл.
  *
- * События навигации ViewModel шлёт сама, через внедрённый `FlowEventSink`: так по конструктору
- * видно, какие ViewModel говорят с роутингом.
+ * О навигации ViewModel не знает. Если переход зависит от результата работы ViewModel, она шлёт
+ * экрану эффект, а экран вызывает свой колбэк, который модуль routing превращает в переход.
  *
  * Контейнер наследник создаёт через `orbitContainer(initialState)` из orbit-viewmodel: он живёт
  * в `viewModelScope` и очищается вместе с ViewModel

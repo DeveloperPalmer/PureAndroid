@@ -6,13 +6,14 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
 import dev.zacsweers.metro.Inject
 import ru.sla.pure.android.core.routing.EntryProviderInstaller
+import ru.sla.pure.android.core.routing.Navigator
 import ru.sla.pure.android.core.routing.showNavigationBar
 import ru.sla.pure.android.feature.map.ui.screen.map.MapScreen
 
 @ContributesIntoSet(AppScope::class)
 class MapEntryProviderInstaller @Inject constructor() : EntryProviderInstaller {
 
-    override fun EntryProviderScope<NavKey>.install() {
+    override fun EntryProviderScope<NavKey>.install(navigator: Navigator) {
         entry<MapRoute.Map>(metadata = showNavigationBar()) {
             MapScreen()
         }
