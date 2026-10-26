@@ -21,9 +21,9 @@ interface CitiesRoutingModule {
 
     @Binds
     @IntoSet
-    fun bindFlowNode(flowNode: CitiesFlowNode): FlowNode
+    fun bindEntryProviderInstaller(installer: CitiesEntryProviderInstaller): EntryProviderInstaller
 
     @Binds
     @IntoSet
-    fun bindEntryProviderInstaller(installer: CitiesEntryProviderInstaller): EntryProviderInstaller
+    fun bindCitiesFlowNode(flowNode: CitiesFlowNode): FlowNode
 }

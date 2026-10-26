@@ -7,26 +7,31 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 
 /**
- * Граф флоу для записей навигации. Как его собрать ([create]), знает наследник в DI-слое флоу,
- * а записи только берут из него [S] через [current]
+ * Граф флоу для записей навигации: точка входа [E] в компонент флоу. Как его собрать ([create]),
+ * знает фича, а записи только берут его через [current]. Сам объект ничего не хранит, поэтому его
+ * можно создавать заново при каждой сборке записей: граф находится в хранилище флоу по [key]
  */
-open class FlowGraph<S : Any>(private val create: () -> S) {
+@PublishedApi
+internal class FlowGraph<E : Any>(
+    private val key: String,
+    private val create: () -> E,
+) {
 
     /**
-     * [S] текущего флоу. Создаётся один раз на флоу и хранится в хранилище флоу
+     * [E] текущего флоу. Создаётся один раз на флоу и хранится в хранилище флоу
      * ([LocalFlowViewModelStoreOwner]): все записи флоу получают один и тот же экземпляр, он
      * переживает поворот и уходит вместе с корнем флоу из стека
      */
     @Composable
-    fun current(): S {
+    fun current(): E {
         val holder = viewModel(
             modelClass = Holder::class,
             viewModelStoreOwner = LocalFlowViewModelStoreOwner.current,
-            key = this::class.qualifiedName,
+            key = key,
             factory = viewModelFactory { initializer { Holder(create()) } },
         )
         @Suppress("UNCHECKED_CAST")
-        return holder.graph as S
+        return holder.graph as E
     }
 
     /** Держит граф флоу в хранилище флоу и задаёт ему время жизни */

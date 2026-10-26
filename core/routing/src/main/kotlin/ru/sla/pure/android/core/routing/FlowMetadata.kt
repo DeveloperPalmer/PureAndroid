@@ -11,12 +11,15 @@ object FlowKey : NavMetadataKey<String>
 
 /**
  * contentKey корневой записи флоу. Корень задаёт его явно (`clazzContentKey = ::flowContentKey`),
- * а записи флоу ссылаются на него через [partOfFlow]: по этому ключу находится хранилище флоу
+ * а записи флоу ссылаются на него через [partOfFlow]: по этому ключу находится хранилище флоу.
+ * Обе метаданные ставит [flow], фичам вызывать их не нужно
  */
-fun flowContentKey(root: NavKey): String = "$root:${root::class.qualifiedName}"
+@PublishedApi
+internal fun flowContentKey(root: NavKey): String = "$root:${root::class.qualifiedName}"
 
-/** Метаданные записи внутри флоу с корнем [root]: `entry<…>(metadata = partOfFlow(root))` */
-fun partOfFlow(root: NavKey): Map<String, Any> = metadata { put(FlowKey, flowContentKey(root)) }
+/** Метаданные записи внутри флоу с корнем [root] */
+@PublishedApi
+internal fun partOfFlow(root: NavKey): Map<String, Any> = metadata { put(FlowKey, flowContentKey(root)) }
 
 /**
  * Хранилище ViewModel флоу — хранилище его корневой записи. ViewModel в нём живёт, пока корень
