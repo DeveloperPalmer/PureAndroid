@@ -12,4 +12,7 @@ dependencies {
     api(libs.androidx.lifecycle.viewmodel)
     api(libs.orbit.core)
     api(libs.orbit.viewmodel)
+
+    // api: ресурсы приложения получает каждый модуль, который подключил core:ui
+    api(projects.core.resources)
 }
