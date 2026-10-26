@@ -3,24 +3,22 @@ package ru.sla.pure.android.core.routing
 import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
-import dagger.hilt.EntryPoints
 
 /**
  * Объявляет флоу — группу экранов с общим DI-графом. Флоу начинается с экрана [root] и живёт,
  * пока этот экран лежит в стеке.
  *
  * - [root] — ключ первого экрана флоу. Его запись объявляется внутри [entries], как и остальные.
- * - [component] — собирает Hilt-компонент флоу. Вызывается один раз, при первом показе экрана флоу.
- * - [E] — точка входа в этот компонент. Внутри каждой записи доступны её методы, и все записи флоу
- *   получают один и тот же экземпляр.
- * - [entries] — записи флоу: `entry<…>` для каждого экрана.
+ * - [component] — собирает компонент флоу [C]. Вызывается один раз, при первом показе экрана флоу.
+ * - [entries] — записи флоу: `entry<…>` для каждого экрана. Внутри записи доступны методы
+ *   компонента [C], и все записи флоу получают один и тот же экземпляр.
  *
  * Пример:
  *
  * ```
- * flow<SomeFlowEntryPoint>(
+ * flow(
  *     root = Route.Main,
- *     component = { builder.get().build() },
+ *     component = { factory.create() },
  * ) {
  *     entry<Route.Main> {
  *         MainScreen(viewModel = viewModel { mainViewModel() })
@@ -28,17 +26,15 @@ import dagger.hilt.EntryPoints
  * }
  * ```
  */
-inline fun <reified E : Any> EntryProviderScope<NavKey>.flow(
+fun <C : FlowComponent> EntryProviderScope<NavKey>.flow(
     root: NavKey,
-    noinline component: () -> Any,
-    entries: FlowEntryScope<E>.() -> Unit,
+    component: () -> C,
+    entries: FlowEntryScope<C>.() -> Unit,
 ) {
-    val graph = FlowGraph(flowContentKey(root)) {
-        EntryPoints.get(
-            component(),
-            E::class.java
-        )
-    }
+    val graph = FlowGraph(
+        key = flowContentKey(root),
+        create = component
+    )
     FlowEntryScope(this, root, graph).entries()
 }
 
@@ -51,21 +47,21 @@ inline fun <reified E : Any> EntryProviderScope<NavKey>.flow(
  * По ссылке на корень декоратор навигации находит общее хранилище флоу, в котором живёт его граф,
  * а по обоим ключам проверяет, что корень лежит в стеке под записью ([checkFlowRoot]).
  *
- * Контент записи вызывается на точке входа флоу [E]: её методы, например `mainViewModel()`,
+ * Контент записи вызывается на компоненте флоу [C]: его методы, например `mainViewModel()`,
  * доступны внутри `entry<…> { }` без дополнительных вызовов.
  */
-class FlowEntryScope<E : Any> @PublishedApi internal constructor(
+class FlowEntryScope<C : FlowComponent> @PublishedApi internal constructor(
     @PublishedApi
     internal val scope: EntryProviderScope<NavKey>,
     @PublishedApi
     internal val root: NavKey,
     @PublishedApi
-    internal val graph: FlowGraph<E>,
+    internal val graph: FlowGraph<C>,
 ) {
 
     inline fun <reified K : NavKey> entry(
         metadata: Map<String, Any> = emptyMap(),
-        noinline content: @Composable E.(K) -> Unit,
+        noinline content: @Composable C.(K) -> Unit,
     ) {
         if (K::class == root::class) {
             scope.entry<K>(
@@ -84,7 +80,7 @@ class FlowEntryScope<E : Any> @PublishedApi internal constructor(
     // Composable-лямбда создаётся в обычной функции, а не в inline entry: так её обрабатывает
     // Compose-компилятор этого модуля, а не модуля фичи, куда встраивается entry
     @PublishedApi
-    internal fun <K : NavKey> withGraph(content: @Composable E.(K) -> Unit): @Composable (K) -> Unit {
+    internal fun <K : NavKey> withGraph(content: @Composable C.(K) -> Unit): @Composable (K) -> Unit {
         return { key -> graph.current().content(key) }
     }
 }

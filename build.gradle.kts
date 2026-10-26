@@ -5,7 +5,7 @@ plugins {
     id("android-application-convention") apply false
     id("android-library-convention") apply false
     id("compose-convention") apply false
-    id("hilt-convention") apply false
+    id("metro-convention") apply false
     id("routing-convention") apply false
     id("kotlin-convention") apply false
 }

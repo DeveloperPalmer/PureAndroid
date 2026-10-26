@@ -3,27 +3,30 @@ package ru.sla.pure.android.feature.main.routing
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesIntoSet
+import dev.zacsweers.metro.Inject
 import ru.sla.pure.android.core.routing.EntryProviderInstaller
 import ru.sla.pure.android.core.routing.flow
 import ru.sla.pure.android.core.routing.showNavigationBar
 import ru.sla.pure.android.feature.main.routing.di.MainFlowComponent
-import ru.sla.pure.android.feature.main.routing.di.MainFlowEntryPoint
 import ru.sla.pure.android.feature.main.ui.screen.main.MainScreen
-import javax.inject.Inject
-import javax.inject.Provider
 
 /**
  * Экраны фичи «Главная»: какой экран показать по ключу. Главный экран — корень флоу «Главная».
- * ViewModel экранов берутся из графа флоу, а живут в хранилище своей записи
+ * ViewModel экранов берутся из графа флоу, а живут в хранилище своей записи.
+ * `@ContributesIntoSet` кладёт установщик в общий `Set<EntryProviderInstaller>` приложения.
+ * Главный экран событий пока не шлёт, поэтому навигации (`FlowNode`) у фичи нет
  */
+@ContributesIntoSet(AppScope::class)
 class MainEntryProviderInstaller @Inject constructor(
-    private val component: Provider<MainFlowComponent.Builder>,
+    private val componentFactory: MainFlowComponent.Factory,
 ) : EntryProviderInstaller {
 
     override fun EntryProviderScope<NavKey>.install() {
-        flow<MainFlowEntryPoint>(
+        flow(
             root = MainRoute.Main,
-            component = { component.get().build() },
+            component = { componentFactory.create() },
         ) {
             entry<MainRoute.Main>(metadata = showNavigationBar()) {
                 MainScreen(viewModel = viewModel { mainViewModel() })

@@ -1,15 +1,13 @@
 package ru.sla.pure.android.feature.main.domain
 
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import ru.sla.pure.android.feature.main.domain.di.MainScope
-import javax.inject.Inject
 
-/**
- * Состояние флоу «Главная». Один экземпляр на флоу: экраны флоу читают одни и те же данные.
- */
-@MainScope
+@SingleIn(MainScope::class)
 class MainModel @Inject constructor() {
 
     private val _cityIds = MutableStateFlow(STUB_CITY_IDS)

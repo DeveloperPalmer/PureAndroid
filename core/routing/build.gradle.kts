@@ -1,5 +1,6 @@
 plugins {
-    id("hilt-convention")
+    id("android-library-convention")
+    id("metro-convention")
     id("org.jetbrains.kotlin.plugin.compose")
 }
 

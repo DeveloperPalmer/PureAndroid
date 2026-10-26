@@ -1,12 +1,14 @@
 package ru.sla.pure.android
 
 import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+import dev.zacsweers.metro.createGraph
+import ru.sla.pure.android.di.AppGraph
 
 /**
- * Точка входа DI. `@HiltAndroidApp` генерирует корневой компонент Hilt (`SingletonComponent`)
- * и базовый класс `Hilt_PureApplication`, который создаёт этот компонент в `onCreate`.
- * Плагин Hilt подменяет родителя класса на сгенерированный после компиляции.
+ * Точка входа DI: держит [appGraph] — корневой граф Metro. Он создаётся при первом обращении
+ * и живёт до конца процесса
  */
-@HiltAndroidApp
-class PureApplication : Application()
+class PureApplication : Application() {
+
+    val appGraph: AppGraph by lazy { createGraph<AppGraph>() }
+}

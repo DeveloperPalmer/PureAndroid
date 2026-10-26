@@ -1,9 +1,9 @@
 package ru.sla.pure.android.feature.main.ui.screen.main
 
+import dev.zacsweers.metro.Inject
 import org.orbitmvi.orbit.viewmodel.orbitContainer
 import ru.sla.pure.android.core.ui.mvi.BaseViewModel
 import ru.sla.pure.android.feature.main.domain.MainModel
-import javax.inject.Inject
 
 /**
  * Главный экран на Orbit. Состояние — [ViewState], одноразовых эффектов у экрана нет (`Nothing`).

@@ -1,6 +1,6 @@
 plugins {
     id("compose-convention")
-    id("hilt-convention")
+    id("metro-convention")
 }
 
 android {
