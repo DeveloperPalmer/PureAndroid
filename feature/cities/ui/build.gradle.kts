@@ -9,4 +9,5 @@ android {
 
 dependencies {
     api(projects.core.ui)
+    implementation(projects.uikit)
 }

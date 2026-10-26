@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -28,6 +27,7 @@ import androidx.lifecycle.compose.dropUnlessResumed
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import ru.sla.pure.android.core.resources.R
+import ru.sla.pure.android.uikit.theme.AppTheme
 
 /**
  * Детали города. [CityDetailsViewModel] создаётся через свою assisted-фабрику: Hilt передаёт её
@@ -76,8 +76,13 @@ private fun CityDetailsContent(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Surface даёт экрану фон и цвет текста темы: без него сквозь экран видно окно Activity
-    Surface(modifier = modifier.fillMaxSize()) {
+    // Surface даёт экрану фон и цвет текста из токенов темы: без него сквозь экран
+    // видно окно Activity
+    Surface(
+        modifier = modifier.fillMaxSize(),
+        color = AppTheme.colors.backgroundPrimary,
+        contentColor = AppTheme.colors.contentPrimary,
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -87,7 +92,7 @@ private fun CityDetailsContent(
         ) {
             Text(
                 text = stringResource(R.string.city_details_title, cityId),
-                style = MaterialTheme.typography.headlineSmall,
+                style = AppTheme.typography.headline,
             )
             Button(onClick = onShowMessage) {
                 Text(stringResource(R.string.city_details_show_message))
@@ -110,10 +115,12 @@ private fun CityDetailsContent(
 @Preview(showBackground = true)
 @Composable
 private fun CityDetailsContentPreview() {
-    CityDetailsContent(
-        cityId = 1L,
-        snackbarHostState = remember { SnackbarHostState() },
-        onShowMessage = {},
-        onBack = {},
-    )
+    AppTheme {
+        CityDetailsContent(
+            cityId = 1L,
+            snackbarHostState = remember { SnackbarHostState() },
+            onShowMessage = {},
+            onBack = {},
+        )
+    }
 }
