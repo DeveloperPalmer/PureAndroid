@@ -15,16 +15,16 @@ import ru.sla.pure.android.core.ui.FlowEventSink
 @InstallIn(ActivityRetainedComponent::class)
 interface FlowEventModule {
 
-    // Один экземпляр на две роли: ViewModel пишут в него как в FlowEventSink,
-    // приложение читает как FlowEventSource
+    // FlowEventMediator в двух ролях: ViewModel отправляют в него события как в FlowEventSink,
+    // а приложение читает их из него как из FlowEventSource. Обе привязки ведут к одному экземпляру
     @Binds
     fun bindFlowEventSink(mediator: FlowEventMediator): FlowEventSink
 
     @Binds
     fun bindFlowEventSource(mediator: FlowEventMediator): FlowEventSource
 
-    // Объявляют наборы, даже если ни одна фича в них ничего не положила: иначе пустой Set
-    // в графе не существует, и Dagger не соберёт приложение
+    // Объявляют наборы заранее. Если ни одна фича ничего в набор не положила, без этого
+    // объявления пустого Set в графе нет, и Dagger не соберёт приложение
     @Multibinds
     fun entryProviderInstallers(): Set<EntryProviderInstaller>
 

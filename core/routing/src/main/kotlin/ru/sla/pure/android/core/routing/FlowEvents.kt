@@ -8,9 +8,7 @@ import ru.sla.pure.android.core.ui.Event
 import ru.sla.pure.android.core.ui.FlowEventSink
 import javax.inject.Inject
 
-/** Откуда приложение читает события экранов, чтобы передать их переходам */
 interface FlowEventSource {
-
     val events: Flow<Event>
 }
 

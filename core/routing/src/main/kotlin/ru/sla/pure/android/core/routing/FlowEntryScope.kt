@@ -6,12 +6,25 @@ import androidx.navigation3.runtime.NavKey
 import dagger.hilt.EntryPoints
 
 /**
- * Записи флоу с корнем [root]. [component] собирает компонент флоу, а записи получают из него
- * точку входа [E] — один экземпляр на флоу, пока корень в стеке:
+ * Объявляет флоу — группу экранов с общим DI-графом. Флоу начинается с экрана [root] и живёт,
+ * пока этот экран лежит в стеке.
+ *
+ * - [root] — ключ первого экрана флоу. Его запись объявляется внутри [entries], как и остальные.
+ * - [component] — собирает Hilt-компонент флоу. Вызывается один раз, при первом показе экрана флоу.
+ * - [E] — точка входа в этот компонент. Внутри каждой записи доступны её методы, и все записи флоу
+ *   получают один и тот же экземпляр.
+ * - [entries] — записи флоу: `entry<…>` для каждого экрана.
+ *
+ * Пример:
  *
  * ```
- * flow<CitiesFlowEntryPoint>(root = CitiesRoute.Cities, component = { builder.get().build() }) {
- *     entry<CitiesRoute.Cities> { CitiesScreen(viewModel = viewModel { citiesViewModel() }) }
+ * flow<SomeFlowEntryPoint>(
+ *     root = Route.Main,
+ *     component = { builder.get().build() },
+ * ) {
+ *     entry<Route.Main> {
+ *         MainScreen(viewModel = viewModel { mainViewModel() })
+ *     }
  * }
  * ```
  */
@@ -30,14 +43,23 @@ inline fun <reified E : Any> EntryProviderScope<NavKey>.flow(
 }
 
 /**
- * Записи внутри [flow]. Метаданные флоу ставятся сами: корень получает contentKey флоу, остальные
- * записи — ссылку на корень. Контент записи вызывается на точке входа флоу [E], поэтому её
- * методы доступны в нём напрямую
+ * Область внутри [flow], где объявляются экраны флоу через [entry].
+ *
+ * Метаданные флоу ставятся сами, вручную их задавать не нужно:
+ * - корневая запись получает ключ флоу;
+ * - остальные записи получают ссылку на корень.
+ * По этой ссылке декоратор навигации находит общее хранилище флоу, в котором живёт его граф.
+ *
+ * Контент записи вызывается на точке входа флоу [E]: её методы, например `mainViewModel()`,
+ * доступны внутри `entry<…> { }` без дополнительных вызовов.
  */
 class FlowEntryScope<E : Any> @PublishedApi internal constructor(
-    @PublishedApi internal val scope: EntryProviderScope<NavKey>,
-    @PublishedApi internal val root: NavKey,
-    @PublishedApi internal val graph: FlowGraph<E>,
+    @PublishedApi
+    internal val scope: EntryProviderScope<NavKey>,
+    @PublishedApi
+    internal val root: NavKey,
+    @PublishedApi
+    internal val graph: FlowGraph<E>,
 ) {
 
     inline fun <reified K : NavKey> entry(
@@ -58,9 +80,10 @@ class FlowEntryScope<E : Any> @PublishedApi internal constructor(
         }
     }
 
-    // Composable-лямбда собирается здесь, а не в inline entry: так её компилирует этот модуль
+    // Composable-лямбда создаётся в обычной функции, а не в inline entry: так её обрабатывает
+    // Compose-компилятор этого модуля, а не модуля фичи, куда встраивается entry
     @PublishedApi
-    internal fun <K : NavKey> withGraph(content: @Composable E.(K) -> Unit): @Composable (K) -> Unit = { key ->
-        graph.current().content(key)
+    internal fun <K : NavKey> withGraph(content: @Composable E.(K) -> Unit): @Composable (K) -> Unit {
+        return { key -> graph.current().content(key) }
     }
 }

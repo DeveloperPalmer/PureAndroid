@@ -20,11 +20,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    /**
-     * Записи и узлы роутинга всех фич: каждый модуль routing кладёт свои через `@IntoSet`.
-     * `@JvmSuppressWildcards` нужен Dagger: без него Kotlin отдаёт Java тип `Set<? extends …>`,
-     * а такого ключа в графе нет
-     */
     @Inject
     lateinit var entryProviderInstallers: Set<@JvmSuppressWildcards EntryProviderInstaller>
 

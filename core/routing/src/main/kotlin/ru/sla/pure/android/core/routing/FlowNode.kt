@@ -3,9 +3,11 @@ package ru.sla.pure.android.core.routing
 import ru.sla.pure.android.core.ui.Event
 
 /**
- * Роутинг фичи: по событию экрана решает, какой переход сделать, но сам не навигирует — только
- * возвращает [FlowTransition]. Модули routing кладут свои узлы в общий `Set` через Hilt
- * (`@Provides @IntoSet`)
+ * Навигация одной фичи: по событию экрана решает, какой переход сделать.
+ *
+ * Сам узел никуда не переходит, а только возвращает [FlowTransition]. Выполняет переход [dispatch].
+ *
+ * Модуль routing фичи кладёт свой узел в общий `Set<FlowNode>` через `@Binds @IntoSet`.
  */
 fun interface FlowNode {
 
@@ -13,8 +15,11 @@ fun interface FlowNode {
 }
 
 /**
- * Передаёт событие узлам по очереди, пока один из них его не примет, и выполняет его переход.
- * Если все узлы ответили [FlowTransition.Ignore], событие ни к чему не приводит
+ * Передаёт событие узлам [flowNodes] по очереди и выполняет переход первого узла, который его
+ * принял.
+ *
+ * Узел принял событие, если вернул что угодно, кроме [FlowTransition.Ignore]. Если событие
+ * не принял ни один узел, ничего не происходит.
  */
 fun Navigator.dispatch(event: Event, flowNodes: Set<FlowNode>) {
     for (flowNode in flowNodes) {

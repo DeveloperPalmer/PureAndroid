@@ -10,20 +10,15 @@ import ru.sla.pure.android.core.routing.FlowNode
 import ru.sla.pure.android.feature.cities.routing.CitiesEntryProviderInstaller
 import ru.sla.pure.android.feature.cities.routing.CitiesFlowNode
 
-/**
- * Роутинг фичи «Города» в общих наборах приложения: `@Binds @IntoSet` кладёт экраны и навигацию
- * фичи в `Set<EntryProviderInstaller>` и `Set<FlowNode>`. Сами классы Hilt создаёт по их
- * `@Inject`-конструкторам
- */
 @Module
 @InstallIn(ActivityRetainedComponent::class)
 interface CitiesRoutingModule {
 
     @Binds
     @IntoSet
-    fun bindEntryProviderInstaller(installer: CitiesEntryProviderInstaller): EntryProviderInstaller
+    fun bindFlowNode(flowNode: CitiesFlowNode): FlowNode
 
     @Binds
     @IntoSet
-    fun bindCitiesFlowNode(flowNode: CitiesFlowNode): FlowNode
+    fun bindEntryProviderInstaller(installer: CitiesEntryProviderInstaller): EntryProviderInstaller
 }
