@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation3.runtime.NavKey
-import ru.sla.pure.android.R
+import ru.sla.pure.android.core.resources.R
 import ru.sla.pure.android.feature.cities.routing.CitiesRoute
 import ru.sla.pure.android.feature.map.routing.MapRoute
 

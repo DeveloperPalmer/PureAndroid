@@ -25,6 +25,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    implementation(projects.core.ui)
     implementation(projects.core.routing)
 
     // Приложение подключает только routing фич: ключи вкладок нужны нижней панели, а записи

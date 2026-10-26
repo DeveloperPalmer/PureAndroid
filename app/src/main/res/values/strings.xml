@@ -1,5 +1,3 @@
 <resources>
     <string name="app_name">PureAndroid</string>
-    <string name="tab_cities">Города</string>
-    <string name="tab_map">Карта</string>
 </resources>

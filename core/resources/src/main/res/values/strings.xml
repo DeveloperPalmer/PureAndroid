@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Вкладки -->
+    <string name="tab_cities">Города</string>
+    <string name="tab_map">Карта</string>
+
     <!-- Города -->
     <string name="cities_title">Города</string>
     <string name="cities_city">Город %d</string>
