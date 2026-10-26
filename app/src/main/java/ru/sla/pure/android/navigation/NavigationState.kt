@@ -80,7 +80,7 @@ fun NavigationState.toEntries(entryProvider: (NavKey) -> NavEntry<NavKey>): List
             entryDecorators = listOf(
                 rememberSaveableStateHolderNavEntryDecorator(),
                 rememberViewModelStoreNavEntryDecorator(viewModelStoreProvider),
-                rememberFlowViewModelStoreNavEntryDecorator(viewModelStoreProvider),
+                rememberFlowViewModelStoreNavEntryDecorator(backStack, viewModelStoreProvider),
             ),
             entryProvider = entryProvider,
         )
