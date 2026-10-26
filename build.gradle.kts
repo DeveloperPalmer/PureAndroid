@@ -7,4 +7,5 @@ plugins {
     id("compose-convention") apply false
     id("hilt-convention") apply false
     id("routing-convention") apply false
+    id("kotlin-convention") apply false
 }

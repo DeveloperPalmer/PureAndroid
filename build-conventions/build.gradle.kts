@@ -9,6 +9,7 @@ dependencies {
     implementation(plugin(libs.plugins.android.library))
     implementation(plugin(libs.plugins.ksp))
     implementation(plugin(libs.plugins.hilt))
+    implementation(plugin(libs.plugins.kotlin.jvm))
     implementation(plugin(libs.plugins.kotlin.compose))
     implementation(plugin(libs.plugins.kotlin.serialization))
 }
