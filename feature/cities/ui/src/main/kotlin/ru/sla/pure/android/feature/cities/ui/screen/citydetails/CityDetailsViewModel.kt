@@ -19,18 +19,22 @@ class CityDetailsViewModel @AssistedInject constructor(
     @Assisted
     private val cityId: Long,
     private val eventSink: FlowEventSink,
-) : BaseViewModel<ViewState, Nothing>() {
+) : BaseViewModel<ViewState, SideEffect>() {
 
     @AssistedFactory
     interface Factory {
         fun create(cityId: Long): CityDetailsViewModel
     }
 
-    override val container = orbitContainer<ViewState, Nothing>(
+    override val container = orbitContainer<ViewState, SideEffect>(
         ViewState(
             cityId = cityId
         )
     )
+
+    fun onShowMessage() = intent {
+        postSideEffect(SideEffect.ShowCityMessage(state.cityId))
+    }
 
     fun onBack() = intent {
         eventSink.sendEvent(FlowEvent.CityDetailsDismissed)
