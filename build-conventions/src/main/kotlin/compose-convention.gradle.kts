@@ -18,4 +18,7 @@ dependencies {
     implementation(libs.findLibrary("androidx.hilt.lifecycle.viewmodel.compose").get())
     implementation(libs.findLibrary("orbit.compose").get())
     debugImplementation(libs.findLibrary("androidx.compose.ui.tooling").get())
+
+    // Общий UI-слой для всех Compose-модулей: базовая ViewModel, события роутинга и ресурсы
+    implementation(project(":core:ui"))
 }
