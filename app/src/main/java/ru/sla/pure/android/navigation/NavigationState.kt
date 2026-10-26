@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.rememberViewModelStoreProvider
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
@@ -66,16 +67,20 @@ fun rememberNavigationState(
  * - `SaveableStateHolder` хранит `rememberSaveable` экранов, в том числе скрытой вкладки;
  * - `ViewModelStore` даёт записи своё хранилище ViewModel. ViewModel живёт, пока запись в стеке,
  *   и очищается, когда запись из него уходит. Без него ViewModel жили бы в Activity, и экраны
- *   деталей разных городов получили бы один экземпляр.
+ *   деталей разных городов получили бы один экземпляр;
+ * - хранилище флоу даёт записям флоу общий `ViewModelStore` — хранилище корня флоу. Оно делит с
+ *   предыдущим декоратором один `ViewModelStoreProvider`, поэтому видит те же хранилища записей.
  */
 @Composable
 fun NavigationState.toEntries(entryProvider: (NavKey) -> NavEntry<NavKey>): List<NavEntry<NavKey>> {
     val decoratedEntries = backStacks.mapValues { (_, backStack) ->
+        val viewModelStoreProvider = rememberViewModelStoreProvider()
         rememberDecoratedNavEntries(
             backStack = backStack,
             entryDecorators = listOf(
                 rememberSaveableStateHolderNavEntryDecorator(),
-                rememberViewModelStoreNavEntryDecorator(),
+                rememberViewModelStoreNavEntryDecorator(viewModelStoreProvider),
+                rememberFlowViewModelStoreNavEntryDecorator(viewModelStoreProvider),
             ),
             entryProvider = entryProvider,
         )
