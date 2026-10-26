@@ -34,6 +34,7 @@ include(
     ":core:resources",
     ":core:routing",
     ":core:ui",
+    ":feature:cities:domain",
     ":feature:cities:routing",
     ":feature:cities:ui",
     ":feature:map:routing",
