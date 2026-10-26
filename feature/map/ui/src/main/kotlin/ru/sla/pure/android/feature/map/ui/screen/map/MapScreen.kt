@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,12 +13,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import ru.sla.pure.android.core.resources.R
+import ru.sla.pure.android.uikit.theme.AppTheme
 
 /** Заглушка карты. Сама карта (Yandex MapKit) сюда не подключается: проверяем только навигацию */
 @Composable
 fun MapScreen(modifier: Modifier = Modifier) {
-    // Surface даёт экрану фон и цвет текста темы: без него сквозь экран видно окно Activity
-    Surface(modifier = modifier.fillMaxSize()) {
+    // Surface даёт экрану фон и цвет текста из токенов темы: без него сквозь экран
+    // видно окно Activity
+    Surface(
+        modifier = modifier.fillMaxSize(),
+        color = AppTheme.colors.backgroundPrimary,
+        contentColor = AppTheme.colors.contentPrimary,
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -28,7 +33,7 @@ fun MapScreen(modifier: Modifier = Modifier) {
         ) {
             Text(
                 text = stringResource(R.string.map_title),
-                style = MaterialTheme.typography.headlineSmall,
+                style = AppTheme.typography.headline,
             )
         }
     }
@@ -37,5 +42,7 @@ fun MapScreen(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 private fun MapScreenPreview() {
-    MapScreen()
+    AppTheme {
+        MapScreen()
+    }
 }
