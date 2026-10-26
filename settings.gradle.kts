@@ -37,4 +37,5 @@ include(
     ":feature:cities:ui",
     ":feature:map:routing",
     ":feature:map:ui",
+    ":uikit",
 )
