@@ -9,6 +9,7 @@ kotlin = "2.4.21"
 composeBom = "2026.09.00"
 ksp = "2.3.12"
 hilt = "2.60.1"
+javaxInject = "1"
 androidxHilt = "1.4.0"
 navigation3 = "1.2.0"
 kotlinxSerialization = "1.12.0"
@@ -18,6 +19,7 @@ orbit = "12.0.1"
 [libraries]
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javaxInject" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
