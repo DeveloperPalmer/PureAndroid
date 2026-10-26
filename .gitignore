@@ -1,18 +1,19 @@
-*.iml
+# Gradle и Kotlin
 .gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-/.idea/gradle.xml
-/.idea/kotlinc.xml
-/.idea/codeStyles
-.DS_Store
+.kotlin
 build/
 /captures
 .externalNativeBuild
 .cxx
 local.properties
+
+# Android Studio: настройки .idea Studio генерирует сама при синхронизации с Gradle или хранит
+# в них личное (выбранное устройство, JDK). В git остаются только общие для команды
+*.iml
+/.idea/*
+!/.idea/.gitignore
+!/.idea/vcs.xml
+!/.idea/inspectionProfiles/
+
+# macOS
+.DS_Store
