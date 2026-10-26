@@ -1,5 +1,7 @@
 plugins {
     id("hilt-convention")
+    // Только компилятор Compose: рантайм и viewModel { } приходят из core:ui
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
