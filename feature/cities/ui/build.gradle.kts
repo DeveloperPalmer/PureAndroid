@@ -9,6 +9,7 @@ android {
 
 dependencies {
     api(projects.core.ui)
+    implementation(projects.feature.cities.domain)
     implementation(projects.uikit)
 
     testImplementation(libs.junit)
