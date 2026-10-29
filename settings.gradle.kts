@@ -30,6 +30,8 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 include(
     ":app",
+    ":app:data",
+    ":core:data",
     ":core:domain",
     ":core:resources",
     ":core:routing",
