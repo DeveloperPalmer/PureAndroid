@@ -8,6 +8,7 @@ android {
 
 dependencies {
     implementation(projects.core.routing)
+    api(projects.feature.main.data)
     api(projects.feature.main.domain)
     api(projects.feature.main.ui)
 }

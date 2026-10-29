@@ -13,7 +13,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.app.data)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
@@ -26,10 +25,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    implementation(projects.core.ui)
     implementation(projects.uikit)
     implementation(projects.core.routing)
-
+    implementation(projects.app.data)
     implementation(projects.feature.main.routing)
     implementation(projects.feature.map.routing)
 }
