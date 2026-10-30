@@ -1,5 +1,6 @@
 plugins {
   id("android-library-convention")
+  id("compose-convention")
 }
 
 android {
@@ -7,12 +8,12 @@ android {
 }
 
 dependencies {
-  // api: BaseViewModel наследует ViewModel и OrbitContainerHost, а наследникам нужны orbitContainer,
-  // intent и reduce — всё это часть публичного API модуля
+  api(projects.core.domain)
+  api(libs.bundles.compose)
+  api(libs.androidx.lifecycle.common)
   api(libs.androidx.lifecycle.viewmodel)
+  api(libs.metrox.viewmodel)
   api(libs.orbit.core)
   api(libs.orbit.viewmodel)
-
-  // api: ресурсы приложения получает каждый модуль, который подключил core:ui
-  api(projects.core.resources)
+  api(libs.orbit.compose)
 }

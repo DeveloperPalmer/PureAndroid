@@ -1,48 +1,35 @@
-# Форматирование и статический анализ
+# Проверки и правила Gradle
 
-Настройки перенесены из `kmp-base-project`: ktlint запускается через Spotless,
-а Detekt подключается к Android- и JVM-модулям общей `detekt-convention`.
-
-```powershell
-.\gradlew.bat spotlessApply   # применить форматирование Kotlin и Gradle Kotlin DSL
-.\gradlew.bat spotlessCheck   # проверить форматирование без изменения файлов
-.\gradlew.bat prePushCheck    # форматирование, Detekt и анализ зависимостей
-.\gradlew.bat buildHealth     # только анализ зависимостей
-```
-
-`prePushCheck` запускает `detektDebug` в Android-модулях и `detektMain`
-в JVM-модулях. Анализ использует разрешение типов и JVM target 11.
-Тесты запускаются отдельно; эта задача не устанавливает Git hook.
-
-## Анализ зависимостей
-
-Dependency Analysis Gradle Plugin применяется ко всем модулям основной сборки.
-`buildHealth` выводит рекомендации в консоль и сохраняет сводные отчёты:
-
-- `build/reports/dependency-analysis/build-health-report.txt`;
-- `build/reports/dependency-analysis/build-health-report.json`.
-
-Сейчас рекомендации имеют уровень `warn`: они требуют ревью и не блокируют
-`prePushCheck`. Ошибки выполнения анализатора останавливают задачу. Автоматическое
-изменение зависимостей в `prePushCheck` не включено.
-
-Для разбора отдельного модуля и обоснования конкретного совета:
+## Проверки
 
 ```powershell
-.\gradlew.bat :app:data:projectHealth
-.\gradlew.bat :app:data:reason --id :core:data
+.\gradlew.bat spotlessCheck   # проверить форматирование Kotlin и Gradle Kotlin DSL
+.\gradlew.bat spotlessApply   # исправить форматирование
+.\gradlew.bat prePushCheck    # применить форматирование и запустить Detekt
 ```
 
-При ревью нужно учитывать публичные типы, сгенерированный код Metro/Room,
-намеренный реэкспорт зависимостей и общие тестовые bundles. Рекомендации по
-отдельным элементам bundle проверяются с учётом всех использующих его модулей.
+`prePushCheck` запускает `detektDebug` для Android и `detektMain` для JVM. Тесты запускаются отдельно.
+Gradle-сборки, синхронизацию, проверки и тесты запускает разработчик. Агент запускает их только по отдельной просьбе.
 
-Версия плагина находится в каталоге версий. Версия 3.20.0 предупреждает, что её
-официально проверенный диапазон AGP заканчивается на 9.3.1; в проекте используется
-AGP 9.4.1. После обновления плагина или AGP следует повторить полный `prePushCheck`.
+Правила форматирования хранятся в [`.editorconfig`](../.editorconfig), настройки Detekt — в [`detekt-config.yml`](../detekt-config.yml).
 
-Правила форматирования находятся в `.editorconfig`, правила анализа — в
-`detekt-config.yml`, версии инструментов — в `gradle/libs.versions.toml`.
-Сгенерированные исходники исключены из анализа, каталоги сборки — из форматирования.
-Для Kotlin и Gradle Kotlin DSL используются два пробела и окончания строк LF;
-`.gitattributes` сохраняет их при работе с Git на Windows.
+## Конвенции модулей
+
+В блоке `plugins` первой явно объявляем конвенцию платформы. В модулях с тестами отдельно подключаем тестовую конвенцию.
+
+| Модуль | Базовая конвенция | Тестовая конвенция |
+| --- | --- | --- |
+| Kotlin/JVM | `kotlin-convention` | `kotlin-test-convention` |
+| Android-библиотека | `android-library-convention` | `android-library-test-convention` |
+
+Для приложения используем `android-application-convention`. В библиотеках с Compose явно подключаем `compose-convention`, с Metro — `di-convention`.
+
+Android-библиотеки с тестовой конвенцией получают MockWebServer и Orbit Test для локальных тестов и доступ к DI-провайдерам из `:app:data` для локальных и инструментальных тестов. При подключении `compose-convention` добавляется набор для Compose UI-тестов.
+
+## Зависимости
+
+- Каждый модуль фичи явно подключает базу своего слоя. Для domain это `:core:domain`, для data — `:core:data`, для UI — `:uikit`, для routing — `:core:routing`. Domain остаётся JVM-модулем.
+- `:uikit` предоставляет `:core:ui` и `:core:resources`. Библиотеки, которые уже предоставляет базовый модуль слоя, повторно не объявляем.
+- По умолчанию используем `implementation`. Выбираем `api` для типов публичных сигнатур и намеренного реэкспорта. Так routing-модуль предоставляет приложению модули фичи для сборки графа Metro.
+- Версии, библиотеки, плагины и bundles храним в [каталоге версий](../gradle/libs.versions.toml). Ключи версий пишем в camelCase, имена библиотек, плагинов и bundles — в kebab-case. В bundle объединяем зависимости для одной конфигурации. Compose BOM подключаем через `platform(...)`.
+- В `dependencies` разделяем пустой строкой основные зависимости, debug, локальные и инструментальные тесты. В основной группе сначала указываем `api`, затем `implementation`.

@@ -1,5 +1,7 @@
 plugins {
-  id("routing-convention")
+  id("android-library-convention")
+  id("compose-convention")
+  id("di-convention")
 }
 
 android {
@@ -8,5 +10,5 @@ android {
 
 dependencies {
   implementation(projects.core.routing)
-  implementation(projects.feature.map.ui)
+  api(projects.feature.map.ui)
 }

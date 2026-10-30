@@ -1,34 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
-  alias(libs.plugins.spotless)
-  alias(libs.plugins.ksp) apply false
   // Конвенции грузятся один раз в корне вместе с AGP, который они приносят:
   // все модули делят классы плагинов
   id("android-application-convention") apply false
   id("android-library-convention") apply false
   id("compose-convention") apply false
-  id("metro-convention") apply false
-  id("routing-convention") apply false
+  id("di-convention") apply false
   id("kotlin-convention") apply false
-  alias(libs.plugins.dependency.analysis)
-}
-
-dependencyAnalysis {
-  // Report advice for review; dependency changes remain explicit decisions.
-  issues {
-    all {
-      onAny {
-        severity("warn")
-      }
-    }
-  }
-  reporting {
-    printBuildHealth(true)
-  }
-}
-
-tasks.named("buildHealth") {
-  mustRunAfter("spotlessApply")
+  alias(libs.plugins.ksp) apply false
+  alias(libs.plugins.spotless)
 }
 
 spotless {
@@ -57,7 +37,6 @@ fun Project.mainDetektTasks() = tasks.matching { task ->
 }
 
 subprojects {
-  pluginManager.apply("com.autonomousapps.dependency-analysis")
   mainDetektTasks().configureEach {
     mustRunAfter(rootProject.tasks.named("spotlessApply"))
   }
@@ -65,8 +44,7 @@ subprojects {
 
 tasks.register("prePushCheck") {
   group = "verification"
-  description = "Formats Kotlin sources, runs Detekt and reports dependency health for all modules."
+  description = "Formats Kotlin sources and runs Detekt."
   dependsOn("spotlessApply")
-  dependsOn("buildHealth")
   dependsOn(subprojects.map { it.mainDetektTasks() })
 }

@@ -1,8 +1,8 @@
 plugins {
   id("com.android.application")
-  id("detekt-convention")
   id("org.jetbrains.kotlin.plugin.compose")
-  id("metro-convention")
+  id("detekt-convention")
+  id("di-convention")
 }
 
 val libs = versionCatalogs.named("libs")
@@ -41,7 +41,6 @@ android {
 
 dependencies {
   implementation(platform(libs.findLibrary("androidx.compose.bom").get()))
-  implementation(libs.findBundle("compose").get())
 
   debugImplementation(libs.findLibrary("androidx.compose.ui.tooling").get())
 }
