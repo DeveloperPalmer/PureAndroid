@@ -32,6 +32,7 @@ include(
     ":app",
     ":app:data",
     ":openapi-schema",
+    ":database",
     ":core:data",
     ":core:domain",
     ":core:resources",
