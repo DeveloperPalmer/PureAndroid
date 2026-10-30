@@ -4,5 +4,6 @@ plugins {
 }
 
 dependencies {
+    api(libs.remo)
     api(libs.kotlinx.coroutines.core)
 }

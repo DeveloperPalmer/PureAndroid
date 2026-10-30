@@ -9,6 +9,7 @@ android {
 }
 
 dependencies {
+    testImplementation(libs.bundles.testing.unit)
     api(projects.core.domain)
     api(projects.core.ui)
 
@@ -18,5 +19,4 @@ dependencies {
     api(libs.androidx.lifecycle.viewmodel.compose)
     api(libs.metrox.viewmodel.compose)
 
-    testImplementation(libs.junit)
 }

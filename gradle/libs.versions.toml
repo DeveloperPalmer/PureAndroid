@@ -18,8 +18,14 @@ okhttp = "5.5.1"
 room = "2.8.5"
 ksp = "2.3.12"
 testRunner = "1.7.0"
+remo = "9.0.1"
+paging = "3.5.1"
 
 [libraries]
+remo = { module = "ru.kode:remo", version.ref = "remo" }
+paging-common = { module = "androidx.paging:paging-common", version.ref = "paging" }
+paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
+paging-testing = { module = "androidx.paging:paging-testing", version.ref = "paging" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "testRunner" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
@@ -58,6 +64,16 @@ androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-te
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 
 [bundles]
+testing-unit = ["junit", "kotlinx-coroutines-test", "orbit-test", "paging-testing"]
+testing-network = ["junit", "kotlinx-coroutines-test", "okhttp", "okhttp-mockwebserver"]
+testing-android = ["androidx-junit", "androidx-test-runner", "kotlinx-coroutines-test"]
+testing-compose = [
+    "androidx-junit",
+    "androidx-test-runner",
+    "androidx-espresso-core",
+    "androidx-compose-ui-test-junit4",
+    "kotlinx-coroutines-test",
+]
 compose = [
     "androidx-compose-ui",
     "androidx-compose-ui-graphics",

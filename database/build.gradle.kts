@@ -15,9 +15,7 @@ ksp {
 }
 
 dependencies {
+    androidTestImplementation(libs.bundles.testing.android)
     api(libs.room.runtime)
     ksp(libs.room.compiler)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.test.runner)
-    androidTestImplementation(libs.kotlinx.coroutines.test)
 }

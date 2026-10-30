@@ -11,17 +11,12 @@ android {
 }
 
 dependencies {
+    androidTestImplementation(libs.bundles.testing.android)
+    testImplementation(libs.bundles.testing.network)
     implementation(projects.database)
     implementation(projects.openapiSchema)
     implementation(projects.feature.main.domain)
 
     testImplementation(projects.app.data)
-    testImplementation(libs.okhttp)
-    testImplementation(libs.okhttp.mockwebserver)
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(projects.app.data)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.test.runner)
-    androidTestImplementation(libs.kotlinx.coroutines.test)
 }
