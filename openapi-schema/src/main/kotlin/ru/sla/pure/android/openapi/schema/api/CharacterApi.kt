@@ -7,9 +7,13 @@ import ru.sla.pure.android.openapi.schema.model.CharacterNM
 import ru.sla.pure.android.openapi.schema.model.CharacterPageNM
 
 interface CharacterApi {
-    @GET("character")
-    suspend fun readPage(@Query("page") page: Int): CharacterPageNM
+  @GET("character")
+  suspend fun readPage(
+    @Query("page") page: Int
+  ): CharacterPageNM
 
-    @GET("character/{id}")
-    suspend fun readCharacter(@Path("id") id: Int): CharacterNM
+  @GET("character/{id}")
+  suspend fun readCharacter(
+    @Path("id") id: Int
+  ): CharacterNM
 }

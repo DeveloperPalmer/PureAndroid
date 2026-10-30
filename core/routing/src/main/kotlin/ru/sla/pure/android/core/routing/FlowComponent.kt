@@ -20,20 +20,20 @@ import kotlin.reflect.KClass
  * [flowCoroutineScope], и вместе с ним все корутины моделей флоу.
  */
 interface FlowComponent : ViewModelGraph {
+  /**
+   * Scope моделей флоу. Граф флоу фичи отдаёт свой `@ForScope(<скоуп флоу>)` scope: без квалификатора
+   * он совпал бы со scope родительского графа
+   */
+  fun flowCoroutineScope(): CoroutineScope
 
-    /**
-     * Scope моделей флоу. Граф флоу фичи отдаёт свой `@ForScope(<скоуп флоу>)` scope: без квалификатора
-     * он совпал бы со scope родительского графа
-     */
-    fun flowCoroutineScope(): CoroutineScope
-
-    @Binds
-    val FlowViewModelFactory.bindMetroViewModelFactory: MetroViewModelFactory
+  @Binds
+  val FlowViewModelFactory.bindMetroViewModelFactory: MetroViewModelFactory
 }
 
 /** Фабрика ViewModel графа флоу: создаёт ViewModel, вложенные в скоуп этого флоу */
 class FlowViewModelFactory @Inject constructor(
-    override val viewModelProviders: Map<KClass<out ViewModel>, () -> ViewModel>,
-    override val assistedFactoryProviders: Map<KClass<out ViewModel>, () -> ViewModelAssistedFactory>,
-    override val manualAssistedFactoryProviders: Map<KClass<out ManualViewModelAssistedFactory>, () -> ManualViewModelAssistedFactory>,
+  override val viewModelProviders: Map<KClass<out ViewModel>, () -> ViewModel>,
+  override val assistedFactoryProviders: Map<KClass<out ViewModel>, () -> ViewModelAssistedFactory>,
+  override val manualAssistedFactoryProviders:
+    Map<KClass<out ManualViewModelAssistedFactory>, () -> ManualViewModelAssistedFactory>,
 ) : MetroViewModelFactory()

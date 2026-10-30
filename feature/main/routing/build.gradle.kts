@@ -1,14 +1,14 @@
 plugins {
-    id("routing-convention")
+  id("routing-convention")
 }
 
 android {
-    namespace = "ru.sla.pure.android.feature.main.routing"
+  namespace = "ru.sla.pure.android.feature.main.routing"
 }
 
 dependencies {
-    implementation(projects.core.routing)
-    api(projects.feature.main.data)
-    api(projects.feature.main.domain)
-    api(projects.feature.main.ui)
+  implementation(projects.core.routing)
+  api(projects.feature.main.data)
+  api(projects.feature.main.domain)
+  api(projects.feature.main.ui)
 }

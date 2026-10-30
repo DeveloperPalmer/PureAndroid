@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 open class ReactiveModel(parentScope: CoroutineScope) : ru.kode.remo.ReactiveModel(parentScope) {
-    init {
-        uncaughtExceptions.onEach { it.printStackTrace() }.launchIn(scope)
-    }
+  init {
+    uncaughtExceptions.onEach { it.printStackTrace() }.launchIn(scope)
+  }
 }

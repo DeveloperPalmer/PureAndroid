@@ -1,0 +1,157 @@
+# Overrides on top of detekt's default config (buildUponDefaultConfig = true in detekt-convention)
+
+processors:
+  exclude:
+    - 'DetektProgressListener'
+
+complexity:
+  CognitiveComplexMethod:
+    allowedComplexity: 20
+  ComplexCondition:
+    allowedConditions: 4
+  CyclomaticComplexMethod:
+    allowedComplexity: 20
+    ignoreSingleWhenExpression: true
+    ignoreSimpleWhenEntries: true
+  LongMethod:
+    allowedLines: 200
+    ignoreAnnotated: ['Composable']
+  LongParameterList:
+    allowedFunctionParameters: 15
+    allowedConstructorParameters: 15
+    ignoreAnnotated: ['Composable', 'Provides', 'SingleIn']
+  StringLiteralDuplication:
+    allowedDuplications: 3
+  TooManyFunctions:
+    allowedFunctionsPerFile: 30
+    allowedFunctionsPerClass: 30
+    allowedFunctionsPerInterface: 30
+    allowedFunctionsPerObject: 30
+    allowedFunctionsPerEnum: 20
+
+coroutines:
+  InjectDispatcher:
+    active: false
+  RedundantSuspendModifier:
+    active: false
+  SuspendFunSwallowedCancellation:
+    active: true
+  SuspendFunWithCoroutineScopeReceiver:
+    active: true
+
+empty-blocks:
+  EmptyFunctionBlock:
+    ignoreOverridden: true
+
+naming:
+  ConstructorParameterNaming:
+    parameterPattern: '[a-z_][A-Za-z0-9]*'
+    ignoreAnnotated: ['Serializable']
+  EnumNaming:
+    enumEntryPattern: '[A-Z][a-zA-Z0-9]*'
+  FunctionNaming:
+    ignoreAnnotated: ['Composable']
+  NoNameShadowing:
+    active: false
+
+performance:
+  CouldBeSequence:
+    allowedOperations: 3
+
+potential-bugs:
+  CastNullableToNonNullableType:
+    active: true
+  IgnoredReturnValue:
+    returnValueTypes:
+      - 'kotlin.sequences.Sequence'
+      - 'kotlinx.coroutines.flow.*Flow'
+      - 'java.util.stream.*Stream'
+  MapGetWithNotNullAssertionOperator:
+    active: false
+  MissingPackageDeclaration:
+    active: true
+  NullableToStringCall:
+    active: true
+  UnnecessaryNotNullCheck:
+    active: true
+  UnreachableCatchBlock:
+    active: false
+  UnsafeCallOnNullableType:
+    active: false
+  UnusedUnaryOperator:
+    active: false
+  UselessPostfixExpression:
+    active: false
+
+style:
+  AbstractClassCanBeConcreteClass:
+    # Metro generates implementations of DI graphs
+    ignoreAnnotated: ['DependencyGraph', 'GraphExtension']
+  AlsoCouldBeApply:
+    active: true
+  CascadingCallWrapping:
+    active: false
+  DataClassShouldBeImmutable:
+    active: true
+  DoubleNegativeLambda:
+    active: true
+  ForbiddenComment:
+    active: false
+  MagicNumber:
+    active: false
+  RangeUntilInsteadOfRangeTo:
+    active: true
+  ReturnCount:
+    max: 4
+  TrailingWhitespace:
+    active: true
+  UnderscoresInNumericLiterals:
+    active: true
+  UnnecessaryBackticks:
+    active: true
+  UnnecessaryBracesAroundTrailingLambda:
+    active: true
+  UnnecessaryInnerClass:
+    active: true
+  UnnecessaryLet:
+    active: true
+  UnusedImport:
+    active: true
+  UnusedPrivateFunction:
+    ignoreAnnotated: ['Preview']
+  UnusedPrivateProperty:
+    allowedNames: '_|ignored|expected|serialVersionUID'
+  UseDataClass:
+    active: true
+  UseIfEmptyOrIfBlank:
+    active: true
+  UseLet:
+    active: true
+  UseSumOfInsteadOfFlatMapSize:
+    active: true
+  WildcardImport:
+    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
+
+compose:
+  ReusedModifierInstance:
+    active: true
+  UnnecessaryEventHandlerParameter:
+    active: true
+  ComposableEventParameterNaming:
+    active: true
+  ComposableParametersOrdering:
+    active: true
+  ModifierHeightWithText:
+    active: true
+  ModifierDefaultValue:
+    active: true
+  MissingModifierDefaultValue:
+    active: true
+  PublicComposablePreview:
+    active: true
+  TopLevelComposableFunctions:
+    active: false
+  ComposableFunctionName:
+    active: true
+  ConditionCouldBeLifted:
+    active: true

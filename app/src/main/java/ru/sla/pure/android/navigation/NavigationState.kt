@@ -24,43 +24,43 @@ import ru.sla.pure.android.core.routing.rememberFlowNavEntryDecorator
  * через сериализацию ключей, поэтому переживают пересоздание Activity и смерть процесса.
  */
 class NavigationState(
-    val startRoute: NavKey,
-    topLevelRoute: MutableState<NavKey>,
-    val backStacks: Map<NavKey, NavBackStack<NavKey>>,
+  val startRoute: NavKey,
+  topLevelRoute: MutableState<NavKey>,
+  val backStacks: Map<NavKey, NavBackStack<NavKey>>,
 ) {
-    var topLevelRoute: NavKey by topLevelRoute
+  var topLevelRoute: NavKey by topLevelRoute
 
-    /**
-     * Стеки, которые показывает `NavDisplay`: стартовая вкладка и, если выбрана другая, она сверху.
-     * Так «Назад» с корня любой вкладки ведёт на стартовую, а с неё — из приложения
-     * (схема «exit through home»).
-     */
-    val stacksInUse: List<NavKey>
-        get() = if (topLevelRoute == startRoute) {
-            listOf(startRoute)
-        } else {
-            listOf(startRoute, topLevelRoute)
-        }
+  /**
+   * Стеки, которые показывает `NavDisplay`: стартовая вкладка и, если выбрана другая, она сверху.
+   * Так «Назад» с корня любой вкладки ведёт на стартовую, а с неё — из приложения
+   * (схема «exit through home»).
+   */
+  val stacksInUse: List<NavKey>
+    get() = if (topLevelRoute == startRoute) {
+      listOf(startRoute)
+    } else {
+      listOf(startRoute, topLevelRoute)
+    }
 }
 
 @Composable
 fun rememberNavigationState(
-    startRoute: NavKey,
-    topLevelRoutes: Set<NavKey>,
+  startRoute: NavKey,
+  topLevelRoutes: Set<NavKey>,
 ): NavigationState {
-    val topLevelRoute = rememberSerializable(stateSerializer = NavKeySerializer()) {
-        mutableStateOf(startRoute)
-    }
-    val backStacks = topLevelRoutes.associateWith { route ->
-        rememberNavBackStack(route)
-    }
-    return remember(startRoute, topLevelRoutes) {
-        NavigationState(
-            startRoute = startRoute,
-            topLevelRoute = topLevelRoute,
-            backStacks = backStacks
-        )
-    }
+  val topLevelRoute = rememberSerializable(stateSerializer = NavKeySerializer()) {
+    mutableStateOf(startRoute)
+  }
+  val backStacks = topLevelRoutes.associateWith { route ->
+    rememberNavBackStack(route)
+  }
+  return remember(startRoute, topLevelRoutes) {
+    NavigationState(
+      startRoute = startRoute,
+      topLevelRoute = topLevelRoute,
+      backStacks = backStacks
+    )
+  }
 }
 
 /**
@@ -74,17 +74,17 @@ fun rememberNavigationState(
  */
 @Composable
 fun NavigationState.toEntries(entryProvider: (NavKey) -> NavEntry<NavKey>): List<NavEntry<NavKey>> {
-    val decoratedEntries = backStacks.mapValues { (_, backStack) ->
-        val viewModelStoreProvider = rememberViewModelStoreProvider()
-        rememberDecoratedNavEntries(
-            backStack = backStack,
-            entryDecorators = listOf(
-                rememberSaveableStateHolderNavEntryDecorator(),
-                rememberViewModelStoreNavEntryDecorator(viewModelStoreProvider),
-                rememberFlowNavEntryDecorator(backStack, viewModelStoreProvider),
-            ),
-            entryProvider = entryProvider,
-        )
-    }
-    return stacksInUse.flatMap { route -> decoratedEntries.getValue(route) }
+  val decoratedEntries = backStacks.mapValues { (_, backStack) ->
+    val viewModelStoreProvider = rememberViewModelStoreProvider()
+    rememberDecoratedNavEntries(
+      backStack = backStack,
+      entryDecorators = listOf(
+        rememberSaveableStateHolderNavEntryDecorator(),
+        rememberViewModelStoreNavEntryDecorator(viewModelStoreProvider),
+        rememberFlowNavEntryDecorator(backStack, viewModelStoreProvider),
+      ),
+      entryProvider = entryProvider,
+    )
+  }
+  return stacksInUse.flatMap { route -> decoratedEntries.getValue(route) }
 }

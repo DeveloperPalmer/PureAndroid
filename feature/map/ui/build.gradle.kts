@@ -1,11 +1,11 @@
 plugins {
-    id("compose-convention")
+  id("compose-convention")
 }
 
 android {
-    namespace = "ru.sla.pure.android.feature.map.ui"
+  namespace = "ru.sla.pure.android.feature.map.ui"
 }
 
 dependencies {
-    implementation(projects.uikit)
+  implementation(projects.uikit)
 }

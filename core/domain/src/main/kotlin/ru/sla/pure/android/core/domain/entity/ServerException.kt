@@ -4,7 +4,6 @@ sealed class ServerException(
   message: String,
   cause: Throwable?
 ) : RuntimeException(message, cause) {
-
   /** Запрос не доехал: разрыв, таймаут, недоступный хост. Повтор осмыслен. */
   class Unreachable(cause: Throwable?) : ServerException("server is unreachable", cause)
 
@@ -20,11 +19,10 @@ sealed class ServerException(
     val code: String?,
     val serverMessage: String?
   ) : ServerException(
-    "server returned $status (code=${code ?: "none"}): ${serverMessage ?: "no message"}",
-    null
-  )
+      "server returned $status (code=${code ?: "none"}): ${serverMessage ?: "no message"}",
+      null
+    )
 
   /** Ответ не соответствует ожидаемой JSON-модели. */
   class Malformed(cause: Throwable?) : ServerException("server response did not decode", cause)
 }
-

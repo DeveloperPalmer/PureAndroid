@@ -27,11 +27,11 @@ import androidx.navigation3.runtime.NavKey
  * ```
  */
 fun EntryProviderScope<NavKey>.flow(
-    root: NavKey,
-    component: () -> FlowComponent,
-    entries: FlowEntryScope.() -> Unit,
+  root: NavKey,
+  component: () -> FlowComponent,
+  entries: FlowEntryScope.() -> Unit,
 ) {
-    FlowEntryScope(this, root, component).entries()
+  FlowEntryScope(this, root, component).entries()
 }
 
 /**
@@ -44,29 +44,28 @@ fun EntryProviderScope<NavKey>.flow(
  * хранилище корня, и оно очищается, когда корень уходит из стека.
  */
 class FlowEntryScope internal constructor(
-    @PublishedApi
-    internal val scope: EntryProviderScope<NavKey>,
-    @PublishedApi
-    internal val root: NavKey,
-    @PublishedApi
-    internal val component: () -> FlowComponent,
+  @PublishedApi
+  internal val scope: EntryProviderScope<NavKey>,
+  @PublishedApi
+  internal val root: NavKey,
+  @PublishedApi
+  internal val component: () -> FlowComponent,
 ) {
-
-    inline fun <reified K : NavKey> entry(
-        metadata: Map<String, Any> = emptyMap(),
-        noinline content: @Composable (K) -> Unit,
-    ) {
-        if (K::class == root::class) {
-            scope.entry<K>(
-                clazzContentKey = ::flowContentKey,
-                metadata = { key -> metadata + partOfFlow(root, key, component) },
-                content = content,
-            )
-        } else {
-            scope.entry<K>(
-                metadata = { key -> metadata + partOfFlow(root, key, component) },
-                content = content,
-            )
-        }
+  inline fun <reified K : NavKey> entry(
+    metadata: Map<String, Any> = emptyMap(),
+    noinline content: @Composable (K) -> Unit,
+  ) {
+    if (K::class == root::class) {
+      scope.entry<K>(
+        clazzContentKey = ::flowContentKey,
+        metadata = { key -> metadata + partOfFlow(root, key, component) },
+        content = content,
+      )
+    } else {
+      scope.entry<K>(
+        metadata = { key -> metadata + partOfFlow(root, key, component) },
+        content = content,
+      )
     }
+  }
 }

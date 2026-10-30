@@ -18,31 +18,31 @@ import ru.sla.pure.android.uikit.theme.AppTheme
 /** Заглушка карты. Сама карта (Yandex MapKit) сюда не подключается: проверяем только навигацию */
 @Composable
 fun MapScreen(modifier: Modifier = Modifier) {
-    // Surface даёт экрану фон и цвет текста из токенов темы: без него сквозь экран
-    // видно окно Activity
-    Surface(
-        modifier = modifier.fillMaxSize(),
-        color = AppTheme.colors.backgroundPrimary,
-        contentColor = AppTheme.colors.contentPrimary,
+  // Surface даёт экрану фон и цвет текста из токенов темы: без него сквозь экран
+  // видно окно Activity
+  Surface(
+    modifier = modifier.fillMaxSize(),
+    color = AppTheme.colors.backgroundPrimary,
+    contentColor = AppTheme.colors.contentPrimary,
+  ) {
+    Box(
+      modifier = Modifier
+        .fillMaxSize()
+        .windowInsetsPadding(WindowInsets.safeDrawing),
+      contentAlignment = Alignment.Center,
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.safeDrawing),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = stringResource(R.string.map_title),
-                style = AppTheme.typography.headline,
-            )
-        }
+      Text(
+        text = stringResource(R.string.map_title),
+        style = AppTheme.typography.headline,
+      )
     }
+  }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun MapScreenPreview() {
-    AppTheme {
-        MapScreen()
-    }
+  AppTheme {
+    MapScreen()
+  }
 }

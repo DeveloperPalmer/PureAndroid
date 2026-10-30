@@ -9,6 +9,5 @@ import ru.sla.pure.android.di.AppGraph
  * и живёт до конца процесса
  */
 class PureApplication : Application() {
-
-    val appGraph: AppGraph by lazy { createGraphFactory<AppGraph.Factory>().create(this) }
+  val appGraph: AppGraph by lazy { createGraphFactory<AppGraph.Factory>().create(this) }
 }

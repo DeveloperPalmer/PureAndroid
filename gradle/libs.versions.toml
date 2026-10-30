@@ -20,8 +20,14 @@ ksp = "2.3.12"
 testRunner = "1.7.0"
 remo = "9.0.1"
 paging = "3.5.1"
+spotless = "8.10.3"
+ktlint = "1.8.0"
+detekt = "2.0.0-alpha.6"
+detekt-rules-compose = "1.4.0"
 
 [libraries]
+detekt-plugin = { module = "dev.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+detekt-rules-compose = { module = "ru.kode:detekt-rules-compose", version.ref = "detekt-rules-compose" }
 remo = { module = "ru.kode:remo", version.ref = "remo" }
 paging-common = { module = "androidx.paging:paging-common", version.ref = "paging" }
 paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
@@ -83,6 +89,7 @@ compose = [
 ]
 
 [plugins]
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }

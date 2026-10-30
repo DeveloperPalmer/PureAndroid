@@ -9,7 +9,7 @@ import ru.sla.pure.android.openapi.schema.api.CharacterApi
 
 @ContributesTo(AppScope::class)
 interface CharacterNetworkModule {
-    @Provides
-    @SingleIn(AppScope::class)
-    fun provideCharacterApiClient(retrofit: Retrofit): CharacterApi = retrofit.create(CharacterApi::class.java)
+  @Provides
+  @SingleIn(AppScope::class)
+  fun provideCharacterApiClient(retrofit: Retrofit): CharacterApi = retrofit.create(CharacterApi::class.java)
 }

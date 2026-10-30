@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed interface MapRoute : NavKey {
-
-    @Serializable
-    data object Map : MapRoute
+  @Serializable
+  data object Map : MapRoute
 }

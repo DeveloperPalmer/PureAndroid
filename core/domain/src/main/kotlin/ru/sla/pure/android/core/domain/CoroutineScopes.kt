@@ -10,5 +10,5 @@ import kotlinx.coroutines.SupervisorJob
  * не отменяет остальные
  */
 fun createCoroutineScope(): CoroutineScope {
-    return CoroutineScope(SupervisorJob() + Dispatchers.Default)
+  return CoroutineScope(SupervisorJob() + Dispatchers.Default)
 }

@@ -34,52 +34,52 @@ import kotlinx.coroutines.cancel
  * декоратор падает с ошибкой ([checkFlowRoot]).
  */
 class FlowNavEntryDecorator<T : Any>(
-    viewModelStoreProvider: ViewModelStoreProvider,
-    backStack: List<NavKey>,
+  viewModelStoreProvider: ViewModelStoreProvider,
+  backStack: List<NavKey>,
 ) : NavEntryDecorator<T>(
     decorate = { entry ->
-        val flow = flowEntry(entry.metadata)
-        if (flow == null) {
-            entry.Content()
-        } else {
-            checkFlowRoot(entry.metadata, backStack)
-            FlowContent(entry, flow, viewModelStoreProvider)
-        }
+      val flow = flowEntry(entry.metadata)
+      if (flow == null) {
+        entry.Content()
+      } else {
+        checkFlowRoot(entry.metadata, backStack)
+        FlowContent(entry, flow, viewModelStoreProvider)
+      }
     },
-)
+  )
 
 @Composable
 fun <T : Any> rememberFlowNavEntryDecorator(
-    backStack: List<NavKey>,
-    viewModelStoreProvider: ViewModelStoreProvider,
+  backStack: List<NavKey>,
+  viewModelStoreProvider: ViewModelStoreProvider,
 ): FlowNavEntryDecorator<T> {
-    return remember(viewModelStoreProvider, backStack) {
-        FlowNavEntryDecorator(
-            viewModelStoreProvider = viewModelStoreProvider,
-            backStack = backStack,
-        )
-    }
+  return remember(viewModelStoreProvider, backStack) {
+    FlowNavEntryDecorator(
+      viewModelStoreProvider = viewModelStoreProvider,
+      backStack = backStack,
+    )
+  }
 }
 
 @Composable
 private fun <T : Any> FlowContent(
-    entry: NavEntry<T>,
-    flow: FlowEntry,
-    viewModelStoreProvider: ViewModelStoreProvider,
+  entry: NavEntry<T>,
+  flow: FlowEntry,
+  viewModelStoreProvider: ViewModelStoreProvider,
 ) {
-    val flowKey = flowContentKey(flow.root)
-    val holder = viewModel(
-        key = flowKey,
-        modelClass = FlowGraphHolder::class,
-        factory = viewModelFactory { initializer { FlowGraphHolder(flow.component()) } },
-        viewModelStoreOwner = rememberViewModelStoreOwner(
-            key = flowKey,
-            provider = viewModelStoreProvider
-        ),
-    )
-    CompositionLocalProvider(LocalMetroViewModelFactory provides holder.viewModelFactory) {
-        entry.Content()
-    }
+  val flowKey = flowContentKey(flow.root)
+  val holder = viewModel(
+    key = flowKey,
+    modelClass = FlowGraphHolder::class,
+    factory = viewModelFactory { initializer { FlowGraphHolder(flow.component()) } },
+    viewModelStoreOwner = rememberViewModelStoreOwner(
+      key = flowKey,
+      provider = viewModelStoreProvider
+    ),
+  )
+  CompositionLocalProvider(LocalMetroViewModelFactory provides holder.viewModelFactory) {
+    entry.Content()
+  }
 }
 
 /**
@@ -87,11 +87,10 @@ private fun <T : Any> FlowContent(
  * с ним, а при удалении отменяет scope флоу: корутины моделей флоу не переживают сам флоу.
  */
 private class FlowGraphHolder(private val component: FlowComponent) : ViewModel() {
+  // Фабрика ViewModel не скоуплена в графе: берём её один раз, а не при каждой рекомпозиции
+  val viewModelFactory: MetroViewModelFactory = component.metroViewModelFactory
 
-    // Фабрика ViewModel не скоуплена в графе: берём её один раз, а не при каждой рекомпозиции
-    val viewModelFactory: MetroViewModelFactory = component.metroViewModelFactory
-
-    override fun onCleared() {
-        component.flowCoroutineScope().cancel()
-    }
+  override fun onCleared() {
+    component.flowCoroutineScope().cancel()
+  }
 }

@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit
 
 @ContributesTo(AppScope::class)
 interface NetworkModule {
-
   @Provides
   @SingleIn(AppScope::class)
   fun provideOkHttpClient(): OkHttpClient {

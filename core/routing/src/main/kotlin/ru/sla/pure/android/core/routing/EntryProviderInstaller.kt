@@ -14,6 +14,5 @@ import androidx.navigation3.runtime.NavKey
  * из него один `entryProvider`, поэтому про экраны фич оно ничего не знает.
  */
 fun interface EntryProviderInstaller {
-
-    fun EntryProviderScope<NavKey>.install(navigator: Navigator)
+  fun EntryProviderScope<NavKey>.install(navigator: Navigator)
 }

@@ -13,9 +13,9 @@ import ru.sla.pure.android.feature.main.domain.di.MainScope
 @ViewModelKey
 @ContributesIntoMap(MainScope::class, binding<ViewModel>())
 class MainViewModel @Inject constructor(
-    private val mainModel: MainModel,
+  mainModel: MainModel,
 ) : BaseViewModel<ViewState, Nothing>() {
-    override val container = orbitContainer<ViewState, Nothing>(ViewState()) {
-        reduce { state.copy(characters = mainModel.characters) }
-    }
+  override val container = orbitContainer<ViewState, Nothing>(ViewState()) {
+    reduce { state.copy(characters = mainModel.characters) }
+  }
 }

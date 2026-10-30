@@ -21,17 +21,16 @@ import ru.sla.pure.android.feature.main.ui.screen.main.MainScreen
  */
 @ContributesIntoSet(AppScope::class)
 class MainEntryProviderInstaller @Inject constructor(
-    private val componentFactory: MainFlowComponent.Factory,
+  private val componentFactory: MainFlowComponent.Factory,
 ) : EntryProviderInstaller {
-
-    override fun EntryProviderScope<NavKey>.install(navigator: Navigator) {
-        flow(
-            root = MainRoute.Main,
-            component = { componentFactory.create() },
-        ) {
-            entry<MainRoute.Main>(metadata = showNavigationBar()) {
-                MainScreen(viewModel = metroViewModel())
-            }
-        }
+  override fun EntryProviderScope<NavKey>.install(navigator: Navigator) {
+    flow(
+      root = MainRoute.Main,
+      component = { componentFactory.create() },
+    ) {
+      entry<MainRoute.Main>(metadata = showNavigationBar()) {
+        MainScreen(viewModel = metroViewModel())
+      }
     }
+  }
 }

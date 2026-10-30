@@ -11,17 +11,16 @@ import ru.sla.pure.android.uikit.theme.AppTheme
  * Единственная Activity: показывает навигацию приложения. Экраны фич берёт из графа приложения
  */
 class MainActivity : ComponentActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        val appGraph = (application as PureApplication).appGraph
-        setContent {
-            AppTheme {
-                AppNavigation(
-                    entryProviderInstallers = appGraph.entryProviderInstallers(),
-                )
-            }
-        }
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    enableEdgeToEdge()
+    val appGraph = (application as PureApplication).appGraph
+    setContent {
+      AppTheme {
+        AppNavigation(
+          entryProviderInstallers = appGraph.entryProviderInstallers(),
+        )
+      }
     }
+  }
 }

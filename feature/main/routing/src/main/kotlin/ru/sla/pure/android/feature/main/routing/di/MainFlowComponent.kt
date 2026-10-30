@@ -19,20 +19,19 @@ import ru.sla.pure.android.feature.main.domain.di.MainScope
  */
 @GraphExtension(MainScope::class)
 interface MainFlowComponent : FlowComponent {
+  @ForScope(MainScope::class)
+  override fun flowCoroutineScope(): CoroutineScope
 
-    @ForScope(MainScope::class)
-    override fun flowCoroutineScope(): CoroutineScope
+  @Provides
+  @SingleIn(MainScope::class)
+  @ForScope(MainScope::class)
+  fun provideCoroutineScope(): CoroutineScope {
+    return createCoroutineScope()
+  }
 
-    @Provides
-    @SingleIn(MainScope::class)
-    @ForScope(MainScope::class)
-    fun provideCoroutineScope(): CoroutineScope {
-        return createCoroutineScope()
-    }
-
-    @ContributesTo(AppScope::class)
-    @GraphExtension.Factory
-    interface Factory {
-        fun create(): MainFlowComponent
-    }
+  @ContributesTo(AppScope::class)
+  @GraphExtension.Factory
+  interface Factory {
+    fun create(): MainFlowComponent
+  }
 }

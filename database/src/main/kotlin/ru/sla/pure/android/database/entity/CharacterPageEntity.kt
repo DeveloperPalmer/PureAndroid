@@ -5,9 +5,9 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "character_pages")
 data class CharacterPageEntity(
-    @PrimaryKey val page: Int,
-    val totalCount: Int,
-    val totalPages: Int,
-    val nextPage: Int?,
-    val previousPage: Int?,
+  @PrimaryKey val page: Int,
+  val totalCount: Int,
+  val totalPages: Int,
+  val nextPage: Int?,
+  val previousPage: Int?,
 )

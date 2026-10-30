@@ -18,42 +18,42 @@ import ru.sla.pure.android.core.routing.EntryProviderInstaller
  */
 @Composable
 fun AppNavigation(
-    entryProviderInstallers: Set<EntryProviderInstaller>,
-    modifier: Modifier = Modifier,
+  entryProviderInstallers: Set<EntryProviderInstaller>,
+  modifier: Modifier = Modifier,
 ) {
-    val navigationState = rememberNavigationState(
-        startRoute = TopLevelDestination.entries.first().route,
-        topLevelRoutes = TOP_LEVEL_ROUTES,
+  val navigationState = rememberNavigationState(
+    startRoute = TopLevelDestination.entries.first().route,
+    topLevelRoutes = TOP_LEVEL_ROUTES,
+  )
+  val navigator = remember(navigationState) { AppNavigator(navigationState) }
+
+  val entryProvider = entryProvider<NavKey> {
+    entryProviderInstallers.forEach { installer ->
+      with(installer) { install(navigator) }
+    }
+  }
+
+  // SharedTransitionLayout нужен декоратору: через общий элемент панель стоит на месте,
+  // пока сцены с ней сменяют друг друга
+  SharedTransitionLayout(modifier) {
+    val navigationBarDecorator = rememberNavigationBarSceneDecoratorStrategy<NavKey>(
+      sharedTransitionScope = this,
+    ) {
+      AppNavigationBar(
+        selectedRoute = navigationState.topLevelRoute,
+        onSelect = navigator::navigateTo,
+      )
+    }
+    NavDisplay(
+      entries = navigationState.toEntries(entryProvider),
+      onBack = navigator::navigateBack,
+      sceneDecoratorStrategies = listOf(navigationBarDecorator),
+      sharedTransitionScope = this,
+      transitionSpec = SlideTransitions.forward(),
+      popTransitionSpec = SlideTransitions.back(),
+      predictivePopTransitionSpec = SlideTransitions.predictiveBack(),
     )
-    val navigator = remember(navigationState) { AppNavigator(navigationState) }
-
-    val entryProvider = entryProvider<NavKey> {
-        entryProviderInstallers.forEach { installer ->
-            with(installer) { install(navigator) }
-        }
-    }
-
-    // SharedTransitionLayout нужен декоратору: через общий элемент панель стоит на месте,
-    // пока сцены с ней сменяют друг друга
-    SharedTransitionLayout(modifier) {
-        val navigationBarDecorator = rememberNavigationBarSceneDecoratorStrategy<NavKey>(
-            sharedTransitionScope = this,
-        ) {
-            AppNavigationBar(
-                selectedRoute = navigationState.topLevelRoute,
-                onSelect = navigator::navigateTo,
-            )
-        }
-        NavDisplay(
-            entries = navigationState.toEntries(entryProvider),
-            onBack = navigator::navigateBack,
-            sceneDecoratorStrategies = listOf(navigationBarDecorator),
-            sharedTransitionScope = this,
-            transitionSpec = SlideTransitions.forward(),
-            popTransitionSpec = SlideTransitions.back(),
-            predictivePopTransitionSpec = SlideTransitions.predictiveBack(),
-        )
-    }
+  }
 }
 
 private val TOP_LEVEL_ROUTES: Set<NavKey> = TopLevelDestination.entries.mapTo(LinkedHashSet()) { it.route }

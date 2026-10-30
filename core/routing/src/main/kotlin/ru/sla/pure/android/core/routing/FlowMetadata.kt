@@ -15,7 +15,7 @@ import androidx.navigation3.runtime.metadata
  * Ставит его [flow], фичам вызывать эту функцию не нужно.
  */
 @PublishedApi
-internal fun flowContentKey(root: NavKey): String = "$root:${root::class.qualifiedName}"
+internal fun flowContentKey(root: NavKey): String = "$root:${root::class.qualifiedName ?: root.javaClass.name}"
 
 /**
  * Метаданные записи [key] во флоу с корнем [root]: по ним декоратор флоу находит хранилище флоу,
@@ -25,11 +25,11 @@ internal fun flowContentKey(root: NavKey): String = "$root:${root::class.qualifi
  */
 @PublishedApi
 internal fun partOfFlow(
-    root: NavKey,
-    key: NavKey,
-    component: () -> FlowComponent,
+  root: NavKey,
+  key: NavKey,
+  component: () -> FlowComponent,
 ): Map<String, Any> = metadata {
-    put(FlowEntryKey, FlowEntry(root = root, key = key, component = component))
+  put(FlowEntryKey, FlowEntry(root = root, key = key, component = component))
 }
 
 /** Флоу записи из её метаданных или `null`, если запись ни в какой флоу не входит */
@@ -46,23 +46,26 @@ internal fun flowEntry(metadata: Map<String, Any>): FlowEntry? = metadata[FlowEn
  * а `NavDisplay` ещё показывает её на анимации ухода.
  */
 internal fun checkFlowRoot(metadata: Map<String, Any>, backStack: List<NavKey>) {
-    val flow = flowEntry(metadata) ?: return
-    if (flow.key == flow.root) return
-    val index = backStack.lastIndexOf(flow.key)
-    if (index == -1) return
-    check(flow.root in backStack.subList(0, index)) {
-        "Запись ${flow.key} входит во флоу ${flow.root}, но корня флоу нет в стеке под ней"
-    }
+  val flow = flowEntry(metadata) ?: return
+  if (flow.key == flow.root) return
+  val index = backStack.lastIndexOf(flow.key)
+  if (index == -1) return
+  check(flow.root in backStack.subList(0, index)) {
+    "Запись ${flow.key} входит во флоу ${flow.root}, но корня флоу нет в стеке под ней"
+  }
 }
 
 /**
  * Место записи во флоу: корень флоу [root], собственный ключ записи [key] и сборка графа флоу
  * [component]
+ *
+ * Сохраняет сравнение регистраций по ссылке.
  */
+@Suppress("UseDataClass")
 internal class FlowEntry(
-    val root: NavKey,
-    val key: NavKey,
-    val component: () -> FlowComponent,
+  val root: NavKey,
+  val key: NavKey,
+  val component: () -> FlowComponent,
 )
 
 private object FlowEntryKey : NavMetadataKey<FlowEntry>

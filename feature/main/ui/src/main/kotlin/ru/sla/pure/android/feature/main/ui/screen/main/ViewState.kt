@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.emptyFlow
 import ru.sla.pure.android.feature.main.domain.entity.Character
 
 data class ViewState(
-    val characters: Flow<PagingData<Character>> = emptyFlow(),
+  val characters: Flow<PagingData<Character>> = emptyFlow(),
 )
