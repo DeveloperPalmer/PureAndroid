@@ -1,7 +1,7 @@
 package ru.sla.pure.android
 
 import android.app.Application
-import dev.zacsweers.metro.createGraph
+import dev.zacsweers.metro.createGraphFactory
 import ru.sla.pure.android.di.AppGraph
 
 /**
@@ -10,5 +10,5 @@ import ru.sla.pure.android.di.AppGraph
  */
 class PureApplication : Application() {
 
-    val appGraph: AppGraph by lazy { createGraph<AppGraph>() }
+    val appGraph: AppGraph by lazy { createGraphFactory<AppGraph.Factory>().create(this) }
 }

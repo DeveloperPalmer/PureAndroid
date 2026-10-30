@@ -9,6 +9,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.database)
     api(projects.core.data)
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlinx.serialization)

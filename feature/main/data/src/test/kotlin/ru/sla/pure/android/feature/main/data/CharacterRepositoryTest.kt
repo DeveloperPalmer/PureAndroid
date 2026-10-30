@@ -19,6 +19,7 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 class CharacterRepositoryTest {
+    private val dao = InMemoryCharacterDao()
     private val server = MockWebServer()
     private val module = object : NetworkModule {}
     private val client = module.provideOkHttpClient()
@@ -29,7 +30,7 @@ class CharacterRepositoryTest {
         server.start()
         val retrofit = module.provideRetrofit(client).newBuilder()
             .baseUrl(server.url("/api/")).build()
-        api = CharacterRepositoryImpl(retrofit.create(CharacterApi::class.java))
+        api = CharacterRepositoryImpl(retrofit.create(CharacterApi::class.java), dao)
     }
 
     @After
@@ -37,6 +38,62 @@ class CharacterRepositoryTest {
         server.close()
         client.connectionPool.evictAll()
         client.dispatcher.executorService.shutdown()
+    }
+
+    @Test
+    fun `страница и персонажи доступны из кэша после потери сети`() = runTest {
+        respond("""{"info":{"count":60,"pages":3,"next":"next","prev":"prev"},"results":[$characterJson]}""")
+        val online = api.readPage(2)
+        server.close()
+        assertEquals(online, api.readPage(2))
+        assertEquals(online.characters.single(), api.readCharacter(1))
+        expectFailure<ServerException.Unreachable> { api.readPage(1) }
+        expectFailure<ServerException.Unreachable> { api.readCharacter(2) }
+    }
+
+    @Test
+    fun `повторный запрос обновляет кэш а другой репозиторий читает сохранённое`() = runTest {
+        respond(characterJson)
+        api.readCharacter(1)
+        respond(characterJson.replace("Rick Sanchez", "Updated Rick"))
+        val updated = api.readCharacter(1)
+        assertEquals("Updated Rick", updated.name)
+        val offline = CharacterRepositoryImpl(failingService(ServerException.Unreachable(null)), dao)
+        assertEquals(updated, offline.readCharacter(1))
+    }
+
+    @Test
+    fun `сохранённая пустая страница доступна офлайн`() = runTest {
+        respond("""{"info":{"count":0,"pages":1,"next":null,"prev":null},"results":[]}""")
+        val online = api.readPage(1)
+        val offline = CharacterRepositoryImpl(failingService(ServerException.Unreachable(null)), dao)
+        assertEquals(online, offline.readPage(1))
+    }
+
+    @Test
+    fun `кэш не скрывает HTTP ошибки некорректный ответ и отмену`() = runTest {
+        respond(characterJson)
+        api.readCharacter(1)
+        val errors = listOf(
+            ServerException.ApiError(404, null, "Not found"),
+            ServerException.ApiError(503, null, "Unavailable"),
+            ServerException.Unauthorized(null),
+            ServerException.Malformed(null),
+            CancellationException("Cancelled"),
+        )
+        for (error in errors) {
+            val failing = CharacterRepositoryImpl(failingService(error), dao)
+            val actual = expectFailure<Exception> { failing.readCharacter(1) }
+            assertSame(error, actual)
+        }
+    }
+
+    @Test
+    fun `ошибка записи кэша передаётся вызывающему коду`() = runTest {
+        val failure = IllegalStateException("Disk failure")
+        dao.writeFailure = failure
+        respond(characterJson)
+        assertSame(failure, expectFailure<IllegalStateException> { api.readCharacter(1) })
     }
 
     @Test
@@ -119,7 +176,7 @@ class CharacterRepositoryTest {
     @Test
     fun `отмена корутины не преобразуется в ошибку сервера`() = runTest {
         val cancellation = CancellationException("Отмена")
-        val failing = CharacterRepositoryImpl(failingService(cancellation))
+        val failing = CharacterRepositoryImpl(failingService(cancellation), dao)
         val error = expectFailure<CancellationException> { failing.readPage() }
         assertSame(cancellation, error)
     }
