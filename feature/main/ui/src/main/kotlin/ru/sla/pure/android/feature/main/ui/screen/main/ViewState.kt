@@ -1,6 +1,7 @@
 package ru.sla.pure.android.feature.main.ui.screen.main
 
 import androidx.compose.runtime.Immutable
+import ru.sla.pure.android.feature.main.domain.entity.Character
 
 /**
  * Состояние главного экрана. Неизменяемый снимок: ViewModel не правит его, а заменяет новым
@@ -9,5 +10,11 @@ import androidx.compose.runtime.Immutable
  */
 @Immutable
 data class ViewState(
-    val cityIds: List<Long> = emptyList(),
+    val characters: List<Character> = emptyList(),
+    val isLoading: Boolean = true,
+    val nextPage: Int? = null,
+    val failedPage: Int? = null,
+    val error: LoadError? = null,
 )
+
+enum class LoadError { Connection, Server, Unexpected }

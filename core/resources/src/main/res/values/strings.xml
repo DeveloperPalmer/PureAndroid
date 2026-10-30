@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Вкладки -->
-    <string name="tab_main">Города</string>
+    <string name="tab_main">Персонажи</string>
     <string name="tab_map">Карта</string>
 
-    <!-- Города -->
-    <string name="cities_title">Города</string>
-    <string name="cities_city">Город %d</string>
+    <!-- Персонажи -->
+    <string name="characters_title">Персонажи</string>
+    <string name="characters_refresh">Обновить</string>
+    <string name="characters_more">Загрузить ещё</string>
+    <string name="characters_retry">Повторить</string>
+    <string name="characters_empty">Персонажей пока нет</string>
+    <string name="characters_loading">Загрузка персонажей</string>
+    <string name="characters_error_connection">Не удалось загрузить данные. Проверьте соединение.</string>
+    <string name="characters_error_server">Не удалось получить ответ сервера.</string>
+    <string name="characters_error_unexpected">Не удалось загрузить персонажей.</string>
+    <string name="character_alive">Жив</string>
+    <string name="character_dead">Мёртв</string>
+    <string name="character_unknown">Статус неизвестен</string>
+    <string name="character_description">%1$s · %2$s</string>
 
     <!-- Карта -->
     <string name="map_title">Карта</string>

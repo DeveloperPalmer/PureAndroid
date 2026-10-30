@@ -18,7 +18,7 @@ import ru.sla.pure.android.feature.main.domain.entity.CharacterPage
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-internal class CharacterRepositoryImpl(
+class CharacterRepositoryImpl(
     private val api: CharacterApi,
     private val dao: CharacterDao,
 ) : CharacterRepository {
