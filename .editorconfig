@@ -1,6 +1,14 @@
 # This config file is used by ktlint (and potentially other tools)
 root = true
 
+[*.toml]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
 [*.{kt,kts}]
 end_of_line = lf
 indent_size = 2

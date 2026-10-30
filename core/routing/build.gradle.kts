@@ -1,7 +1,8 @@
 plugins {
   id("android-library-convention")
-  id("metro-convention")
-  id("org.jetbrains.kotlin.plugin.compose")
+  id("android-library-test-convention")
+  id("compose-convention")
+  id("di-convention")
 }
 
 android {
@@ -9,13 +10,9 @@ android {
 }
 
 dependencies {
-  testImplementation(libs.bundles.testing.unit)
   api(projects.core.domain)
-  api(projects.core.ui)
-
-  api(platform(libs.androidx.compose.bom))
-  api(libs.androidx.navigation3.runtime)
   api(libs.androidx.compose.runtime)
-  api(libs.androidx.lifecycle.viewmodel.compose)
-  api(libs.metrox.viewmodel.compose)
+  api(libs.androidx.navigation3.runtime)
+  api(libs.androidx.navigation3.ui)
+  api(libs.bundles.viewmodel)
 }

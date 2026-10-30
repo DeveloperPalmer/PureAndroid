@@ -1,4 +1,5 @@
 *.kt text eol=lf
 *.kts text eol=lf
+*.toml text eol=lf
 .editorconfig text eol=lf
 detekt-config.yml text eol=lf

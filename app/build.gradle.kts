@@ -13,19 +13,16 @@ android {
 }
 
 dependencies {
-  androidTestImplementation(libs.bundles.testing.compose)
-  testImplementation(libs.bundles.testing.unit)
+  implementation(libs.androidx.activity)
   implementation(libs.androidx.activity.compose)
-  implementation(libs.androidx.navigation3.runtime)
-  implementation(libs.androidx.navigation3.ui)
-  implementation(libs.androidx.lifecycle.viewmodel.navigation3)
-
-  androidTestImplementation(platform(libs.androidx.compose.bom))
-  debugImplementation(libs.androidx.compose.ui.test.manifest)
-
-  implementation(projects.uikit)
-  implementation(projects.core.routing)
+  implementation(libs.androidx.annotation)
   implementation(projects.app.data)
+  implementation(projects.core.routing)
   implementation(projects.feature.main.routing)
   implementation(projects.feature.map.routing)
+
+  testImplementation(libs.bundles.testing.unit)
+
+  androidTestImplementation(libs.bundles.testing.android)
+  androidTestRuntimeOnly(libs.androidx.test.runner)
 }

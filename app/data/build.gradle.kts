@@ -1,7 +1,7 @@
 plugins {
   id("android-library-convention")
-  id("metro-convention")
-  id("org.jetbrains.kotlin.plugin.serialization")
+  id("android-library-test-convention")
+  id("di-convention")
 }
 
 android {
@@ -9,11 +9,6 @@ android {
 }
 
 dependencies {
-  testImplementation(libs.bundles.testing.network)
-  implementation(projects.database)
   api(projects.core.data)
-  implementation(libs.retrofit)
-  implementation(libs.retrofit.kotlinx.serialization)
-  implementation(libs.okhttp)
-  implementation(libs.kotlinx.serialization.json)
+  api(projects.database)
 }

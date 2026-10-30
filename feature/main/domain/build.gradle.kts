@@ -1,10 +1,12 @@
 plugins {
   id("kotlin-convention")
-  id("metro-convention")
+  id("kotlin-test-convention")
+  id("di-convention")
 }
 
 dependencies {
-  testImplementation(libs.bundles.testing.unit)
-  api(projects.core.domain)
-  api(libs.paging.common)
+  implementation(projects.core.domain)
+  implementation(libs.paging.common)
+
+  testImplementation(libs.paging.testing)
 }

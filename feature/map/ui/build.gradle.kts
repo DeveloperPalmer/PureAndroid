@@ -1,4 +1,5 @@
 plugins {
+  id("android-library-convention")
   id("compose-convention")
 }
 
@@ -7,5 +8,5 @@ android {
 }
 
 dependencies {
-  implementation(projects.uikit)
+  api(projects.uikit)
 }
