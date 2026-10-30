@@ -10,6 +10,25 @@ plugins {
   id("metro-convention") apply false
   id("routing-convention") apply false
   id("kotlin-convention") apply false
+  alias(libs.plugins.dependency.analysis)
+}
+
+dependencyAnalysis {
+  // Report advice for review; dependency changes remain explicit decisions.
+  issues {
+    all {
+      onAny {
+        severity("warn")
+      }
+    }
+  }
+  reporting {
+    printBuildHealth(true)
+  }
+}
+
+tasks.named("buildHealth") {
+  mustRunAfter("spotlessApply")
 }
 
 spotless {
@@ -38,6 +57,7 @@ fun Project.mainDetektTasks() = tasks.matching { task ->
 }
 
 subprojects {
+  pluginManager.apply("com.autonomousapps.dependency-analysis")
   mainDetektTasks().configureEach {
     mustRunAfter(rootProject.tasks.named("spotlessApply"))
   }
@@ -45,7 +65,8 @@ subprojects {
 
 tasks.register("prePushCheck") {
   group = "verification"
-  description = "Formats Kotlin sources and runs Detekt for Android debug and JVM main sources."
+  description = "Formats Kotlin sources, runs Detekt and reports dependency health for all modules."
   dependsOn("spotlessApply")
+  dependsOn("buildHealth")
   dependsOn(subprojects.map { it.mainDetektTasks() })
 }

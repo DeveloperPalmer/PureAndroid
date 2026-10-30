@@ -17,7 +17,7 @@ internal fun convertServerError(error: Throwable): Throwable = when (error) {
 private fun readErrorBody(error: HttpException): ServerErrorBody? {
   return try {
     error.response()?.errorBody()?.use { body ->
-      ServerJson.decodeFromString(ServerErrorBody.serializer(), body.string())
+      ServerJson.decodeFromString<ServerErrorBody>(body.string())
     }
   } catch (_: SerializationException) {
     null
