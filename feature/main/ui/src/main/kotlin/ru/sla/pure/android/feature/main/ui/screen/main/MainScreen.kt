@@ -2,15 +2,14 @@ package ru.sla.pure.android.feature.main.ui.screen.main
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -19,35 +18,48 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.LoadState
+import androidx.paging.LoadStates
+import androidx.paging.PagingData
+import kotlinx.coroutines.flow.flowOf
 import org.orbitmvi.orbit.compose.collectAsState
+import ru.sla.pure.android.core.domain.entity.ServerException
 import ru.sla.pure.android.core.resources.R
 import ru.sla.pure.android.feature.main.domain.entity.Character
-import ru.sla.pure.android.feature.main.domain.entity.CharacterLocation
 import ru.sla.pure.android.feature.main.domain.entity.CharacterGender
+import ru.sla.pure.android.feature.main.domain.entity.CharacterLocation
 import ru.sla.pure.android.feature.main.domain.entity.CharacterStatus
 import ru.sla.pure.android.uikit.theme.AppTheme
 
 @Composable
 fun MainScreen(modifier: Modifier = Modifier, viewModel: MainViewModel) {
     val state by viewModel.collectAsState()
-    MainContent(state, viewModel::refresh, viewModel::loadMore, viewModel::retry, modifier)
+    val characters = state.characters.collectAsLazyPagingItems()
+    MainContent(characters, modifier)
 }
 
 @Composable
 internal fun MainContent(
-    state: ViewState,
-    onRefresh: () -> Unit,
-    onLoadMore: () -> Unit,
-    onRetry: () -> Unit,
+    characters: LazyPagingItems<Character>,
     modifier: Modifier = Modifier,
 ) {
+    val refresh = characters.loadState.refresh
+    val append = characters.loadState.append
+    val prepend = characters.loadState.prepend
+    val error = (refresh as? LoadState.Error) ?: (append as? LoadState.Error) ?: (prepend as? LoadState.Error)
+    val loading = refresh is LoadState.Loading || append is LoadState.Loading || prepend is LoadState.Loading
     Surface(
         modifier = modifier.fillMaxSize(),
         color = AppTheme.colors.backgroundPrimary,
@@ -60,13 +72,13 @@ internal fun MainContent(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(stringResource(R.string.characters_title), style = AppTheme.typography.headline)
-                TextButton(onClick = onRefresh, enabled = !state.isLoading) {
+                TextButton(onClick = characters::refresh, enabled = refresh !is LoadState.Loading) {
                     Text(stringResource(R.string.characters_refresh))
                 }
             }
-            LazyColumn(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                items(state.characters, key = { it.id }) { character ->
-                    CharacterRow(character)
+            LazyColumn(Modifier.fillMaxSize().testTag("characters"), horizontalAlignment = Alignment.CenterHorizontally) {
+                items(characters.itemCount, key = characters.itemKey { it.id }) { index ->
+                    characters[index]?.let { CharacterRow(it) }
                 }
                 item(key = "load-state") {
                     Column(
@@ -75,22 +87,19 @@ internal fun MainContent(
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         when {
-                            state.isLoading -> {
+                            loading -> {
                                 val label = stringResource(R.string.characters_loading)
                                 CircularProgressIndicator(Modifier.semantics { contentDescription = label })
                             }
-                            state.error != null -> {
-                                Text(stringResource(when (state.error) {
-                                    LoadError.Connection -> R.string.characters_error_connection
-                                    LoadError.Server -> R.string.characters_error_server
-                                    LoadError.Unexpected -> R.string.characters_error_unexpected
+                            error != null -> {
+                                Text(stringResource(when (error.error) {
+                                    is ServerException.Unreachable -> R.string.characters_error_connection
+                                    is ServerException -> R.string.characters_error_server
+                                    else -> R.string.characters_error_unexpected
                                 }))
-                                Button(onClick = onRetry) { Text(stringResource(R.string.characters_retry)) }
+                                Button(onClick = characters::retry) { Text(stringResource(R.string.characters_retry)) }
                             }
-                            state.characters.isEmpty() -> Text(stringResource(R.string.characters_empty))
-                            state.nextPage != null -> Button(onClick = onLoadMore) {
-                                Text(stringResource(R.string.characters_more))
-                            }
+                            characters.itemCount == 0 -> Text(stringResource(R.string.characters_empty))
                         }
                     }
                 }
@@ -124,14 +133,16 @@ private fun CharacterRow(character: Character) {
 @Preview(showBackground = true)
 @Composable
 private fun MainContentPreview() {
-    AppTheme {
-        MainContent(
-            state = ViewState(
-                characters = listOf(Character(
-                    1, "Rick Sanchez", CharacterStatus.Alive, "Human", "", CharacterGender.Male,
-                    CharacterLocation("Earth", ""), CharacterLocation("Citadel of Ricks", ""), "",
-                )), isLoading = false, nextPage = 2,
-            ), onRefresh = {}, onLoadMore = {}, onRetry = {},
-        )
+    val data = remember {
+        flowOf(PagingData.from(
+            listOf(Character(
+                1, "Rick Sanchez", CharacterStatus.Alive, "Human", "", CharacterGender.Male,
+                CharacterLocation("Earth", ""), CharacterLocation("Citadel of Ricks", ""), "",
+            )),
+            sourceLoadStates = LoadStates(
+                LoadState.NotLoading(true), LoadState.NotLoading(true), LoadState.NotLoading(true),
+            ),
+        ))
     }
+    AppTheme { MainContent(data.collectAsLazyPagingItems()) }
 }

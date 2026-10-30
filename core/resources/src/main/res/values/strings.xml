@@ -7,7 +7,6 @@
     <!-- Персонажи -->
     <string name="characters_title">Персонажи</string>
     <string name="characters_refresh">Обновить</string>
-    <string name="characters_more">Загрузить ещё</string>
     <string name="characters_retry">Повторить</string>
     <string name="characters_empty">Персонажей пока нет</string>
     <string name="characters_loading">Загрузка персонажей</string>

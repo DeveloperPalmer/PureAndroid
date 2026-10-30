@@ -1,12 +1,24 @@
 package ru.sla.pure.android.feature.main.domain
 
+import androidx.paging.cachedIn
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import dev.zacsweers.metro.ForScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
-import ru.sla.pure.android.feature.main.domain.entity.CharacterPage
+import kotlinx.coroutines.CoroutineScope
+import ru.sla.pure.android.core.domain.ReactiveModel
 import ru.sla.pure.android.feature.main.domain.di.MainScope
+import ru.sla.pure.android.feature.main.domain.paging.CharacterPagingSource
 
 @SingleIn(MainScope::class)
 @Inject
-class MainModel(private val repository: CharacterRepository) {
-    suspend fun readPage(page: Int): CharacterPage = repository.readPage(page)
+class MainModel(
+    @ForScope(MainScope::class) coroutineScope: CoroutineScope,
+    private val repository: CharacterRepository,
+) : ReactiveModel(coroutineScope) {
+    val characters = Pager(
+        config = PagingConfig(pageSize = 20, initialLoadSize = 20, enablePlaceholders = false),
+        pagingSourceFactory = { CharacterPagingSource(repository) },
+    ).flow.cachedIn(scope)
 }
