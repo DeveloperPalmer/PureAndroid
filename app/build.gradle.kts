@@ -20,9 +20,4 @@ dependencies {
   implementation(projects.core.routing)
   implementation(projects.feature.main.routing)
   implementation(projects.feature.map.routing)
-
-  testImplementation(libs.bundles.testing.unit)
-
-  androidTestImplementation(libs.bundles.testing.android)
-  androidTestRuntimeOnly(libs.androidx.test.runner)
 }

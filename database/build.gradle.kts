@@ -1,6 +1,5 @@
 plugins {
   id("android-library-convention")
-  id("android-library-test-convention")
   alias(libs.plugins.ksp)
 }
 
