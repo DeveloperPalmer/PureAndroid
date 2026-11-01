@@ -1,6 +1,5 @@
 plugins {
   id("android-library-convention")
-  id("android-library-test-convention")
   id("compose-convention")
   id("di-convention")
 }

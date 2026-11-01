@@ -12,6 +12,7 @@ dependencies {
   implementation(plugin(libs.plugins.kotlin.jvm))
   implementation(plugin(libs.plugins.kotlin.compose))
   implementation(plugin(libs.plugins.kotlin.serialization))
+  implementation(plugin(libs.plugins.mannodermaus.android.junit))
 }
 
 // Плагин из [plugins] каталога как обычная зависимость. Каждый плагин публикуется с артефактом-маркером

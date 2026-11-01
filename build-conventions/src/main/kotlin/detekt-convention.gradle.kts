@@ -1,12 +1,15 @@
 import dev.detekt.gradle.Detekt
 import dev.detekt.gradle.DetektCreateBaselineTask
+import gradle.kotlin.dsl.accessors._4b8206f8a6e8886e9c69f593219ab709.versionCatalogs
 
 plugins {
   id("dev.detekt")
 }
 
+val libs = versionCatalogs.named("libs")
+
 dependencies {
-  detektPlugins(versionCatalogs.named("libs").findLibrary("detekt.rules.compose").get())
+  detektPlugins(libs.findLibrary("detekt.rules.compose").get())
 }
 
 detekt {

@@ -44,20 +44,17 @@ fun MainScreen(
 ) {
   val state by viewModel.collectAsState()
   val characters = state.characters.collectAsLazyPagingItems()
-  LaunchedEffect(
-    key1 = characters,
-    key2 = viewModel,
-  ) {
-    snapshotFlow {
-      characters.loadState
-    }.collect { loadStates ->
+
+  LaunchedEffect(characters, viewModel) {
+    snapshotFlow { characters.loadState }.collect { loadStates ->
       viewModel.onLoadStatesChanged(loadStates = loadStates)
     }
   }
+
   MainContent(
+    modifier = modifier,
     characters = characters,
     contentLoadState = state.contentLoadState,
-    modifier = modifier,
     refreshInProgress = state.refreshInProgress,
   )
 }
@@ -130,18 +127,20 @@ internal fun MainContent(
                   },
                 )
               }
+
               contentLoadState is ContentLoadState.Error -> {
                 Text(
-                  text = stringResource(id = contentLoadState.error.messageResource),
+                  text = stringResource(contentLoadState.error.messageResource),
                 )
                 Button(
                   onClick = characters::retry,
                 ) {
                   Text(
-                    text = stringResource(id = R.string.characters_retry),
+                    text = stringResource(R.string.characters_retry),
                   )
                 }
               }
+
               characters.itemCount == 0 -> {
                 Text(
                   text = stringResource(id = R.string.characters_empty),
@@ -175,10 +174,7 @@ private fun CharacterRow(character: Character) {
       }
     )
     Text(
-      text = stringResource(
-        id = R.string.character_description,
-        formatArgs = arrayOf(status, character.species),
-      ),
+      text = stringResource(R.string.character_description, arrayOf(status, character.species)),
       style = AppTheme.typography.bodySmall,
       color = AppTheme.colors.contentSecondary,
     )

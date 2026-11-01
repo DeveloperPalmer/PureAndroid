@@ -4,7 +4,6 @@ plugins {
   id("detekt-convention")
 }
 
-// Общие настройки Android-библиотеки (модули фич и ядра). Модуль задаёт только namespace
 android {
   compileSdk {
     version = release(37)
