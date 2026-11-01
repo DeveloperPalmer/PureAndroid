@@ -23,10 +23,12 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import ru.sla.pure.android.core.domain.entity.ServerException
+import ru.sla.pure.android.core.ui.toUiLceState
 import ru.sla.pure.android.feature.main.domain.entity.Character
 import ru.sla.pure.android.feature.main.domain.entity.CharacterGender
 import ru.sla.pure.android.feature.main.domain.entity.CharacterLocation
 import ru.sla.pure.android.feature.main.domain.entity.CharacterStatus
+import ru.sla.pure.android.feature.main.domain.paging.asLceState
 import ru.sla.pure.android.uikit.theme.AppTheme
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -100,7 +102,16 @@ class MainScreenTest {
   }
 
   private fun show(flow: Flow<PagingData<Character>>) {
-    compose.setContent { AppTheme { MainContent(flow.collectAsLazyPagingItems()) } }
+    compose.setContent {
+      val characters = flow.collectAsLazyPagingItems()
+      AppTheme {
+        MainContent(
+          characters = characters,
+          contentLoadState = characters.loadState.asLceState().toUiLceState(),
+          refreshInProgress = characters.loadState.refresh is LoadState.Loading,
+        )
+      }
+    }
   }
 
   private fun pager(read: (Int) -> List<Character>): Flow<PagingData<Character>> = Pager(
