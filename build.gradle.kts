@@ -29,22 +29,33 @@ spotless {
   }
 }
 
-// On Android, detektMain aggregates all variants; select only debug here.
-fun Project.mainDetektTasks() = tasks.matching { task ->
-  val android = pluginManager.hasPlugin("com.android.application") ||
-    pluginManager.hasPlugin("com.android.library")
-  task.name == if (android) "detektDebug" else "detektMain"
-}
-
 subprojects {
-  mainDetektTasks().configureEach {
+  tasks.matching { it.name == "detektDebug" }.configureEach {
     mustRunAfter(rootProject.tasks.named("spotlessApply"))
   }
 }
 
+tasks.register("detektDebug") {
+  dependsOn(
+    subprojects.map { project ->
+      project.tasks.matching { it.name == "detektDebug" }
+    }
+  )
+}
+
+tasks.register("testDebugUnitTest") {
+  dependsOn(
+    subprojects.map { project ->
+      project.tasks.matching { it.name == "testDebugUnitTest" }
+    }
+  )
+}
+
 tasks.register("prePushCheck") {
   group = "verification"
-  description = "Formats Kotlin sources and runs Detekt."
+  description = "Formats Kotlin sources, runs Detekt and unit tests."
+
   dependsOn("spotlessApply")
-  dependsOn(subprojects.map { it.mainDetektTasks() })
+  dependsOn("detektDebug")
+  dependsOn("testDebugUnitTest")
 }

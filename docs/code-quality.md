@@ -5,10 +5,10 @@
 ```powershell
 .\gradlew.bat spotlessCheck   # проверить форматирование Kotlin и Gradle Kotlin DSL
 .\gradlew.bat spotlessApply   # исправить форматирование
-.\gradlew.bat prePushCheck    # применить форматирование и запустить Detekt
+.\gradlew.bat prePushCheck    # применить форматирование, запустить Detekt и юнит-тесты
 ```
 
-`prePushCheck` запускает `detektDebug` для Android и `detektMain` для JVM. Тесты запускаются отдельно.
+`prePushCheck` запускает `detektDebug` и `testDebugUnitTest` в модулях, где эти задачи существуют. JVM-тесты и инструментальные UI-тесты запускаются отдельно.
 Gradle-сборки, синхронизацию, проверки и тесты запускает разработчик. Агент запускает их только по отдельной просьбе.
 
 Правила форматирования хранятся в [`.editorconfig`](../.editorconfig), настройки Detekt — в [`detekt-config.yml`](../detekt-config.yml).

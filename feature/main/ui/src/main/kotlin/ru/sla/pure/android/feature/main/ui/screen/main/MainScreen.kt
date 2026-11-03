@@ -1,5 +1,6 @@
 package ru.sla.pure.android.feature.main.ui.screen.main
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,9 +14,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,10 +38,7 @@ import ru.sla.pure.android.feature.main.domain.entity.CharacterStatus
 import ru.sla.pure.android.uikit.theme.AppTheme
 
 @Composable
-fun MainScreen(
-  modifier: Modifier = Modifier,
-  viewModel: MainViewModel,
-) {
+fun MainScreen(viewModel: MainViewModel) {
   val state by viewModel.collectAsState()
   val characters = state.characters.collectAsLazyPagingItems()
 
@@ -51,8 +48,13 @@ fun MainScreen(
     }
   }
 
+  LaunchedEffect(characters, viewModel) {
+    snapshotFlow { characters.itemCount }.collect { count ->
+      viewModel.onCharactersCountChanged(count = count)
+    }
+  }
+
   MainContent(
-    modifier = modifier,
     characters = characters,
     contentLoadState = state.contentLoadState,
     refreshInProgress = state.refreshInProgress,
@@ -61,95 +63,115 @@ fun MainScreen(
 
 @Composable
 internal fun MainContent(
+  modifier: Modifier = Modifier,
   characters: LazyPagingItems<Character>,
   contentLoadState: ContentLoadState,
-  modifier: Modifier = Modifier,
   refreshInProgress: Boolean = false,
 ) {
-  Surface(
-    modifier = modifier.fillMaxSize(),
-    color = AppTheme.colors.backgroundPrimary,
-    contentColor = AppTheme.colors.contentPrimary,
+  Column(
+    modifier = modifier
+      .fillMaxSize()
+      .background(AppTheme.colors.backgroundPrimary)
+      .windowInsetsPadding(insets = WindowInsets.safeDrawing),
   ) {
-    Column(
+    Row(
       modifier = Modifier
-        .fillMaxSize()
-        .windowInsetsPadding(insets = WindowInsets.safeDrawing),
+        .fillMaxWidth()
+        .padding(horizontal = 16.dp, vertical = 8.dp),
+      verticalAlignment = Alignment.CenterVertically,
     ) {
-      Row(
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-      ) {
-        Text(
-          text = stringResource(id = R.string.characters_title),
-          style = AppTheme.typography.headline,
+      Text(
+        text = stringResource(id = R.string.characters_title),
+        style = AppTheme.typography.headline,
+      )
+    }
+    PullToRefreshBox(
+      modifier = Modifier
+        .fillMaxWidth()
+        .weight(1f),
+      isRefreshing = refreshInProgress,
+      onRefresh = characters::refresh,
+    ) {
+      if (characters.itemCount == 0) {
+        EmptyContent(
+          modifier = Modifier
+            .fillMaxSize()
+            .padding(all = 24.dp),
+          characters = characters,
+          contentLoadState = contentLoadState
         )
-        TextButton(
-          onClick = characters::refresh,
-          enabled = !refreshInProgress,
+      } else {
+        ReadyContent(
+          modifier = Modifier
+            .fillMaxSize()
+            .testTag(tag = "characters"),
+          characters = characters,
+          contentLoadState = contentLoadState
+        )
+      }
+    }
+  }
+}
+
+@Composable
+private fun EmptyContent(
+  modifier: Modifier = Modifier,
+  characters: LazyPagingItems<Character>,
+  contentLoadState: ContentLoadState,
+) {
+  Column(
+    modifier = modifier,
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.Center,
+  ) {
+    when (contentLoadState) {
+      is ContentLoadState.Loading -> {
+        CircularProgressIndicator()
+      }
+      is ContentLoadState.Error -> {
+        Text(
+          text = stringResource(contentLoadState.error.messageResource),
+        )
+        Button(
+          onClick = characters::retry,
         ) {
           Text(
-            text = stringResource(id = R.string.characters_refresh),
+            text = stringResource(R.string.characters_retry),
           )
         }
       }
-      LazyColumn(
-        modifier = Modifier
-          .fillMaxSize()
-          .testTag(tag = "characters"),
-        horizontalAlignment = Alignment.CenterHorizontally
-      ) {
-        items(
-          key = characters.itemKey { character -> character.id },
-          count = characters.itemCount,
-        ) { index ->
-          characters[index]?.let { character ->
-            CharacterRow(character = character)
-          }
-        }
-        item(key = "load-state") {
-          Column(
-            modifier = Modifier
-              .fillMaxWidth()
-              .padding(all = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(space = 12.dp),
-          ) {
-            when {
-              contentLoadState is ContentLoadState.Loading -> {
-                val label = stringResource(id = R.string.characters_loading)
-                CircularProgressIndicator(
-                  modifier = Modifier.semantics {
-                    contentDescription = label
-                  },
-                )
-              }
-
-              contentLoadState is ContentLoadState.Error -> {
-                Text(
-                  text = stringResource(contentLoadState.error.messageResource),
-                )
-                Button(
-                  onClick = characters::retry,
-                ) {
-                  Text(
-                    text = stringResource(R.string.characters_retry),
-                  )
-                }
-              }
-
-              characters.itemCount == 0 -> {
-                Text(
-                  text = stringResource(id = R.string.characters_empty),
-                )
-              }
-            }
-          }
-        }
+      is ContentLoadState.Ready -> {
+        Text(
+          text = stringResource(R.string.characters_empty),
+        )
       }
+    }
+  }
+}
+
+@Composable
+private fun ReadyContent(
+  modifier: Modifier = Modifier,
+  characters: LazyPagingItems<Character>,
+  contentLoadState: ContentLoadState,
+) {
+  LazyColumn(
+    modifier = modifier,
+    horizontalAlignment = Alignment.CenterHorizontally
+  ) {
+    items(
+      key = characters.itemKey { character -> character.id },
+      count = characters.itemCount,
+    ) { index ->
+      characters[index]?.let { character ->
+        CharacterRow(character = character)
+      }
+    }
+    item(key = "load-state") {
+      BottomLoading(
+        characters = characters,
+        contentLoadState = contentLoadState
+      )
     }
   }
 }
@@ -174,7 +196,7 @@ private fun CharacterRow(character: Character) {
       }
     )
     Text(
-      text = stringResource(R.string.character_description, arrayOf(status, character.species)),
+      text = stringResource(R.string.character_description, status, character.species),
       style = AppTheme.typography.bodySmall,
       color = AppTheme.colors.contentSecondary,
     )
@@ -184,4 +206,45 @@ private fun CharacterRow(character: Character) {
     )
   }
   HorizontalDivider()
+}
+
+@Composable
+private fun BottomLoading(
+  modifier: Modifier = Modifier,
+  characters: LazyPagingItems<Character>,
+  contentLoadState: ContentLoadState,
+) {
+  val loadingDescription = stringResource(R.string.characters_loading)
+  Column(
+    modifier = modifier
+      .fillMaxWidth()
+      .padding(all = 24.dp),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.spacedBy(space = 12.dp),
+  ) {
+    when (contentLoadState) {
+      is ContentLoadState.Ready -> {
+        Unit
+      }
+      is ContentLoadState.Loading -> {
+        CircularProgressIndicator(
+          modifier = Modifier.semantics {
+            contentDescription = loadingDescription
+          },
+        )
+      }
+      is ContentLoadState.Error -> {
+        Text(
+          text = stringResource(contentLoadState.error.messageResource),
+        )
+        Button(
+          onClick = characters::retry,
+        ) {
+          Text(
+            text = stringResource(R.string.characters_retry),
+          )
+        }
+      }
+    }
+  }
 }
