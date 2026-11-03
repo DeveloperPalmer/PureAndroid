@@ -5,6 +5,8 @@ val libs = versionCatalogs.named("libs")
 
 dependencies {
   add("testImplementation", libs.findBundle("testing.unit").get())
+  add("testImplementation", libs.findLibrary("mockk").get())
+  add("testImplementation", libs.findLibrary("turbine").get())
 }
 
 // Юнит-тесты бегут на JUnit 5 (JUnit Platform)

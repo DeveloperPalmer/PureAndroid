@@ -12,13 +12,19 @@ import ru.sla.pure.android.feature.main.domain.di.MainScope
 import ru.sla.pure.android.feature.main.domain.paging.CharacterPagingSource
 
 @SingleIn(MainScope::class)
-@Inject
-class MainModel(
-  @ForScope(MainScope::class) coroutineScope: CoroutineScope,
+class MainModel @Inject constructor(
+  @ForScope(MainScope::class)
+  coroutineScope: CoroutineScope,
   repository: CharacterRepository,
 ) : ReactiveModel(coroutineScope) {
   val characters = Pager(
-    config = PagingConfig(pageSize = 20, initialLoadSize = 20, enablePlaceholders = false),
+    config = PagingConfig(
+      pageSize = PAGE_SIZE,
+      initialLoadSize = PAGE_SIZE,
+      enablePlaceholders = false
+    ),
     pagingSourceFactory = { CharacterPagingSource(repository) },
   ).flow.cachedIn(scope)
 }
+
+internal const val PAGE_SIZE = 20

@@ -15,6 +15,7 @@ dependencies {
   add("testImplementation", libs.findLibrary("okhttp.mockwebserver").get())
   add("testImplementation", libs.findLibrary("orbit.test").get())
   add("androidTestImplementation", libs.findBundle("testing.android").get())
+  add("androidTestImplementation", libs.findLibrary("kaspresso").get())
   add("androidTestRuntimeOnly", libs.findLibrary("androidx.test.runner").get())
 }
 
@@ -23,6 +24,6 @@ pluginManager.withPlugin("compose-convention") {
     add("debugRuntimeOnly", libs.findLibrary("androidx.compose.ui.test.manifest").get())
     add("androidTestImplementation", platform(libs.findLibrary("androidx.compose.bom").get()))
     add("androidTestImplementation", libs.findLibrary("androidx.compose.ui.test").get())
-    add("androidTestRuntimeOnly", libs.findLibrary("androidx.espresso.core").get())
+    add("androidTestImplementation", libs.findLibrary("kaspresso.compose.support").get())
   }
 }

@@ -30,8 +30,12 @@ class MainViewModel @Inject constructor(
     reduce {
       state.copy(
         contentLoadState = contentLoadState,
-        refreshInProgress = loadStates.refresh is LoadState.Loading,
+        refreshing = loadStates.refresh is LoadState.Loading,
       )
     }
+  }
+
+  fun onCharactersCountChanged(count: Int) = intent {
+    reduce { state.copy(hasContent = count > 0) }
   }
 }
