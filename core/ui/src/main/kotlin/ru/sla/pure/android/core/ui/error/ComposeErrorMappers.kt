@@ -8,5 +8,9 @@ fun composeErrorMapper(
   vararg errorMappers: (Throwable) -> UiError?,
   defaultMapper: ErrorMapper = ::baseErrorMapper,
 ): ErrorMapper {
-  return { error -> errorMappers.firstNotNullOfOrNull { mapper -> mapper(error) } ?: defaultMapper(error) }
+  return { error ->
+    errorMappers
+      .firstNotNullOfOrNull { mapper -> mapper(error) }
+      ?: defaultMapper(error)
+  }
 }

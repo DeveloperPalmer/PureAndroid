@@ -13,7 +13,8 @@ import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import ru.sla.pure.android.core.domain.entity.ServerException
+import ru.sla.pure.android.core.domain.entity.ApiError
+import ru.sla.pure.android.core.domain.entity.ConnectivityError
 import ru.sla.pure.android.feature.main.domain.CharacterRepository
 import ru.sla.pure.android.feature.main.domain.PAGE_SIZE
 import ru.sla.pure.android.feature.main.domain.entity.Character
@@ -42,19 +43,24 @@ class CharacterPagingSourceTest {
 
   @Test
   fun `ошибка репозитория становится LoadResult Error`() = runTest {
-    val error = ServerException.Unreachable(null)
-    coEvery { repository.readPage(1) } throws error
-
+    val errors = listOf(
+      ConnectivityError.NoConnection(null),
+      ApiError(500, null, "Internal server error"),
+      IllegalStateException("unexpected failure"),
+    )
     val params = PagingSource.LoadParams.Refresh<Int>(
       key = null,
       loadSize = PAGE_SIZE,
       placeholdersEnabled = false
     )
 
-    val result = source.load(params)
+    for (error in errors) {
+      coEvery { repository.readPage(1) } throws error
+      val result = source.load(params)
 
-    assertTrue(result is PagingSource.LoadResult.Error)
-    assertSame(error, (result as PagingSource.LoadResult.Error).throwable)
+      assertTrue(result is PagingSource.LoadResult.Error)
+      assertSame(error, (result as PagingSource.LoadResult.Error).throwable)
+    }
   }
 
   @Test

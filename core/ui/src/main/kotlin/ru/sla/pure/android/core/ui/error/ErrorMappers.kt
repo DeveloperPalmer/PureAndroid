@@ -1,20 +1,21 @@
 package ru.sla.pure.android.core.ui.error
 
-import ru.sla.pure.android.core.domain.entity.ServerException
+import ru.sla.pure.android.core.domain.entity.ApiError
+import ru.sla.pure.android.core.domain.entity.ConnectivityError
 import ru.sla.pure.android.core.resources.R
 import ru.sla.pure.android.core.ui.entity.UiError
 
 fun baseErrorMapper(error: Throwable): UiError {
   val mapper = composeErrorMapper(
     ::connectionErrorMapper,
-    ::serverErrorMapper,
+    ::apiErrorMapper,
     defaultMapper = ::defaultErrorMapper,
   )
   return mapper(error)
 }
 
 fun connectionErrorMapper(error: Throwable): UiError? {
-  return if (error is ServerException.Unreachable) {
+  return if (error is ConnectivityError) {
     UiError(
       messageResource = R.string.error_connection,
       cause = error,
@@ -24,8 +25,8 @@ fun connectionErrorMapper(error: Throwable): UiError? {
   }
 }
 
-fun serverErrorMapper(error: Throwable): UiError? {
-  return if (error is ServerException) {
+fun apiErrorMapper(error: Throwable): UiError? {
+  return if (error is ApiError) {
     UiError(
       messageResource = R.string.error_server,
       cause = error,

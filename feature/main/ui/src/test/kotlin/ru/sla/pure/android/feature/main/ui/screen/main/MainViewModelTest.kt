@@ -22,11 +22,14 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orbitmvi.orbit.test.testWithInternalState
-import ru.sla.pure.android.core.domain.entity.ServerException
+import ru.sla.pure.android.core.domain.entity.ApiError
+import ru.sla.pure.android.core.domain.entity.ConnectivityError
 import ru.sla.pure.android.core.resources.R
 import ru.sla.pure.android.core.ui.entity.ContentLoadState
 import ru.sla.pure.android.feature.main.domain.MainModel
 import ru.sla.pure.android.feature.main.domain.entity.Character
+import java.net.SocketTimeoutException
+import javax.net.ssl.SSLException
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModelTest {
@@ -106,7 +109,7 @@ class MainViewModelTest {
 
   @Test
   fun `ошибка обновления показывает ошибку контента`() = runTest(testDispatcher) {
-    val state = stateAfter(loadStates(refresh = LoadState.Error(ServerException.Unreachable(null))))
+    val state = stateAfter(loadStates(refresh = LoadState.Error(ConnectivityError.NoConnection(null))))
 
     val error = state.contentLoadState as ContentLoadState.Error
     assertEquals(R.string.error_connection, error.error.messageResource)
@@ -114,9 +117,39 @@ class MainViewModelTest {
   }
 
   @Test
+  fun `таймаут показывается как ошибка соединения`() = runTest(testDispatcher) {
+    val cause = ConnectivityError.TimeOut(SocketTimeoutException())
+    val state = stateAfter(loadStates(refresh = LoadState.Error(cause)))
+    val error = state.contentLoadState as ContentLoadState.Error
+
+    assertEquals(R.string.error_connection, error.error.messageResource)
+    assertSame(cause, error.error.cause)
+  }
+
+  @Test
+  fun `SSL ошибка показывается как ошибка соединения`() = runTest(testDispatcher) {
+    val cause = ConnectivityError.SSLError(SSLException("handshake failed"))
+    val state = stateAfter(loadStates(refresh = LoadState.Error(cause)))
+    val error = state.contentLoadState as ContentLoadState.Error
+
+    assertEquals(R.string.error_connection, error.error.messageResource)
+    assertSame(cause, error.error.cause)
+  }
+
+  @Test
+  fun `ошибка API показывается как ошибка сервера`() = runTest(testDispatcher) {
+    val cause = ApiError(500, null, "Internal server error")
+    val state = stateAfter(loadStates(refresh = LoadState.Error(cause)))
+    val error = state.contentLoadState as ContentLoadState.Error
+
+    assertEquals(R.string.error_server, error.error.messageResource)
+    assertSame(cause, error.error.cause)
+  }
+
+  @Test
   fun `ошибка догрузки страницы тоже показывает ошибку контента`() = runTest(testDispatcher) {
     val state = stateAfter(
-      loadStates(append = LoadState.Error(ServerException.Unreachable(null)))
+      loadStates(append = LoadState.Error(ConnectivityError.NoConnection(null)))
     )
 
     assertTrue(state.contentLoadState is ContentLoadState.Error)
@@ -127,7 +160,7 @@ class MainViewModelTest {
     val state = stateAfter(
       loadStates(
         refresh = LoadState.Loading,
-        append = LoadState.Error(ServerException.Unreachable(null)),
+        append = LoadState.Error(ConnectivityError.NoConnection(null)),
       )
     )
 

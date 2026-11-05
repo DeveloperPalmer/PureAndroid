@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data class ServerErrorBody(
+internal data class ApiErrorBody(
   @SerialName("code")
   val code: String? = null,
   @SerialName("error")
