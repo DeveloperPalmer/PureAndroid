@@ -27,9 +27,9 @@ interface NetworkModule {
 
   @Provides
   @SingleIn(AppScope::class)
-  fun provideRetrofit(client: OkHttpClient): Retrofit {
+  fun provideRetrofit(client: OkHttpClient, apiBaseUrl: ApiBaseUrl): Retrofit {
     return Retrofit.Builder()
-      .baseUrl("https://rickandmortyapi.com/api/")
+      .baseUrl(apiBaseUrl.value)
       .client(client)
       .addCallAdapterFactory(ApiErrorCallAdapterFactory())
       .addConverterFactory(ServerJson.asConverterFactory("application/json".toMediaType()))

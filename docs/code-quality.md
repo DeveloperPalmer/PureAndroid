@@ -25,7 +25,9 @@ Gradle-сборки, синхронизацию, проверки и тесты 
 
 В библиотеках с Compose явно подключаем `compose-convention`, с Metro — `di-convention`.
 
-`kotlin-test-convention` подключает набор `testing-unit` с JUnit 5, библиотеками корутин, MockK и Turbine для локальных тестов. `android-test-convention` применяет `kotlin-test-convention`, настраивает инструментальные тесты и добавляет MockWebServer и Orbit Test. В модулях с `compose-convention` она также подключает библиотеки для Compose UI-тестов. Зависимости конкретных сценариев, например Paging Testing и DI-провайдеры из `:app:data`, объявляем в использующем их модуле.
+`kotlin-test-convention` подключает набор `testing-unit` с JUnit 5, библиотеками корутин, MockK и Turbine для локальных тестов. `android-test-convention` применяет `kotlin-test-convention`, настраивает инструментальные тесты и добавляет MockWebServer и Orbit Test для локальных тестов. В модулях с `compose-convention` она подключает `:core:testing` с Compose Test и Kaspresso, а в Compose-библиотеках также добавляет ViewModel Compose и Android MockK для изолированных экранных тестов.
+
+`android-test-convention` включает `testFixtures` по умолчанию в Android-библиотеках. Для fixtures Compose-библиотек она подключает `:app:testing` и JSON. Зависимости конкретных сценариев, например типы своего domain-модуля, Paging Testing и DI-провайдеры из `:app:data`, объявляем в использующем их модуле.
 
 ## Зависимости
 

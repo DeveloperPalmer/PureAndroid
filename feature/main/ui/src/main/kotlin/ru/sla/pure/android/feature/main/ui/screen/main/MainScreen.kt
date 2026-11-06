@@ -73,6 +73,7 @@ internal fun MainContent(
 ) {
   Column(
     modifier = modifier
+      .testTag(MainScreenTestTags.SCREEN)
       .fillMaxSize()
       .background(AppTheme.colors.backgroundPrimary)
       .windowInsetsPadding(insets = WindowInsets.safeDrawing),
@@ -130,7 +131,12 @@ private fun EmptyContent(
   ) {
     when (contentLoadState) {
       is ContentLoadState.Loading -> {
-        CircularProgressIndicator()
+        val loadingDescription = stringResource(R.string.characters_loading)
+        CircularProgressIndicator(
+          modifier = Modifier.semantics {
+            contentDescription = loadingDescription
+          },
+        )
       }
       is ContentLoadState.Error -> {
         Text(

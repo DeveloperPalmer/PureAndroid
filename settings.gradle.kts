@@ -31,6 +31,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(
   ":app",
   ":app:data",
+  ":app:testing",
   ":openapi-schema",
   ":database",
   ":core:data",

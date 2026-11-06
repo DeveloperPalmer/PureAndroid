@@ -1,13 +1,13 @@
 package ru.sla.pure.android.feature.main.ui.screen.main
 
-import android.nfc.tech.MifareUltralight.PAGE_SIZE
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.AndroidComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsMatcher.Companion.expectValue
-import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performTouchInput
@@ -20,7 +20,6 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.kaspersky.components.composesupport.core.KNode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -38,18 +37,20 @@ import ru.sla.pure.android.feature.main.ui.screen.main.MainScreenTest.Companion.
 import ru.sla.pure.android.uikit.theme.AppTheme
 import java.io.IOException
 
+private const val PAGE_SIZE = 20
+
 @OptIn(ExperimentalTestApi::class)
 class MainScreenTest : BaseTestCase() {
   @Test
-  @DisplayName("первичная загрузка показывает спиннер контента без индикатора потягивания")
-  fun первичная_загрузка_показывает_спиннер_контента_без_индикатора_потягивания() {
+  @DisplayName("Первичная загрузка показывает спиннер контента без индикатора потягивания")
+  fun initialLoadingShowsContentSpinnerWithoutRefreshIndicator() {
     runScreenTest {
       showMainContent(
         charactersFlow = staticContent(emptyList(), refresh = LoadState.Loading),
         contentLoadState = ContentLoadState.Loading,
         refreshInProgress = false,
       )
-      val screen = mainScreen()
+      val screen = MainScreen(this)
 
       screen.loadingIndicator.assertIsDisplayed()
       // Индикатор потягивания — тоже indeterminate progress; на экране должен быть ровно один
@@ -58,37 +59,41 @@ class MainScreenTest : BaseTestCase() {
   }
 
   @Test
-  @DisplayName("успешная загрузка показывает список персонажей")
-  fun успешная_загрузка_показывает_список_персонажей() {
+  @DisplayName("Успешная загрузка показывает список персонажей")
+  fun successfulLoadShowsCharacters() {
     runScreenTest {
       showMainContent(staticContent(characters(1..PAGE_SIZE)))
 
-      mainScreen().character("Персонаж 1").assertIsDisplayed()
+      MainScreen(this).character("Персонаж 1").assertIsDisplayed()
     }
   }
 
   @Test
-  @DisplayName("после первичной загрузки список показан с начала")
-  fun после_первичной_загрузки_список_показан_с_начала() {
+  @DisplayName("После первичной загрузки список показан с начала")
+  fun initialLoadShowsListFromStart() {
     runScreenTest {
       // Регрессия на якорь скролла: раньше список открывался на футере загрузки
       showMainContent(staticContent(characters(1..PAGE_SIZE * 2)))
-      val screen = mainScreen()
+      val screen = MainScreen(this)
 
       screen.character("Персонаж 1").assertIsDisplayed()
-      screen.character("Персонаж ${PAGE_SIZE * 2}").assertIsNotDisplayed()
+      onNodeWithTag("characters").assert(
+        SemanticsMatcher("Список находится в начале") { node ->
+          node.config[SemanticsProperties.VerticalScrollAxisRange].value() == 0f
+        },
+      )
     }
   }
 
   @Test
-  @DisplayName("индикатор потягивания виден поверх загруженного списка")
-  fun индикатор_потягивания_виден_поверх_загруженного_списка() {
+  @DisplayName("Индикатор потягивания виден поверх загруженного списка")
+  fun refreshIndicatorIsVisibleOverLoadedList() {
     runScreenTest {
       showMainContent(
         charactersFlow = staticContent(characters(1..PAGE_SIZE)),
         refreshInProgress = true,
       )
-      val screen = mainScreen()
+      val screen = MainScreen(this)
 
       // В готовом контенте своих спиннеров нет — единственный индикатор это PTR
       assertEquals(1, indeterminateProgressCount())
@@ -97,8 +102,8 @@ class MainScreenTest : BaseTestCase() {
   }
 
   @Test
-  @DisplayName("индикатор загрузки доступен для screen reader")
-  fun индикатор_загрузки_доступен_для_screen_reader() {
+  @DisplayName("У индикатора загрузки есть описание для программы чтения с экрана")
+  fun loadingIndicatorHasAccessibleDescription() {
     runScreenTest {
       showMainContent(
         charactersFlow = staticContent(emptyList(), refresh = LoadState.Loading),
@@ -106,35 +111,35 @@ class MainScreenTest : BaseTestCase() {
       )
 
       // Нода найдётся только если у спиннера есть contentDescription
-      mainScreen().loadingIndicator.assertIsDisplayed()
+      MainScreen(this).loadingIndicator.assertIsDisplayed()
     }
   }
 
   @Test
-  @DisplayName("ошибка первичной загрузки показывает текст ошибки и кнопку повторить")
-  fun ошибка_первичной_загрузки_показывает_текст_ошибки_и_кнопку_повторить() {
+  @DisplayName("Ошибка первичной загрузки показывает текст ошибки и кнопку повторить")
+  fun initialLoadErrorShowsMessageAndRetry() {
     runScreenTest {
       showMainContent(
         charactersFlow = staticContent(emptyList(), refresh = connectionError()),
         contentLoadState = ContentLoadState.Error(connectionUiError()),
       )
-      val screen = mainScreen()
+      val screen = MainScreen(this)
 
-      screen.text(checkNotNull(activity).getString(R.string.error_connection)).assertIsDisplayed()
+      screen.error(R.string.error_connection).assertIsDisplayed()
       screen.retryButton.assertIsDisplayed()
     }
   }
 
   @Test
-  @DisplayName("повторить после ошибки перезапускает загрузку и показывает контент")
-  fun повторить_после_ошибки_перезапускает_загрузку_и_показывает_контент() {
+  @DisplayName("Повторить после ошибки перезапускает загрузку и показывает контент")
+  fun retryAfterErrorLoadsCharacters() {
     runScreenTest {
       // Источник падает один раз, затем отдаёт страницу: retry вызывает реальную перезагрузку
       showMainContent(
         charactersFlow = Pager(PagingConfig(pageSize = PAGE_SIZE)) { FailOncePagingSource() }.flow,
         contentLoadState = ContentLoadState.Error(connectionUiError()),
       )
-      val screen = mainScreen()
+      val screen = MainScreen(this)
 
       screen.retryButton.assertIsDisplayed().also { screen.retryButton.performClick() }
 
@@ -143,21 +148,21 @@ class MainScreenTest : BaseTestCase() {
   }
 
   @Test
-  @DisplayName("пустая страница предлагает обновить")
-  fun пустая_страница_предлагает_обновить() {
+  @DisplayName("Пустая страница предлагает обновить")
+  fun emptyPagePromptsRefresh() {
     runScreenTest {
       showMainContent(staticContent(emptyList()))
 
-      mainScreen().text(checkNotNull(activity).getString(R.string.characters_empty)).assertIsDisplayed()
+      MainScreen(this).emptyMessage.assertIsDisplayed()
     }
   }
 
   @Test
-  @DisplayName("скролл к концу списка автоматически подгружает следующую страницу")
-  fun скролл_к_концу_списка_автоматически_подгружает_следующую_страницу() {
+  @DisplayName("Прокрутка к концу списка автоматически загружает следующую страницу")
+  fun scrollingToEndLoadsNextPage() {
     runScreenTest {
       showMainContent(Pager(PagingConfig(pageSize = PAGE_SIZE)) { TwoPagesPagingSource() }.flow)
-      val screen = mainScreen()
+      val screen = MainScreen(this)
 
       onNodeWithTag("characters").performScrollToIndex(PAGE_SIZE * 2 - 1)
 
@@ -166,35 +171,35 @@ class MainScreenTest : BaseTestCase() {
   }
 
   @Test
-  @DisplayName("ошибка догрузки показывает ошибку в футере списка, а не на весь экран")
-  fun ошибка_догрузки_показывает_ошибку_в_футере_списка_а_не_на_весь_экран() {
+  @DisplayName("Ошибка догрузки показывает ошибку в футере списка, а не на весь экран")
+  fun appendErrorShowsInListFooter() {
     runScreenTest {
       showMainContent(
         charactersFlow = staticContent(characters(1..PAGE_SIZE), append = connectionError()),
         contentLoadState = ContentLoadState.Error(connectionUiError()),
       )
-      val screen = mainScreen()
+      val screen = MainScreen(this)
 
       // Контент остаётся на экране, ошибка — в футере
       screen.character("Персонаж 1").assertIsDisplayed()
 
       // Футер изначально за пределами экрана — докручиваем до него
       onNodeWithTag("characters").performScrollToIndex(PAGE_SIZE)
-      screen.text(checkNotNull(activity).getString(R.string.error_connection)).assertIsDisplayed()
+      screen.error(R.string.error_connection).assertIsDisplayed()
       screen.retryButton.assertIsDisplayed()
     }
   }
 
   @Test
-  @DisplayName("потягивание обновляет данные списка")
-  fun потягивание_обновляет_данные_списка() {
+  @DisplayName("Потягивание обновляет данные списка")
+  fun pullToRefreshLoadsNewCharacters() {
     runScreenTest {
       // Каждое поколение источника отдаёт новые имена: refresh создаёт источник заново
       var generation = 0
       showMainContent(
         Pager(PagingConfig(pageSize = PAGE_SIZE)) { GeneratingPagingSource(++generation) }.flow,
       )
-      val screen = mainScreen()
+      val screen = MainScreen(this)
       screen.character("Поколение 1 №1").assertIsDisplayed()
 
       onNodeWithTag("characters").performTouchInput { swipeDown() }
@@ -220,15 +225,6 @@ class MainScreenTest : BaseTestCase() {
         )
       }
     }
-  }
-
-  private fun AndroidComposeUiTest<ComponentActivity>.mainScreen(): MainScreenObject {
-    val activity = checkNotNull(activity)
-    return MainScreenObject(
-      provider = this,
-      loadingDescription = activity.getString(R.string.characters_loading),
-      retryText = activity.getString(R.string.characters_retry),
-    )
   }
 
   private fun AndroidComposeUiTest<ComponentActivity>.indeterminateProgressCount(): Int {
@@ -277,31 +273,6 @@ class MainScreenTest : BaseTestCase() {
           "",
         )
       }
-    }
-  }
-}
-
-private class MainScreenObject(
-  private val provider: SemanticsNodeInteractionsProvider,
-  loadingDescription: String,
-  retryText: String,
-) {
-  val loadingIndicator = KNode(provider) {
-    hasContentDescription(loadingDescription)
-  }
-  val retryButton = KNode(provider) {
-    hasText(retryText)
-  }
-
-  fun character(name: String): KNode {
-    return KNode(provider) {
-      hasText(name)
-    }
-  }
-
-  fun text(value: String): KNode {
-    return KNode(provider) {
-      hasText(value)
     }
   }
 }

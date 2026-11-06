@@ -8,7 +8,7 @@ import ru.sla.pure.android.di.AppGraph
  * Точка входа DI: держит [appGraph] — корневой граф Metro. Он создаётся при первом обращении
  * и живёт до конца процесса
  */
-class PureApplication : Application() {
+open class PureApplication : Application() {
   val appGraph: AppGraph by lazy { createGraphFactory<AppGraph.Factory>().create(this) }
-  val appFlowComponent by lazy { appGraph.appFlowFactory().create() }
+  open val appFlowComponent by lazy { appGraph.appFlowFactory().create() }
 }

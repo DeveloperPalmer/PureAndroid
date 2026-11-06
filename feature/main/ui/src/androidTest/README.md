@@ -1,78 +1,82 @@
-# UI-тесты CharacterDetails
+# UI-тесты feature main
 
-Тесты используют существующие Kaspresso 1.6.1, JUnit 5 и Compose Test API v2.
-Запускать на подключённом устройстве или эмуляторе с API 26+.
+Модуль использует Kaspresso 1.6.1, JUnit 5 и Compose Test API v2. Запускать на устройстве или эмуляторе
+с API 26+.
+
+## Изолированные тесты в androidTest
+
+Все 12 проверок экрана деталей собраны в `CharacterDetailsScreenTest`.
 
 ```powershell
 .\gradlew.bat :feature:main:ui:connectedDebugAndroidTest `
-  '-Pandroid.testInstrumentationRunnerArguments.package=ru.sla.pure.android.feature.main.ui.test.characterdetails'
+  '-Pandroid.testInstrumentationRunnerArguments.class=ru.sla.pure.android.feature.main.ui.test.characterdetails.CharacterDetailsScreenTest'
 ```
 
-Команда запускает все 12 проверок CharacterDetails: 6 компонентных, 5 экранных и 1 стресс-тест.
+Весь изолированный набор модуля, включая `MainScreenTest`:
 
+```powershell
+.\gradlew.bat :feature:main:ui:connectedDebugAndroidTest
+```
+
+XML-отчёт: `feature/main/ui/build/outputs/androidTest-results/connected/debug/*.xml`.
 HTML-отчёт: `feature/main/ui/build/reports/androidTests/connected/debug/index.html`.
+Количество тестов нужно сверять с XML, а не только с успешным завершением Gradle.
 
-## Покрытие
+### Покрытие CharacterDetails
 
-- `CharacterDetailsContentTest`: загрузка со старыми данными, `Ready` без данных,
-  четыре поля персонажа, одинаковые значения происхождения и текущего места,
-  ошибка со старыми данными, однократный вызов retry, возврат во всех состояниях.
-- `CharacterDetailsScreenTest`: настоящие `CharacterDetailsScreen`, ViewModel и MainModel;
-  загрузка нужного id, мгновенный ответ, ошибка соединения → retry → успех,
-  ошибка сервера → retry → другая ошибка → retry → успех, событие закрытия во время загрузки.
-- `CharacterDetailsScreen`: локаторы и повторяющиеся проверки состояния экрана.
-  Проверяется и наличие ожидаемых элементов, и отсутствие элементов других состояний.
+- 6 компонентных проверок состояний, полей, retry и возврата.
+- 5 экранных проверок с настоящими ViewModel и MainModel.
+- `opensCharacterDetailsRepeatedly` проверяет многократное открытие деталей. Аргумент `detailsIterations` меняет число повторов.
 
-`CharacterDetailsStressTest` проверяет многократное открытие деталей и также входит
-в указанную команду. Число повторов можно изменить аргументом `detailsIterations`.
+Здесь подменяется только `CharacterRepository` через MockK. ViewModel и MainModel настоящие. Это осознанно
+более низкий уровень, чем app-level E2E: `CompletableDeferred` управляет ответами и позволяет точно проверить
+loading, последовательность ошибок и количество вызовов без реальной сети.
 
-Тест мгновенного ответа обнаружил потерю результата при открытии экрана: `asLceState`
-и `successResults` подписываются отдельно, а стандартный `startOnSubscribe` ждёт только
-одного подписчика результата. Во ViewModel используется штатный
-`StartScheduled.Lazily(minResultsSubscribers = 2)`, чтобы загрузка начиналась после обеих
-подписок. Replay старого результата не включается, поскольку модель общая для разных персонажей.
+Page Object ограничен корнем экрана, кнопки находятся по строковым ресурсам и семантике нажатия, поля — по
+стабильным `CharacterDetailsTestTags`. Проверяется как наличие элементов текущего состояния, так и отсутствие
+элементов остальных состояний. Тесты не зависят от координат, индексов дочерних элементов и языка интерфейса.
 
-## Принятые подходы
+`CharacterDetailsViewModel` использует `StartScheduled.Lazily(minResultsSubscribers = 2)`: обе подписки должны
+быть установлены до старта загрузки, иначе мгновенный результат мог быть потерян. Replay старого результата
+не используется, поскольку MainModel общая для разных персонажей.
 
-- Page Object на стандартном `ComposeScreen` с дочерними `KNode`, ограниченными корнем экрана.
-  Для действий используется `KNode` из Kaspresso Compose Support.
-- Сценарии оформлены через `TestCase.run` и именованные `step`. Блок Kaspresso находится
-  внутри Compose test environment: во время обработки ошибки экран ещё открыт для диагностики.
-- Кнопки находятся по строковому ресурсу и семантике нажатия, индикатор — по progress semantics.
-  Полям даны стабильные test tags: происхождение и текущее место могут иметь одинаковый текст.
-  В тестах нет зависимости от языка интерфейса, координат и индексов дочерних элементов.
-- Изолированные проверки получают состояние и callbacks через `CharacterDetailsContent`.
-  Интеграционные сценарии подменяют только `CharacterRepository`; ViewModel не мокается.
-- Каждый тест получает новый репозиторий и scope. `CompletableDeferred` позволяет удерживать
-  загрузку до явного ответа теста, без `sleep`, таймеров и реальной сети.
-- UI синхронизируется средствами Compose и штатными перехватчиками Kaspresso.
-  Для запросов используется `coVerify` с ограниченным ожиданием, для событий навигации — `waitUntil`.
-- ViewModel принадлежит Activity и очищается при её закрытии; scope модели отменяется в `@AfterEach`.
+## Общие fixtures и app-level E2E
 
-## Общая инфраструктура
+`android-test-convention` включает `src/testFixtures` и подключает общий рантайм E2E и JSON.
+Модуль фичи объявляет зависимость от своего domain. В fixtures находятся:
 
-Все сценарии CharacterDetails принадлежат этому модулю. Page Object `CharacterDetailsScreen`
-описывает KNode, а production-компоненты используют константы `CharacterDetailsTestTags`.
-Новый тестируемый экран добавляет собственный Page Object и собственные теги.
+- `screen/characterdetails/CharacterDetailsScreen.kt` и `Mock.kt` — Page Object и общие данные;
+- `screen/main/MainScreen.kt` — общие взаимодействия со списком;
+- `test/CharacterHttpFixtures.kt` — JSON-контракты ответов;
+- `test/MainFlowE2ETestCase.kt` — абстрактный класс с двумя app-level E2E-сценариями.
 
-Общий `BaseTestCase` находится в `:core:testing` и подключён через androidTestImplementation.
-Он запускает Kaspresso внутри Compose Test API v2, не зависит от app и не попадает в production APK.
-Тестовые Application и runner в app сохранены отдельно и для этих тестов не используются.
+Собственные `testFixtures` автоматически входят и в feature test APK. Поэтому E2E-сценарии объявлены
+в абстрактном классе: runner не запускает его при `:feature:main:ui:connectedDebugAndroidTest`.
+Конкретный `ru.sla.pure.android.testing.feature.main.MainFlowE2ETest` находится в `app/src/androidTest` и наследует
+сценарии. Изолированный набор содержит 23 теста, app E2E — 2. Запуск:
 
-Репозиторий подменяется строгим MockK-моком из mockk-android. coEvery/coAnswers задают ответы,
-coVerify проверяет id и количество вызовов. CompletableDeferred удерживает загрузку до явного
-ответа теста. Данные персонажей остаются обычными объектами, ViewModel и MainModel — настоящими.
+```powershell
+.\gradlew.bat :app:connectedDebugAndroidTest `
+  '-Pandroid.testInstrumentationRunnerArguments.class=ru.sla.pure.android.testing.feature.main.MainFlowE2ETest'
+```
 
-Для Marathon соберите тестовый APK фичи и запустите CLI из корня:
+Проверяются список → детали → назад и HTTP 503 в деталях → retry → успех. Используются настоящие MainActivity,
+навигация, ViewModel, MainModel, repository, Retrofit, сериализация, мапперы и Room DAO. Подменяются только URL
+на `MockWebServer` и файловая Room на in-memory. В E2E нет mock-репозитория и `setContent`.
+
+При добавлении fixtures нельзя подключать feature data/implementation к `:app:testing`: общий runtime не должен
+зависеть от фич. Feature приносит собственные Page Objects, данные и сценарии через свой `testFixtures` artifact.
+
+## Marathon для изолированных тестов
 
 ```powershell
 .\gradlew.bat :feature:main:ui:assembleDebugAndroidTest
 marathon
 ```
 
-Marathonfile настроен на библиотечный APK и обнаружение тестов на устройстве (remote parser),
-поскольку используется JUnit 5. Запуск самим Marathon CLI в текущем окружении не проверен.
-Результаты сохраняются локально в build/reports/marathon. Отправки в Jira нет.
+Корневой `Marathonfile` настроен на библиотечный test APK и remote parser для JUnit 5. Результаты —
+`build/reports/marathon`. App E2E использует отдельный `Marathonfile.app-e2e`; см. `app/src/androidTest/README.md`.
+Marathon CLI в текущем окружении отсутствует, поэтому реальные запуски этих конфигураций не проверены.
 
 Официальные рекомендации:
 

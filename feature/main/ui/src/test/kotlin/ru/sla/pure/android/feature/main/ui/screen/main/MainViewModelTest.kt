@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orbitmvi.orbit.test.testWithInternalState
 import ru.sla.pure.android.core.domain.entity.ApiError
@@ -50,7 +51,8 @@ class MainViewModelTest {
   }
 
   @Test
-  fun `начальное состояние - контент в загрузке, refresh не активен`() = runTest(testDispatcher) {
+  @DisplayName("В начальном состоянии контент загружается, индикатор обновления выключен")
+  fun `initial state shows loading without refresh`() = runTest(testDispatcher) {
     val viewModel = MainViewModel(mainModel) {}
 
     viewModel.testWithInternalState(this) {
@@ -64,7 +66,8 @@ class MainViewModelTest {
   }
 
   @Test
-  fun `нажатие на персонажа отправляет событие флоу с его ID`() = runTest(testDispatcher) {
+  @DisplayName("Нажатие на персонажа отправляет событие флоу с его ID")
+  fun `opening a character emits a flow event with its ID`() = runTest(testDispatcher) {
     val events = mutableListOf<Event>()
     val viewModel = MainViewModel(mainModel) { events.add(it) }
 
@@ -74,14 +77,16 @@ class MainViewModelTest {
   }
 
   @Test
-  fun `состояние загрузки маппится в индикатор контента`() = runTest(testDispatcher) {
+  @DisplayName("Состояние загрузки маппится в индикатор контента")
+  fun `loading state shows the content indicator`() = runTest(testDispatcher) {
     val state = stateAfter(loadStates(refresh = LoadState.Loading))
 
     assertEquals(ContentLoadState.Loading, state.contentLoadState)
   }
 
   @Test
-  fun `активный refresh поверх контента включает refreshInProgress`() = runTest(testDispatcher) {
+  @DisplayName("Активный refresh поверх контента включает refreshInProgress")
+  fun `refresh with content sets refresh in progress`() = runTest(testDispatcher) {
     val state = stateAfter(
       loadStates(refresh = LoadState.Loading),
       itemsCount = 1,
@@ -91,7 +96,8 @@ class MainViewModelTest {
   }
 
   @Test
-  fun `первичная загрузка без данных не включает refreshInProgress`() = runTest(testDispatcher) {
+  @DisplayName("Первичная загрузка без данных не включает refreshInProgress")
+  fun `initial load without items does not set refresh in progress`() = runTest(testDispatcher) {
     // Иначе при пустом экране индикатор потягивания дублирует полноэкранный спиннер
     val state = stateAfter(loadStates(refresh = LoadState.Loading))
 
@@ -99,7 +105,8 @@ class MainViewModelTest {
   }
 
   @Test
-  fun `догрузка страницы не включает refreshInProgress`() = runTest(testDispatcher) {
+  @DisplayName("Догрузка страницы не включает refreshInProgress")
+  fun `append does not set refresh in progress`() = runTest(testDispatcher) {
     // Сначала готовность: догрузка возможна только когда первая страница уже загружена
     val state = stateAfter(
       loadStates(),
@@ -112,7 +119,8 @@ class MainViewModelTest {
   }
 
   @Test
-  fun `успешная загрузка переводит контент в готовность`() = runTest(testDispatcher) {
+  @DisplayName("Успешная загрузка переводит контент в готовность")
+  fun `successful load marks content as ready`() = runTest(testDispatcher) {
     val state = stateAfter(loadStates())
 
     assertEquals(ContentLoadState.Ready, state.contentLoadState)
@@ -120,7 +128,8 @@ class MainViewModelTest {
   }
 
   @Test
-  fun `ошибка обновления показывает ошибку контента`() = runTest(testDispatcher) {
+  @DisplayName("Ошибка обновления показывает ошибку контента")
+  fun `refresh failure shows a content error`() = runTest(testDispatcher) {
     val state = stateAfter(loadStates(refresh = LoadState.Error(ConnectivityError.NoConnection(null))))
 
     val error = state.contentLoadState as ContentLoadState.Error
@@ -129,7 +138,8 @@ class MainViewModelTest {
   }
 
   @Test
-  fun `таймаут показывается как ошибка соединения`() = runTest(testDispatcher) {
+  @DisplayName("Таймаут показывается как ошибка соединения")
+  fun `timeout shows a connection error`() = runTest(testDispatcher) {
     val cause = ConnectivityError.TimeOut(SocketTimeoutException())
     val state = stateAfter(loadStates(refresh = LoadState.Error(cause)))
     val error = state.contentLoadState as ContentLoadState.Error
@@ -139,7 +149,8 @@ class MainViewModelTest {
   }
 
   @Test
-  fun `SSL ошибка показывается как ошибка соединения`() = runTest(testDispatcher) {
+  @DisplayName("Ошибка SSL показывается как ошибка соединения")
+  fun `SSL failure shows a connection error`() = runTest(testDispatcher) {
     val cause = ConnectivityError.SSLError(SSLException("handshake failed"))
     val state = stateAfter(loadStates(refresh = LoadState.Error(cause)))
     val error = state.contentLoadState as ContentLoadState.Error
@@ -149,7 +160,8 @@ class MainViewModelTest {
   }
 
   @Test
-  fun `ошибка API показывается как ошибка сервера`() = runTest(testDispatcher) {
+  @DisplayName("Ошибка API показывается как ошибка сервера")
+  fun `API error shows a server error`() = runTest(testDispatcher) {
     val cause = ApiError(500, null, "Internal server error")
     val state = stateAfter(loadStates(refresh = LoadState.Error(cause)))
     val error = state.contentLoadState as ContentLoadState.Error
@@ -159,7 +171,8 @@ class MainViewModelTest {
   }
 
   @Test
-  fun `ошибка догрузки страницы тоже показывает ошибку контента`() = runTest(testDispatcher) {
+  @DisplayName("Ошибка догрузки страницы тоже показывает ошибку контента")
+  fun `append failure shows a content error`() = runTest(testDispatcher) {
     val state = stateAfter(
       loadStates(append = LoadState.Error(ConnectivityError.NoConnection(null)))
     )
@@ -168,7 +181,8 @@ class MainViewModelTest {
   }
 
   @Test
-  fun `загрузка важнее ошибки при конфликте состояний`() = runTest(testDispatcher) {
+  @DisplayName("Загрузка важнее ошибки при конфликте состояний")
+  fun `loading takes precedence over error`() = runTest(testDispatcher) {
     val state = stateAfter(
       loadStates(
         refresh = LoadState.Loading,
@@ -180,7 +194,8 @@ class MainViewModelTest {
   }
 
   @Test
-  fun `поток персонажей пробрасывается из модели без изменений`() = runTest(testDispatcher) {
+  @DisplayName("Поток персонажей пробрасывается из модели без изменений")
+  fun `characters flow is passed through from the model`() = runTest(testDispatcher) {
     val characters = flowOf(PagingData.empty<Character>())
     every { mainModel.characters } returns characters
 

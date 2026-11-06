@@ -1,0 +1,11 @@
+name: PureAndroid app E2E tests
+outputDir: build/reports/marathon-app-e2e
+shardingStrategy:
+  type: count
+  count: 2
+vendorConfiguration:
+  type: Android
+  applicationApk: app/build/outputs/apk/debug/app-debug.apk
+  testApplicationApk: app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+  testParserConfiguration:
+    type: remote

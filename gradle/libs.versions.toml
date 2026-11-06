@@ -40,6 +40,9 @@ mockk = "1.14.9"
 turbine = "1.2.1"
 testRunner = "1.7.0"
 testMonitor = "1.8.0"
+testOrchestrator = "1.6.1"
+androidxConcurrentFutures = "1.2.0"
+espressoIdlingResource = "3.7.0"
 kaspresso = "1.6.1"
 # Code quality
 detekt = "2.0.0-alpha.6"
@@ -118,6 +121,9 @@ paging-testing = { module = "androidx.paging:paging-testing", version.ref = "pag
 # Android instrumentation testing
 androidx-test-monitor = { module = "androidx.test:monitor", version.ref = "testMonitor" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "testRunner" }
+androidx-test-orchestrator = { module = "androidx.test:orchestrator", version.ref = "testOrchestrator" }
+androidx-concurrent-futures = { module = "androidx.concurrent:concurrent-futures", version.ref = "androidxConcurrentFutures" }
+androidx-espresso-idling-resource = { module = "androidx.test.espresso:espresso-idling-resource", version.ref = "espressoIdlingResource" }
 kaspresso = { module = "com.kaspersky.android-components:kaspresso", version.ref = "kaspresso" }
 kaspresso-compose-support = { module = "com.kaspersky.android-components:kaspresso-compose-support", version.ref = "kaspresso" }
 # Compose testing

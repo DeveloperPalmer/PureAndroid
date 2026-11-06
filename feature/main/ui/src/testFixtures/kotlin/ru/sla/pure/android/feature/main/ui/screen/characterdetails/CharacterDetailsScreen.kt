@@ -10,12 +10,12 @@ import io.github.kakaocup.compose.node.element.ComposeScreen
 import ru.sla.pure.android.core.resources.R
 import ru.sla.pure.android.feature.main.domain.entity.Character
 
-internal class CharacterDetailsScreen(
-    semanticsProvider: SemanticsNodeInteractionsProvider,
+class CharacterDetailsScreen(
+  semanticsProvider: SemanticsNodeInteractionsProvider,
 ) : ComposeScreen<CharacterDetailsScreen>(
-  semanticsProvider = semanticsProvider,
-  viewBuilderAction = { hasTestTag(CharacterDetailsTestTags.SCREEN) },
-) {
+    semanticsProvider = semanticsProvider,
+    viewBuilderAction = { hasTestTag(CharacterDetailsTestTags.SCREEN) },
+  ) {
   val backButton: KNode = child {
     hasText(R.string.character_details_back)
     hasClickAction()
@@ -28,10 +28,10 @@ internal class CharacterDetailsScreen(
 
   val loadingIndicator: KNode = child {
     addSemanticsMatcher(
-        SemanticsMatcher.expectValue(
-            SemanticsProperties.ProgressBarRangeInfo,
-            ProgressBarRangeInfo.Indeterminate
-        )
+      SemanticsMatcher.expectValue(
+        SemanticsProperties.ProgressBarRangeInfo,
+        ProgressBarRangeInfo.Indeterminate,
+      ),
     )
   }
 
@@ -78,7 +78,9 @@ internal class CharacterDetailsScreen(
     assertBackAvailable()
   }
 
-  fun assertError(@StringRes message: Int) {
+  fun assertError(
+    @StringRes message: Int
+  ) {
     error.assertIsDisplayed()
     error.assertTextEquals(message)
     retryButton.assertIsDisplayed()

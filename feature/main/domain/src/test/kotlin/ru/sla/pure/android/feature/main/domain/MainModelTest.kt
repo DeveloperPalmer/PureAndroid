@@ -6,6 +6,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import ru.sla.pure.android.core.domain.createCoroutineScope
 import ru.sla.pure.android.feature.main.domain.entity.Character
@@ -36,7 +37,8 @@ class MainModelTest {
   }
 
   @Test
-  fun `первая страница отображается начиная с первого персонажа`() = runTest {
+  @DisplayName("Первая страница отображается начиная с первого персонажа")
+  fun `first page starts with the first character`() = runTest {
     val items = model.characters.asSnapshot()
 
     // prefetchDistance по умолчанию равен pageSize, поэтому снапшот может захватить и вторую
@@ -45,7 +47,8 @@ class MainModelTest {
   }
 
   @Test
-  fun `вторая страница добавляется после первой`() = runTest {
+  @DisplayName("Вторая страница добавляется после первой")
+  fun `second page is appended after the first`() = runTest {
     val items = model.characters.asSnapshot {
       // Скролл к последнему элементу первой страницы запускает догрузку следующей
       scrollTo(index = PAGE_SIZE - 1)

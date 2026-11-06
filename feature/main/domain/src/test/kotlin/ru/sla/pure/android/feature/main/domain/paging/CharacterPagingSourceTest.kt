@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import ru.sla.pure.android.core.domain.entity.ApiError
@@ -27,7 +28,8 @@ class CharacterPagingSourceTest {
   private val source = CharacterPagingSource(repository)
 
   @Test
-  fun `отмена загрузки не превращается в ошибку Paging`() = runTest {
+  @DisplayName("Отмена загрузки не превращается в ошибку Paging")
+  fun `load cancellation is propagated`() = runTest {
     // Paging ждёт ошибки значением (LoadResult.Error), а отмену корутины — исключением
     coEvery { repository.readPage(1) } throws CancellationException("scope cancelled")
 
@@ -42,7 +44,8 @@ class CharacterPagingSourceTest {
   }
 
   @Test
-  fun `ошибка репозитория становится LoadResult Error`() = runTest {
+  @DisplayName("Ошибка репозитория возвращается как LoadResult.Error")
+  fun `repository failure returns a load error`() = runTest {
     val errors = listOf(
       ConnectivityError.NoConnection(null),
       ApiError(500, null, "Internal server error"),
@@ -64,7 +67,8 @@ class CharacterPagingSourceTest {
   }
 
   @Test
-  fun `refresh у позиции прокрутки восстанавливает страницу с этой позицией`() {
+  @DisplayName("Обновление восстанавливает страницу с текущей позицией прокрутки")
+  fun `refresh key restores the page containing the anchor`() {
     // Пользователь смотрит вторую страницу (элемент 25) → refresh должен начаться со страницы 2,
     // иначе после обновления список перепрыгнет на начало
     val state = PagingState(
@@ -91,7 +95,8 @@ class CharacterPagingSourceTest {
   }
 
   @Test
-  fun `refresh без позиции прокрутки начинается с первой страницы`() {
+  @DisplayName("Обновление без позиции прокрутки начинается с первой страницы")
+  fun `refresh without an anchor starts from the first page`() {
     val state = PagingState<Int, Character>(
       config = PagingConfig(
         pageSize = PAGE_SIZE
