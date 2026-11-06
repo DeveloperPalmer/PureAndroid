@@ -15,6 +15,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.orbitmvi.orbit.compose.collectAsState
@@ -26,15 +27,29 @@ import ru.sla.pure.android.uikit.theme.AppTheme
 fun CharacterDetailsScreen(viewModel: CharacterDetailsViewModel) {
   val state by viewModel.collectAsState()
 
+  CharacterDetailsContent(
+    state = state,
+    onNavigateBack = viewModel::onNavigateBack,
+    onRetry = viewModel::onRetry,
+  )
+}
+
+@Composable
+internal fun CharacterDetailsContent(
+  state: ViewState,
+  onNavigateBack: () -> Unit,
+  onRetry: () -> Unit,
+) {
   Column(
     modifier = Modifier
+      .testTag(CharacterDetailsTestTags.SCREEN)
       .fillMaxSize()
       .background(AppTheme.colors.backgroundPrimary)
       .windowInsetsPadding(WindowInsets.safeDrawing)
       .padding(16.dp),
     verticalArrangement = Arrangement.spacedBy(8.dp),
   ) {
-    TextButton(onClick = { viewModel.onNavigateBack() }) {
+    TextButton(onClick = onNavigateBack) {
       Text(stringResource(R.string.character_details_back))
     }
     val character = state.character
@@ -43,8 +58,11 @@ fun CharacterDetailsScreen(viewModel: CharacterDetailsViewModel) {
         CircularProgressIndicator()
       }
       is ContentLoadState.Error -> {
-        Text(stringResource(loadState.error.messageResource))
-        Button(onClick = { viewModel.onRetry() }) {
+        Text(
+          text = stringResource(loadState.error.messageResource),
+          modifier = Modifier.testTag(CharacterDetailsTestTags.DETAILS_ERROR),
+        )
+        Button(onClick = onRetry) {
           Text(stringResource(R.string.characters_retry))
         }
       }
@@ -52,10 +70,14 @@ fun CharacterDetailsScreen(viewModel: CharacterDetailsViewModel) {
         if (character == null) {
           CircularProgressIndicator()
         } else {
-          Text(text = character.name, style = AppTheme.typography.headline)
-          Text(text = character.species)
-          Text(text = character.origin.name)
-          Text(text = character.location.name)
+          Text(
+            text = character.name,
+            modifier = Modifier.testTag(CharacterDetailsTestTags.DETAILS_NAME),
+            style = AppTheme.typography.headline,
+          )
+          Text(text = character.species, modifier = Modifier.testTag(CharacterDetailsTestTags.DETAILS_SPECIES))
+          Text(text = character.origin.name, modifier = Modifier.testTag(CharacterDetailsTestTags.DETAILS_ORIGIN))
+          Text(text = character.location.name, modifier = Modifier.testTag(CharacterDetailsTestTags.DETAILS_LOCATION))
         }
       }
     }

@@ -38,6 +38,7 @@ include(
   ":core:resources",
   ":core:routing",
   ":core:ui",
+  ":core:testing",
   ":feature:app",
   ":feature:main:domain",
   ":feature:main:data",

@@ -13,4 +13,7 @@ dependencies {
   api(projects.uikit)
   implementation(libs.paging.compose)
   implementation(projects.feature.main.domain)
+  androidTestImplementation(libs.androidx.lifecycle.viewmodel.compose)
+  androidTestImplementation(projects.core.testing)
+  androidTestImplementation(libs.mockk.android)
 }

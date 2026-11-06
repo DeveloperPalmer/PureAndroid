@@ -12,7 +12,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeDown
-import androidx.compose.ui.test.v2.runAndroidComposeUiTest
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.Pager
@@ -21,16 +20,14 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.kaspersky.components.composesupport.config.withComposeSupport
 import com.kaspersky.components.composesupport.core.KNode
-import com.kaspersky.kaspresso.kaspresso.Kaspresso
-import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import ru.sla.pure.android.core.resources.R
+import ru.sla.pure.android.core.testing.BaseTestCase
 import ru.sla.pure.android.core.ui.entity.ContentLoadState
 import ru.sla.pure.android.core.ui.entity.UiError
 import ru.sla.pure.android.feature.main.domain.entity.Character
@@ -42,11 +39,11 @@ import ru.sla.pure.android.uikit.theme.AppTheme
 import java.io.IOException
 
 @OptIn(ExperimentalTestApi::class)
-class MainScreenTest : TestCase(Kaspresso.Builder.withComposeSupport()) {
+class MainScreenTest : BaseTestCase() {
   @Test
   @DisplayName("первичная загрузка показывает спиннер контента без индикатора потягивания")
-  fun `первичная_загрузка_показывает_спиннер_контента_без_индикатора_потягивания`() {
-    runAndroidComposeUiTest<ComponentActivity> {
+  fun первичная_загрузка_показывает_спиннер_контента_без_индикатора_потягивания() {
+    runScreenTest {
       showMainContent(
         charactersFlow = staticContent(emptyList(), refresh = LoadState.Loading),
         contentLoadState = ContentLoadState.Loading,
@@ -62,8 +59,8 @@ class MainScreenTest : TestCase(Kaspresso.Builder.withComposeSupport()) {
 
   @Test
   @DisplayName("успешная загрузка показывает список персонажей")
-  fun `успешная_загрузка_показывает_список_персонажей`() {
-    runAndroidComposeUiTest<ComponentActivity> {
+  fun успешная_загрузка_показывает_список_персонажей() {
+    runScreenTest {
       showMainContent(staticContent(characters(1..PAGE_SIZE)))
 
       mainScreen().character("Персонаж 1").assertIsDisplayed()
@@ -72,8 +69,8 @@ class MainScreenTest : TestCase(Kaspresso.Builder.withComposeSupport()) {
 
   @Test
   @DisplayName("после первичной загрузки список показан с начала")
-  fun `после_первичной_загрузки_список_показан_с_начала`() {
-    runAndroidComposeUiTest<ComponentActivity> {
+  fun после_первичной_загрузки_список_показан_с_начала() {
+    runScreenTest {
       // Регрессия на якорь скролла: раньше список открывался на футере загрузки
       showMainContent(staticContent(characters(1..PAGE_SIZE * 2)))
       val screen = mainScreen()
@@ -85,8 +82,8 @@ class MainScreenTest : TestCase(Kaspresso.Builder.withComposeSupport()) {
 
   @Test
   @DisplayName("индикатор потягивания виден поверх загруженного списка")
-  fun `индикатор_потягивания_виден_поверх_загруженного_списка`() {
-    runAndroidComposeUiTest<ComponentActivity> {
+  fun индикатор_потягивания_виден_поверх_загруженного_списка() {
+    runScreenTest {
       showMainContent(
         charactersFlow = staticContent(characters(1..PAGE_SIZE)),
         refreshInProgress = true,
@@ -101,8 +98,8 @@ class MainScreenTest : TestCase(Kaspresso.Builder.withComposeSupport()) {
 
   @Test
   @DisplayName("индикатор загрузки доступен для screen reader")
-  fun `индикатор_загрузки_доступен_для_screen_reader`() {
-    runAndroidComposeUiTest<ComponentActivity> {
+  fun индикатор_загрузки_доступен_для_screen_reader() {
+    runScreenTest {
       showMainContent(
         charactersFlow = staticContent(emptyList(), refresh = LoadState.Loading),
         contentLoadState = ContentLoadState.Loading,
@@ -115,8 +112,8 @@ class MainScreenTest : TestCase(Kaspresso.Builder.withComposeSupport()) {
 
   @Test
   @DisplayName("ошибка первичной загрузки показывает текст ошибки и кнопку повторить")
-  fun `ошибка_первичной_загрузки_показывает_текст_ошибки_и_кнопку_повторить`() {
-    runAndroidComposeUiTest<ComponentActivity> {
+  fun ошибка_первичной_загрузки_показывает_текст_ошибки_и_кнопку_повторить() {
+    runScreenTest {
       showMainContent(
         charactersFlow = staticContent(emptyList(), refresh = connectionError()),
         contentLoadState = ContentLoadState.Error(connectionUiError()),
@@ -130,8 +127,8 @@ class MainScreenTest : TestCase(Kaspresso.Builder.withComposeSupport()) {
 
   @Test
   @DisplayName("повторить после ошибки перезапускает загрузку и показывает контент")
-  fun `повторить_после_ошибки_перезапускает_загрузку_и_показывает_контент`() {
-    runAndroidComposeUiTest<ComponentActivity> {
+  fun повторить_после_ошибки_перезапускает_загрузку_и_показывает_контент() {
+    runScreenTest {
       // Источник падает один раз, затем отдаёт страницу: retry вызывает реальную перезагрузку
       showMainContent(
         charactersFlow = Pager(PagingConfig(pageSize = PAGE_SIZE)) { FailOncePagingSource() }.flow,
@@ -147,8 +144,8 @@ class MainScreenTest : TestCase(Kaspresso.Builder.withComposeSupport()) {
 
   @Test
   @DisplayName("пустая страница предлагает обновить")
-  fun `пустая_страница_предлагает_обновить`() {
-    runAndroidComposeUiTest<ComponentActivity> {
+  fun пустая_страница_предлагает_обновить() {
+    runScreenTest {
       showMainContent(staticContent(emptyList()))
 
       mainScreen().text(checkNotNull(activity).getString(R.string.characters_empty)).assertIsDisplayed()
@@ -157,8 +154,8 @@ class MainScreenTest : TestCase(Kaspresso.Builder.withComposeSupport()) {
 
   @Test
   @DisplayName("скролл к концу списка автоматически подгружает следующую страницу")
-  fun `скролл_к_концу_списка_автоматически_подгружает_следующую_страницу`() {
-    runAndroidComposeUiTest<ComponentActivity> {
+  fun скролл_к_концу_списка_автоматически_подгружает_следующую_страницу() {
+    runScreenTest {
       showMainContent(Pager(PagingConfig(pageSize = PAGE_SIZE)) { TwoPagesPagingSource() }.flow)
       val screen = mainScreen()
 
@@ -170,8 +167,8 @@ class MainScreenTest : TestCase(Kaspresso.Builder.withComposeSupport()) {
 
   @Test
   @DisplayName("ошибка догрузки показывает ошибку в футере списка, а не на весь экран")
-  fun `ошибка_догрузки_показывает_ошибку_в_футере_списка_а_не_на_весь_экран`() {
-    runAndroidComposeUiTest<ComponentActivity> {
+  fun ошибка_догрузки_показывает_ошибку_в_футере_списка_а_не_на_весь_экран() {
+    runScreenTest {
       showMainContent(
         charactersFlow = staticContent(characters(1..PAGE_SIZE), append = connectionError()),
         contentLoadState = ContentLoadState.Error(connectionUiError()),
@@ -190,8 +187,8 @@ class MainScreenTest : TestCase(Kaspresso.Builder.withComposeSupport()) {
 
   @Test
   @DisplayName("потягивание обновляет данные списка")
-  fun `потягивание_обновляет_данные_списка`() {
-    runAndroidComposeUiTest<ComponentActivity> {
+  fun потягивание_обновляет_данные_списка() {
+    runScreenTest {
       // Каждое поколение источника отдаёт новые имена: refresh создаёт источник заново
       var generation = 0
       showMainContent(
@@ -331,7 +328,7 @@ private class TwoPagesPagingSource : PagingSource<Int, Character>() {
     val page = params.key ?: 1
     val from = (page - 1) * PAGE_SIZE + 1
     return LoadResult.Page(
-      data = characters(from..from + PAGE_SIZE - 1),
+      data = characters(from..<from + PAGE_SIZE),
       prevKey = if (page > 1) page - 1 else null,
       nextKey = if (page < 2) page + 1 else null,
     )

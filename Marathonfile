@@ -1,0 +1,7 @@
+name: PureAndroid feature UI tests
+outputDir: build/reports/marathon
+vendorConfiguration:
+  type: Android
+  testApplicationApk: feature/main/ui/build/outputs/apk/androidTest/debug/ui-debug-androidTest.apk
+  testParserConfiguration:
+    type: remote
