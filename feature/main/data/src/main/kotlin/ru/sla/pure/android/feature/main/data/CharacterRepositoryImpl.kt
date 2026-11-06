@@ -27,10 +27,14 @@ class CharacterRepositoryImpl(
     val response = try {
       api.readPage(page)
     } catch (error: ConnectivityError) {
-      return dao.readPage(page)?.toDomainModel() ?: throw error
+      val (info, characters) = dao.readPage(page) ?: throw error
+      return info.toDomainModel(characters)
     }
     val result = response.toDomainModel(page)
-    dao.savePage(result.toCachePageInfo(), result.characters.map { it.toCacheEntity() })
+    dao.savePage(
+      result.toCachePageInfo(),
+      result.characters.map { it.toCacheEntity() }
+    )
     return result
   }
 

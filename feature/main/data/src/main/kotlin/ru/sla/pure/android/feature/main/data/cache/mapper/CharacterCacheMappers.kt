@@ -1,6 +1,5 @@
 package ru.sla.pure.android.feature.main.data.cache.mapper
 
-import ru.sla.pure.android.database.entity.CachedCharacterPage
 import ru.sla.pure.android.database.entity.CharacterEntity
 import ru.sla.pure.android.database.entity.CharacterPageEntity
 import ru.sla.pure.android.feature.main.domain.entity.Character
@@ -36,18 +35,18 @@ internal fun CharacterEntity.toDomainModel() = Character(
 )
 
 internal fun CharacterPage.toCachePageInfo() = CharacterPageEntity(
-  page = page,
+  current = page,
   totalCount = totalCount,
   totalPages = totalPages,
   nextPage = nextPage,
   previousPage = previousPage,
 )
 
-internal fun CachedCharacterPage.toDomainModel() = CharacterPage(
+internal fun CharacterPageEntity.toDomainModel(characters: List<CharacterEntity>) = CharacterPage(
   characters = characters.map { it.toDomainModel() },
-  page = info.page,
-  totalCount = info.totalCount,
-  totalPages = info.totalPages,
-  nextPage = info.nextPage,
-  previousPage = info.previousPage,
+  page = current,
+  totalCount = totalCount,
+  totalPages = totalPages,
+  nextPage = nextPage,
+  previousPage = previousPage,
 )
