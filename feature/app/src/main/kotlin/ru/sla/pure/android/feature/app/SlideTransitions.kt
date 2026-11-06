@@ -1,4 +1,4 @@
-package ru.sla.pure.android.navigation
+package ru.sla.pure.android.feature.app
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform

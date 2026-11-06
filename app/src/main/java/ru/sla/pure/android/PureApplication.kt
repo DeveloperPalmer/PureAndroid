@@ -10,4 +10,5 @@ import ru.sla.pure.android.di.AppGraph
  */
 class PureApplication : Application() {
   val appGraph: AppGraph by lazy { createGraphFactory<AppGraph.Factory>().create(this) }
+  val appFlowComponent by lazy { appGraph.appFlowFactory().create() }
 }

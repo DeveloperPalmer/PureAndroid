@@ -1,6 +1,6 @@
 package ru.sla.pure.android.app.data.di
 
-import android.app.Application
+import android.content.Context
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
@@ -12,7 +12,7 @@ import ru.sla.pure.android.database.dao.CharacterDao
 interface DatabaseModule {
   @Provides
   @SingleIn(AppScope::class)
-  fun provideDatabase(application: Application): CharacterDatabase = CharacterDatabase.create(application)
+  fun provideDatabase(applicationContext: Context): CharacterDatabase = CharacterDatabase.create(applicationContext)
 
   @Provides
   @SingleIn(AppScope::class)

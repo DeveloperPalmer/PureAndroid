@@ -1,23 +1,24 @@
-package ru.sla.pure.android.navigation
+package ru.sla.pure.android.feature.app
 
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import ru.sla.pure.android.core.routing.EntryProviderInstaller
+import ru.sla.pure.android.feature.app.entity.TopLevelDestination
 
-/**
- * Навигация приложения: один `NavDisplay` на все экраны. В Navigation 3 стеком владеет само
- * приложение: это обычные списки ключей в [NavigationState], а переходы делает [AppNavigator].
- * Экраны приходят из модулей routing фич через [entryProviderInstallers], и они же по колбэкам
- * экранов вызывают переходы [AppNavigator]. Модули ui приложению не видны.
- * Нижнюю панель декоратор сцен добавляет записям с `showNavigationBar()`.
- */
 @Composable
-fun AppNavigation(
+fun AppFlowHost(
+  navigator: AppNavigator,
   entryProviderInstallers: Set<EntryProviderInstaller>,
   modifier: Modifier = Modifier,
 ) {
@@ -25,11 +26,15 @@ fun AppNavigation(
     startRoute = TopLevelDestination.entries.first().route,
     topLevelRoutes = TOP_LEVEL_ROUTES,
   )
-  val navigator = remember(navigationState) { AppNavigator(navigationState) }
 
-  val entryProvider = entryProvider<NavKey> {
+  DisposableEffect(navigator, navigationState) {
+    navigator.attach(navigationState)
+    onDispose { navigator.detach(navigationState) }
+  }
+
+  val entryProvider = entryProvider {
     entryProviderInstallers.forEach { installer ->
-      with(installer) { install(navigator) }
+      with(installer) { install() }
     }
   }
 
@@ -38,14 +43,15 @@ fun AppNavigation(
   SharedTransitionLayout(modifier) {
     val navigationBarDecorator = rememberNavigationBarSceneDecoratorStrategy<NavKey>(
       sharedTransitionScope = this,
-    ) {
-      AppNavigationBar(
-        selectedRoute = navigationState.topLevelRoute,
-        onSelect = navigator::navigateTo,
-      )
-    }
+      navigationBar = {
+        AppNavigationBar(
+          selectedRoute = navigationState.topLevelRoute,
+          onSelect = navigator::navigateTo,
+        )
+      }
+    )
     NavDisplay(
-      entries = navigationState.toEntries(entryProvider),
+      entries = navigationState.entries(entryProvider),
       onBack = navigator::navigateBack,
       sceneDecoratorStrategies = listOf(navigationBarDecorator),
       sharedTransitionScope = this,
@@ -53,6 +59,23 @@ fun AppNavigation(
       popTransitionSpec = SlideTransitions.back(),
       predictivePopTransitionSpec = SlideTransitions.predictiveBack(),
     )
+  }
+}
+
+@Composable
+private fun AppNavigationBar(
+  selectedRoute: NavKey,
+  onSelect: (NavKey) -> Unit,
+) {
+  NavigationBar {
+    TopLevelDestination.entries.forEach { destination ->
+      NavigationBarItem(
+        selected = destination.route == selectedRoute,
+        onClick = { onSelect(destination.route) },
+        icon = { Icon(painterResource(destination.icon), contentDescription = null) },
+        label = { Text(stringResource(destination.label)) },
+      )
+    }
   }
 }
 

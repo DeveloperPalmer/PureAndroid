@@ -17,7 +17,5 @@ dependencies {
   implementation(libs.androidx.activity.compose)
   implementation(libs.androidx.annotation)
   implementation(projects.app.data)
-  implementation(projects.core.routing)
-  implementation(projects.feature.main.routing)
-  implementation(projects.feature.map.routing)
+  implementation(projects.feature.app)
 }

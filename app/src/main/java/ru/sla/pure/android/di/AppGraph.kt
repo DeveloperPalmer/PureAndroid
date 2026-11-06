@@ -1,11 +1,10 @@
 package ru.sla.pure.android.di
 
-import android.app.Application
+import android.content.Context
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
-import dev.zacsweers.metro.Multibinds
 import dev.zacsweers.metro.Provides
-import ru.sla.pure.android.core.routing.EntryProviderInstaller
+import ru.sla.pure.android.feature.app.di.AppFlowComponent
 
 /**
  * Корневой граф: живёт столько же, сколько процесс. `@DependencyGraph(AppScope::class)` добавляет
@@ -14,13 +13,12 @@ import ru.sla.pure.android.core.routing.EntryProviderInstaller
  */
 @DependencyGraph(AppScope::class)
 interface AppGraph {
+  fun appFlowFactory(): AppFlowComponent.Factory
+
   @DependencyGraph.Factory
   interface Factory {
     fun create(
-      @Provides application: Application
+      @Provides applicationContext: Context
     ): AppGraph
   }
-
-  @Multibinds(allowEmpty = true)
-  fun entryProviderInstallers(): Set<EntryProviderInstaller>
 }

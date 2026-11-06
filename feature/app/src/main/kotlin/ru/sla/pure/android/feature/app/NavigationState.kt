@@ -1,4 +1,4 @@
-package ru.sla.pure.android.navigation
+package ru.sla.pure.android.feature.app
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -41,6 +41,32 @@ class NavigationState(
     } else {
       listOf(startRoute, topLevelRoute)
     }
+
+  /**
+   * Записи для `NavDisplay`. Декораторы оборачивают каждую запись, и у каждого стека они свои:
+   * - `SaveableStateHolder` хранит `rememberSaveable` экранов, в том числе скрытой вкладки;
+   * - `ViewModelStore` даёт записи своё хранилище ViewModel. ViewModel живёт, пока запись в стеке,
+   *   и очищается, когда запись из него уходит. Без него ViewModel жили бы в Activity, и экраны
+   *   деталей разных городов получили бы один экземпляр;
+   * - декоратор флоу даёт записям флоу общий DI-граф, который лежит в хранилище корня флоу. Он делит
+   *   с предыдущим декоратором один `ViewModelStoreProvider`, поэтому видит те же хранилища записей.
+   */
+  @Composable
+  fun entries(entryProvider: EntryProvider): List<NavEntry<NavKey>> {
+    val decoratedEntries = backStacks.mapValues { (_, backStack) ->
+      val viewModelStoreProvider = rememberViewModelStoreProvider()
+      rememberDecoratedNavEntries(
+        backStack = backStack,
+        entryProvider = entryProvider,
+        entryDecorators = listOf(
+          rememberSaveableStateHolderNavEntryDecorator(),
+          rememberViewModelStoreNavEntryDecorator(viewModelStoreProvider),
+          rememberFlowNavEntryDecorator(backStack, viewModelStoreProvider),
+        ),
+      )
+    }
+    return stacksInUse.flatMap { route -> decoratedEntries.getValue(route) }
+  }
 }
 
 @Composable
@@ -63,28 +89,4 @@ fun rememberNavigationState(
   }
 }
 
-/**
- * Записи для `NavDisplay`. Декораторы оборачивают каждую запись, и у каждого стека они свои:
- * - `SaveableStateHolder` хранит `rememberSaveable` экранов, в том числе скрытой вкладки;
- * - `ViewModelStore` даёт записи своё хранилище ViewModel. ViewModel живёт, пока запись в стеке,
- *   и очищается, когда запись из него уходит. Без него ViewModel жили бы в Activity, и экраны
- *   деталей разных городов получили бы один экземпляр;
- * - декоратор флоу даёт записям флоу общий DI-граф, который лежит в хранилище корня флоу. Он делит
- *   с предыдущим декоратором один `ViewModelStoreProvider`, поэтому видит те же хранилища записей.
- */
-@Composable
-fun NavigationState.toEntries(entryProvider: (NavKey) -> NavEntry<NavKey>): List<NavEntry<NavKey>> {
-  val decoratedEntries = backStacks.mapValues { (_, backStack) ->
-    val viewModelStoreProvider = rememberViewModelStoreProvider()
-    rememberDecoratedNavEntries(
-      backStack = backStack,
-      entryDecorators = listOf(
-        rememberSaveableStateHolderNavEntryDecorator(),
-        rememberViewModelStoreNavEntryDecorator(viewModelStoreProvider),
-        rememberFlowNavEntryDecorator(backStack, viewModelStoreProvider),
-      ),
-      entryProvider = entryProvider,
-    )
-  }
-  return stacksInUse.flatMap { route -> decoratedEntries.getValue(route) }
-}
+internal typealias EntryProvider = (NavKey) -> NavEntry<NavKey>

@@ -55,8 +55,8 @@ fun <T : Any> rememberFlowNavEntryDecorator(
 ): FlowNavEntryDecorator<T> {
   return remember(viewModelStoreProvider, backStack) {
     FlowNavEntryDecorator(
-      viewModelStoreProvider = viewModelStoreProvider,
       backStack = backStack,
+      viewModelStoreProvider = viewModelStoreProvider,
     )
   }
 }
