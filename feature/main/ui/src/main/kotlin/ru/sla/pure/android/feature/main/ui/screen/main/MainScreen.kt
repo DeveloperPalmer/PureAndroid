@@ -1,6 +1,7 @@
 package ru.sla.pure.android.feature.main.ui.screen.main
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -58,6 +59,7 @@ fun MainScreen(viewModel: MainViewModel) {
     characters = characters,
     contentLoadState = state.contentLoadState,
     refreshInProgress = state.refreshInProgress,
+    onOpenCharacter = { id -> viewModel.onOpenCharacter(id) },
   )
 }
 
@@ -66,6 +68,7 @@ internal fun MainContent(
   modifier: Modifier = Modifier,
   characters: LazyPagingItems<Character>,
   contentLoadState: ContentLoadState,
+  onOpenCharacter: (Int) -> Unit,
   refreshInProgress: Boolean = false,
 ) {
   Column(
@@ -106,7 +109,8 @@ internal fun MainContent(
             .fillMaxSize()
             .testTag(tag = "characters"),
           characters = characters,
-          contentLoadState = contentLoadState
+          contentLoadState = contentLoadState,
+          onOpenCharacter = onOpenCharacter,
         )
       }
     }
@@ -154,6 +158,7 @@ private fun ReadyContent(
   modifier: Modifier = Modifier,
   characters: LazyPagingItems<Character>,
   contentLoadState: ContentLoadState,
+  onOpenCharacter: (Int) -> Unit,
 ) {
   LazyColumn(
     modifier = modifier,
@@ -164,7 +169,10 @@ private fun ReadyContent(
       count = characters.itemCount,
     ) { index ->
       characters[index]?.let { character ->
-        CharacterRow(character = character)
+        CharacterRow(
+          character = character,
+          onClick = { onOpenCharacter(character.id) }
+        )
       }
     }
     item(key = "load-state") {
@@ -177,10 +185,14 @@ private fun ReadyContent(
 }
 
 @Composable
-private fun CharacterRow(character: Character) {
+private fun CharacterRow(
+  character: Character,
+  onClick: () -> Unit
+) {
   Column(
     modifier = Modifier
       .fillMaxWidth()
+      .clickable(onClick = onClick)
       .padding(horizontal = 16.dp, vertical = 12.dp),
     verticalArrangement = Arrangement.spacedBy(space = 4.dp),
   ) {

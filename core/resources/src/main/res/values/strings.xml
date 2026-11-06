@@ -16,6 +16,7 @@
     <string name="character_dead">Мёртв</string>
     <string name="character_unknown">Статус неизвестен</string>
     <string name="character_description">%1$s · %2$s</string>
+    <string name="character_details_back">Назад</string>
 
     <!-- Карта -->
     <string name="map_title">Карта</string>

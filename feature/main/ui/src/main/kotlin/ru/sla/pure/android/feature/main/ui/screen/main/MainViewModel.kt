@@ -8,19 +8,26 @@ import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.binding
 import dev.zacsweers.metrox.viewmodel.ViewModelKey
 import org.orbitmvi.orbit.viewmodel.orbitContainer
+import ru.sla.pure.android.core.ui.FlowEventSink
 import ru.sla.pure.android.core.ui.mvi.BaseViewModel
 import ru.sla.pure.android.core.ui.toUiLceState
 import ru.sla.pure.android.feature.main.domain.MainModel
 import ru.sla.pure.android.feature.main.domain.di.MainScope
 import ru.sla.pure.android.feature.main.domain.paging.asLceState
+import ru.sla.pure.android.feature.main.ui.routing.MainFlowEvent
 
 @ViewModelKey
 @ContributesIntoMap(MainScope::class, binding<ViewModel>())
 class MainViewModel @Inject constructor(
   mainModel: MainModel,
+  private val flowEventSink: FlowEventSink,
 ) : BaseViewModel<ViewState, Nothing>() {
   override val container = orbitContainer<ViewState, Nothing>(ViewState()) {
     reduce { state.copy(characters = mainModel.characters) }
+  }
+
+  fun onOpenCharacter(characterId: Int) = intent {
+    flowEventSink.sendEvent(MainFlowEvent.CharacterDetailsRequested(characterId))
   }
 
   fun onLoadStatesChanged(loadStates: CombinedLoadStates) = intent {

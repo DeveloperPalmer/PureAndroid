@@ -7,4 +7,7 @@ import kotlinx.serialization.Serializable
 sealed interface MainRoute : NavKey {
   @Serializable
   data object Main : MainRoute
+
+  @Serializable
+  data class CharacterDetails(val characterId: Int) : MainRoute
 }

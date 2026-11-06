@@ -219,6 +219,7 @@ class MainScreenTest : TestCase(Kaspresso.Builder.withComposeSupport()) {
           characters = charactersFlow.collectAsLazyPagingItems(),
           contentLoadState = contentLoadState,
           refreshInProgress = refreshInProgress,
+          onOpenCharacter = {},
         )
       }
     }

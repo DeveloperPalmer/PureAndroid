@@ -52,6 +52,7 @@ private fun MainContentPreview() {
     MainContent(
       characters = data.collectAsLazyPagingItems(),
       contentLoadState = ContentLoadState.Ready,
+      onOpenCharacter = {},
     )
   }
 }

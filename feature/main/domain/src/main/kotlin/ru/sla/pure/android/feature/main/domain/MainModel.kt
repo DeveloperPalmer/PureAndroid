@@ -9,6 +9,7 @@ import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineScope
 import ru.sla.pure.android.core.domain.ReactiveModel
 import ru.sla.pure.android.feature.main.domain.di.MainScope
+import ru.sla.pure.android.feature.main.domain.entity.Character
 import ru.sla.pure.android.feature.main.domain.paging.CharacterPagingSource
 
 @SingleIn(MainScope::class)
@@ -25,6 +26,10 @@ class MainModel @Inject constructor(
     ),
     pagingSourceFactory = { CharacterPagingSource(repository) },
   ).flow.cachedIn(scope)
+
+  val loadCharacter = task<Int, Character> { characterId ->
+    repository.readCharacter(characterId)
+  }
 }
 
 internal const val PAGE_SIZE = 20

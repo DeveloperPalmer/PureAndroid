@@ -8,12 +8,17 @@ import dev.zacsweers.metro.Multibinds
 import ru.sla.pure.android.core.routing.AppFlowScope
 import ru.sla.pure.android.core.routing.EntryProviderInstaller
 import ru.sla.pure.android.core.routing.Navigator
+import ru.sla.pure.android.core.ui.FlowEventSink
 import ru.sla.pure.android.feature.app.AppNavigator
+import ru.sla.pure.android.feature.main.routing.MainFlow
 
 @GraphExtension(AppFlowScope::class)
 interface AppFlowComponent {
   @Binds
   val AppNavigator.bindNavigator: Navigator
+
+  @Binds
+  val MainFlow.bindFlowEventSink: FlowEventSink
 
   fun appNavigator(): AppNavigator
 

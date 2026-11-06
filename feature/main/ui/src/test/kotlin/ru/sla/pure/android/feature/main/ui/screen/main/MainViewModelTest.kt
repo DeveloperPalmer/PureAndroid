@@ -25,9 +25,11 @@ import org.orbitmvi.orbit.test.testWithInternalState
 import ru.sla.pure.android.core.domain.entity.ApiError
 import ru.sla.pure.android.core.domain.entity.ConnectivityError
 import ru.sla.pure.android.core.resources.R
+import ru.sla.pure.android.core.ui.Event
 import ru.sla.pure.android.core.ui.entity.ContentLoadState
 import ru.sla.pure.android.feature.main.domain.MainModel
 import ru.sla.pure.android.feature.main.domain.entity.Character
+import ru.sla.pure.android.feature.main.ui.routing.MainFlowEvent
 import java.net.SocketTimeoutException
 import javax.net.ssl.SSLException
 
@@ -49,7 +51,7 @@ class MainViewModelTest {
 
   @Test
   fun `начальное состояние - контент в загрузке, refresh не активен`() = runTest(testDispatcher) {
-    val viewModel = MainViewModel(mainModel)
+    val viewModel = MainViewModel(mainModel) {}
 
     viewModel.testWithInternalState(this) {
       val initial = containerHost.container.stateFlow.value
@@ -59,6 +61,16 @@ class MainViewModelTest {
 
       cancelAndIgnoreRemainingItems()
     }
+  }
+
+  @Test
+  fun `нажатие на персонажа отправляет событие флоу с его ID`() = runTest(testDispatcher) {
+    val events = mutableListOf<Event>()
+    val viewModel = MainViewModel(mainModel) { events.add(it) }
+
+    viewModel.onOpenCharacter(42).join()
+
+    assertEquals(listOf(MainFlowEvent.CharacterDetailsRequested(42)), events)
   }
 
   @Test
@@ -196,7 +208,7 @@ class MainViewModelTest {
     vararg changes: CombinedLoadStates,
     itemsCount: Int = 0,
   ): ViewState {
-    val viewModel = MainViewModel(mainModel)
+    val viewModel = MainViewModel(mainModel) {}
     lateinit var state: ViewState
     viewModel.testWithInternalState(this) {
       runOnCreate()
