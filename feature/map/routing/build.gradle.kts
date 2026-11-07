@@ -9,6 +9,6 @@ android {
 }
 
 dependencies {
-  implementation(projects.core.routing)
   api(projects.feature.map.ui)
+  implementation(projects.core.routing)
 }

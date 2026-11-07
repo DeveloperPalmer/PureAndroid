@@ -9,8 +9,8 @@ android {
 }
 
 dependencies {
-  implementation(libs.androidx.annotation)
   api(projects.core.routing)
   api(projects.feature.main.routing)
   api(projects.feature.map.routing)
+  implementation(libs.androidx.annotation)
 }

@@ -26,8 +26,10 @@ dependencies {
   implementation(libs.androidx.annotation)
   implementation(projects.app.data)
   implementation(projects.feature.app)
+
   debugImplementation(libs.androidx.concurrent.futures)
   debugImplementation(libs.androidx.espresso.idling.resource)
+
   androidTestImplementation(libs.androidx.concurrent.futures)
   androidTestImplementation(libs.androidx.espresso.idling.resource)
   androidTestImplementation(libs.androidx.test.runner)

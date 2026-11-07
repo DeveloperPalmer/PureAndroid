@@ -9,7 +9,6 @@ android {
 
 dependencies {
   api(projects.core.domain)
-  implementation(projects.core.resources)
   api(libs.bundles.compose)
   api(libs.androidx.lifecycle.common)
   api(libs.androidx.lifecycle.viewmodel)
@@ -17,4 +16,5 @@ dependencies {
   api(libs.orbit.core)
   api(libs.orbit.viewmodel)
   api(libs.orbit.compose)
+  implementation(projects.core.resources)
 }

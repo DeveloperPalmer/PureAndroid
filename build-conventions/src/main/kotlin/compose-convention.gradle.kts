@@ -17,5 +17,6 @@ dependencies {
     "implementation"
   }
   add(bomConfiguration, platform(libs.findLibrary("androidx.compose.bom").get()))
+
   add("debugImplementation", libs.findLibrary("androidx.compose.ui.tooling").get())
 }
