@@ -8,6 +8,7 @@ import dev.zacsweers.metro.SingleIn
 import ru.sla.pure.android.database.CharacterDatabase
 import ru.sla.pure.android.database.SettingsDatabase
 import ru.sla.pure.android.database.dao.CharacterDao
+import ru.sla.pure.android.database.dao.SettingsDao
 
 @ContributesTo(AppScope::class)
 interface DatabaseModule {
@@ -27,5 +28,11 @@ interface DatabaseModule {
   @SingleIn(AppScope::class)
   fun provideSettingsDatabase(applicationContext: Context): SettingsDatabase {
     return SettingsDatabase.create(applicationContext)
+  }
+
+  @Provides
+  @SingleIn(AppScope::class)
+  fun provideSettingsDao(database: SettingsDatabase): SettingsDao {
+    return database.settingsDao()
   }
 }
