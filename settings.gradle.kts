@@ -34,6 +34,7 @@ include(
   ":app:testing",
   ":openapi-schema",
   ":database",
+  ":build-config",
   ":core:data",
   ":core:domain",
   ":core:resources",

@@ -6,6 +6,30 @@ plugins {
 android {
   namespace = "ru.sla.pure.android"
 
+  buildFeatures {
+    buildConfig = true
+  }
+
+  signingConfigs {
+    getByName("debug") {
+      storeFile = file("debug.keystore")
+      storePassword = "android"
+      keyAlias = "androiddebugkey"
+      keyPassword = "android"
+    }
+  }
+
+  buildTypes {
+    debug {
+      applicationIdSuffix = ".debug"
+      signingConfig = signingConfigs.getByName("debug")
+      isDebuggable = true
+    }
+    release {
+      isDebuggable = false
+    }
+  }
+
   testOptions {
     animationsDisabled = true
     execution = "ANDROIDX_TEST_ORCHESTRATOR"
@@ -25,6 +49,7 @@ dependencies {
   implementation(libs.androidx.activity.compose)
   implementation(libs.androidx.annotation)
   implementation(projects.app.data)
+  implementation(projects.buildConfig)
   implementation(projects.feature.app)
 
   debugImplementation(libs.androidx.concurrent.futures)
