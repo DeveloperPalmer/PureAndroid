@@ -43,6 +43,7 @@ include(
   ":core:ui",
   ":core:testing",
   ":feature:app",
+  ":feature:login:domain",
   ":feature:main:domain",
   ":feature:main:data",
   ":feature:main:routing",
