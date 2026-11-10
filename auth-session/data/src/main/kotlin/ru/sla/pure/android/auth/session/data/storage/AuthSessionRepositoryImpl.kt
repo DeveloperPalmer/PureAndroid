@@ -3,9 +3,7 @@ package ru.sla.pure.android.auth.session.data.storage
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import ru.sla.pure.android.auth.session.data.AccessTokenRefresher
 import ru.sla.pure.android.auth.session.domain.AuthSessionRepository
 import ru.sla.pure.android.auth.session.domain.entity.AccessToken
@@ -73,8 +71,6 @@ class AuthSessionRepositoryImpl @Inject constructor(
 
   override suspend fun cleanupStorage(key: SessionKey) {
     // Кэш персонажей общий для всех сессий, поэтому очищаем его целиком.
-    withContext(Dispatchers.IO) {
-      characterDatabase.clearAllTables()
-    }
+    characterDatabase.clearAllTables()
   }
 }

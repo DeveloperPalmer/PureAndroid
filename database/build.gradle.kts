@@ -1,21 +1,20 @@
 plugins {
   id("android-library-convention")
   alias(libs.plugins.ksp)
+  alias(libs.plugins.androidx.room3)
 }
 
 android {
   namespace = "ru.sla.pure.android.database"
 }
 
-ksp {
-  arg("room.schemaLocation", "$projectDir/schemas")
+room3 {
+  schemaDirectory("$projectDir/schemas")
 }
 
 dependencies {
   api(projects.core.domain)
-  api(libs.room.runtime)
-  api(libs.room.common)
-  api(libs.androidx.sqlite)
+  api(libs.room3.runtime)
 
-  ksp(libs.room.compiler)
+  ksp(libs.room3.compiler)
 }

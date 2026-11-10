@@ -32,8 +32,8 @@ class AccessTokenRefresher @Inject constructor(
   /**
    * @param staleAccessToken токен, с которым вызывающий получил 401.
    * @return свежая пара либо `null`, если сессии уже нет.
-   * @throws ru.sla.pure.android.auth.session.domain.entity.RefreshRejectedException если сервер отверг refresh-токен. К этому моменту ключ
-   *   сессии уже стёрт, и приложение увидит `AuthSessionState.Inactive`.
+   * @throws ru.sla.pure.android.auth.session.domain.entity.RefreshRejectedException если сервер отверг refresh-токен.
+   * К этому моменту ключ сессии уже стёрт, и приложение увидит `AuthSessionState.Inactive`.
    */
   suspend fun refresh(staleAccessToken: AccessToken): AuthTokens? {
     return mutex.withLock {

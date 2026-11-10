@@ -1,13 +1,13 @@
 package ru.sla.pure.android.database.entity
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
+import androidx.room3.ColumnInfo
+import androidx.room3.ColumnTypeConverters
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
 import ru.sla.pure.android.database.converter.CharacterIdListConverter
 
 @Entity(tableName = "character_pages")
-@TypeConverters(CharacterIdListConverter::class)
+@ColumnTypeConverters(CharacterIdListConverter::class)
 data class CharacterPageEntity(
   @PrimaryKey
   @ColumnInfo(name = "page")

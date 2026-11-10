@@ -29,8 +29,7 @@ okio = "3.6.0"
 retrofit = "3.0.0"
 # Storage and paging
 paging = "3.5.1"
-room = "2.8.5"
-sqlite = "2.6.2"
+room3 = "3.0.3"
 # Testing
 junitJupiter = "5.14.4"
 junitPlatform = "1.14.4"
@@ -103,12 +102,10 @@ okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-kotlinx-serialization = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "retrofit" }
 # Storage and paging
-androidx-sqlite = { module = "androidx.sqlite:sqlite", version.ref = "sqlite" }
 paging-common = { module = "androidx.paging:paging-common", version.ref = "paging" }
 paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
-room-common = { module = "androidx.room:room-common", version.ref = "room" }
-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room3-compiler = { module = "androidx.room3:room3-compiler", version.ref = "room3" }
+room3-runtime = { module = "androidx.room3:room3-runtime", version.ref = "room3" }
 # Unit testing
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiter" }
@@ -190,6 +187,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 # Dependency injection and code generation
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+androidx-room3 = { id = "androidx.room3", version.ref = "room3" }
 # Code quality
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 # JUnit 5 на устройстве (androidTest)

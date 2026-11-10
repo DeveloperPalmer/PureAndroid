@@ -4,7 +4,6 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import ru.sla.pure.android.auth.session.domain.TokenRefresher
-import ru.sla.pure.android.auth.session.domain.entity.AuthTokens
 import ru.sla.pure.android.auth.session.domain.entity.RefreshRejectedException
 import ru.sla.pure.android.auth.session.domain.entity.RefreshToken
 

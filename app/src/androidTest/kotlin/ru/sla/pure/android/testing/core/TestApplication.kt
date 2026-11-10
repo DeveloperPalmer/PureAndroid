@@ -1,6 +1,7 @@
 package ru.sla.pure.android.testing.core
 
-import androidx.room.Room
+import androidx.room3.Room
+import androidx.sqlite.driver.AndroidSQLiteDriver
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Provides
@@ -25,7 +26,9 @@ class TestApplication : PureApplication(), AppUnderTest {
 
   override fun install(baseUrl: String) {
     check(testFlow == null) { "The test graph is already installed" }
-    val database = Room.inMemoryDatabaseBuilder(this, CharacterDatabase::class.java).build()
+    val database = Room.inMemoryDatabaseBuilder(this, CharacterDatabase::class.java)
+      .setDriver(AndroidSQLiteDriver())
+      .build()
     testDatabase = database
     testFlow = createGraphFactory<TestAppGraph.Factory>()
       .create(

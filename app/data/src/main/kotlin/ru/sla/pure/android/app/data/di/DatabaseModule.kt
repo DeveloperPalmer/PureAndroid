@@ -6,15 +6,26 @@ import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
 import ru.sla.pure.android.database.CharacterDatabase
+import ru.sla.pure.android.database.SettingsDatabase
 import ru.sla.pure.android.database.dao.CharacterDao
 
 @ContributesTo(AppScope::class)
 interface DatabaseModule {
   @Provides
   @SingleIn(AppScope::class)
-  fun provideDatabase(applicationContext: Context): CharacterDatabase = CharacterDatabase.create(applicationContext)
+  fun provideDatabase(applicationContext: Context): CharacterDatabase {
+    return CharacterDatabase.create(applicationContext)
+  }
 
   @Provides
   @SingleIn(AppScope::class)
-  fun provideCharacterDao(database: CharacterDatabase): CharacterDao = database.characterDao()
+  fun provideCharacterDao(database: CharacterDatabase): CharacterDao {
+    return database.characterDao()
+  }
+
+  @Provides
+  @SingleIn(AppScope::class)
+  fun provideSettingsDatabase(applicationContext: Context): SettingsDatabase {
+    return SettingsDatabase.create(applicationContext)
+  }
 }
