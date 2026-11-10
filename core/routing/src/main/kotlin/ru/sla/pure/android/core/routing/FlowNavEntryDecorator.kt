@@ -71,7 +71,14 @@ private fun <T : Any> FlowContent(
   val holder = viewModel(
     key = flowKey,
     modelClass = FlowGraphHolder::class,
-    factory = viewModelFactory { initializer { FlowGraphHolder(flow.component()) } },
+    factory = viewModelFactory {
+      initializer {
+        FlowGraphHolder(
+          component = flow.component(),
+          flowKey = flowKey
+        )
+      }
+    },
     viewModelStoreOwner = rememberViewModelStoreOwner(
       key = flowKey,
       provider = viewModelStoreProvider
@@ -86,11 +93,15 @@ private fun <T : Any> FlowContent(
  * Обёртка-ViewModel над графом флоу: через неё граф лежит в хранилище флоу и удаляется вместе
  * с ним, а при удалении отменяет scope флоу: корутины моделей флоу не переживают сам флоу.
  */
-private class FlowGraphHolder(private val component: FlowComponent) : ViewModel() {
+private class FlowGraphHolder(
+  private val component: FlowComponent,
+  private val flowKey: String,
+) : ViewModel() {
   // Фабрика ViewModel не скоуплена в графе: берём её один раз, а не при каждой рекомпозиции
   val viewModelFactory: MetroViewModelFactory = component.metroViewModelFactory
 
   override fun onCleared() {
     component.flowCoroutineScope().cancel()
+    watchClearedFlow(this, component, flowKey)
   }
 }

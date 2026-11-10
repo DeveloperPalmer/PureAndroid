@@ -15,11 +15,6 @@ import ru.sla.pure.android.feature.main.ui.screen.characterdetails.CharacterDeta
 import ru.sla.pure.android.feature.main.ui.screen.characterdetails.CharacterDetailsViewModel
 import ru.sla.pure.android.feature.main.ui.screen.main.MainScreen
 
-/**
- * Экраны фичи «Главная»: какой экран показать по ключу. Главный экран — корень флоу «Главная».
- * ViewModel экранов берутся из графа флоу, а живут в хранилище своей записи.
- * `@ContributesIntoSet` добавляет установщик в корневой флоу.
- */
 @ContributesIntoSet(AppFlowScope::class)
 class MainEntryProviderInstaller @Inject constructor(
   private val componentFactory: MainFlowComponent.Factory,

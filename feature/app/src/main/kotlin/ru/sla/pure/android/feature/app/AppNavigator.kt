@@ -24,10 +24,10 @@ class AppNavigator @Inject constructor() : Navigator {
   /** Ключ вкладки переключает вкладку, любой другой ключ кладётся в стек текущей */
   override fun navigateTo(route: NavKey) {
     val state = navigationState ?: return
-    if (route in state.backStacks) {
+    if (route in state.topLevelBackStacks) {
       state.topLevelRoute = route
     } else {
-      val backStack = state.backStacks.getValue(state.topLevelRoute)
+      val backStack = state.topLevelBackStacks.getValue(state.topLevelRoute)
       if (backStack.last() != route) {
         backStack.add(route)
       }
@@ -37,7 +37,7 @@ class AppNavigator @Inject constructor() : Navigator {
   /** С корня вкладки — на стартовую вкладку, иначе — шаг назад в стеке текущей */
   override fun navigateBack() {
     val state = navigationState ?: return
-    val backStack = state.backStacks.getValue(state.topLevelRoute)
+    val backStack = state.topLevelBackStacks.getValue(state.topLevelRoute)
     if (backStack.last() == state.topLevelRoute) {
       state.topLevelRoute = state.startRoute
     } else {

@@ -2,13 +2,13 @@ package ru.sla.pure.android.feature.main.routing
 
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
-import ru.sla.pure.android.core.routing.AppFlowScope
 import ru.sla.pure.android.core.routing.Navigator
 import ru.sla.pure.android.core.ui.Event
 import ru.sla.pure.android.core.ui.FlowEventSink
+import ru.sla.pure.android.feature.main.domain.di.MainScope
 import ru.sla.pure.android.feature.main.ui.routing.MainFlowEvent
 
-@SingleIn(AppFlowScope::class)
+@SingleIn(MainScope::class)
 class MainFlow @Inject constructor(
   private val navigator: Navigator
 ) : FlowEventSink {

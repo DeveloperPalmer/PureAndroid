@@ -16,6 +16,12 @@ import ru.sla.pure.android.feature.main.domain.di.MainScope
  */
 @GraphExtension(MainScope::class)
 interface MainFlowComponent : FlowComponent {
+  @ContributesTo(AppFlowScope::class)
+  @GraphExtension.Factory
+  interface Factory {
+    fun create(): MainFlowComponent
+  }
+
   @ForScope(MainScope::class)
   override fun flowCoroutineScope(): CoroutineScope
 
@@ -24,11 +30,5 @@ interface MainFlowComponent : FlowComponent {
   @ForScope(MainScope::class)
   fun provideCoroutineScope(): CoroutineScope {
     return createCoroutineScope()
-  }
-
-  @ContributesTo(AppFlowScope::class)
-  @GraphExtension.Factory
-  interface Factory {
-    fun create(): MainFlowComponent
   }
 }

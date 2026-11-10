@@ -26,7 +26,7 @@ import ru.sla.pure.android.core.routing.rememberFlowNavEntryDecorator
 class NavigationState(
   val startRoute: NavKey,
   topLevelRoute: MutableState<NavKey>,
-  val backStacks: Map<NavKey, NavBackStack<NavKey>>,
+  val topLevelBackStacks: Map<NavKey, NavBackStack<NavKey>>,
 ) {
   var topLevelRoute: NavKey by topLevelRoute
 
@@ -53,7 +53,7 @@ class NavigationState(
    */
   @Composable
   fun entries(entryProvider: EntryProvider): List<NavEntry<NavKey>> {
-    val decoratedEntries = backStacks.mapValues { (_, backStack) ->
+    val decoratedEntries = topLevelBackStacks.mapValues { (_, backStack) ->
       val viewModelStoreProvider = rememberViewModelStoreProvider()
       rememberDecoratedNavEntries(
         backStack = backStack,
@@ -77,14 +77,14 @@ fun rememberNavigationState(
   val topLevelRoute = rememberSerializable(stateSerializer = NavKeySerializer()) {
     mutableStateOf(startRoute)
   }
-  val backStacks = topLevelRoutes.associateWith { route ->
+  val topLevelBackStacks = topLevelRoutes.associateWith { route ->
     rememberNavBackStack(route)
   }
   return remember(startRoute, topLevelRoutes) {
     NavigationState(
       startRoute = startRoute,
       topLevelRoute = topLevelRoute,
-      backStacks = backStacks
+      topLevelBackStacks = topLevelBackStacks
     )
   }
 }

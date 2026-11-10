@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.orbitmvi.orbit.viewmodel.orbitContainer
 import ru.kode.remo.QueueingStrategy
-import ru.kode.remo.StartScheduled
 import ru.kode.remo.successResults
+import ru.sla.pure.android.core.domain.model.startOnSubscribe
 import ru.sla.pure.android.core.ui.FlowEventSink
 import ru.sla.pure.android.core.ui.lce.asLceState
 import ru.sla.pure.android.core.ui.mvi.BaseViewModel
@@ -29,19 +29,14 @@ class CharacterDetailsViewModel @AssistedInject constructor(
 ) : BaseViewModel<ViewState, Nothing>() {
   @AssistedFactory
   @ManualViewModelAssistedFactoryKey
-  @ContributesIntoMap(
-    MainScope::class,
-    binding<ManualViewModelAssistedFactory>()
-  )
+  @ContributesIntoMap(MainScope::class, binding<ManualViewModelAssistedFactory>())
   fun interface Factory : ManualViewModelAssistedFactory {
     fun create(characterId: Int): CharacterDetailsViewModel
   }
 
   override val container = orbitContainer<ViewState, Nothing>(ViewState()) {
-    // Both asLceState and successResults must subscribe before a fast response can be emitted.
-    mainModel.loadCharacter.start(
+    mainModel.loadCharacter.startOnSubscribe(
       argument = characterId,
-      scheduled = StartScheduled.Lazily(minResultsSubscribers = 2),
       queueingStrategy = QueueingStrategy.SkipNew,
     )
 

@@ -44,6 +44,8 @@ testOrchestrator = "1.6.1"
 androidxConcurrentFutures = "1.2.0"
 espressoIdlingResource = "3.7.0"
 kaspresso = "1.6.1"
+# Debug diagnostics
+leakCanary = "3.0-alpha-9"
 # Code quality
 detekt = "2.0.0-alpha.6"
 detektRulesCompose = "1.4.0"
@@ -129,6 +131,8 @@ kaspresso-compose-support = { module = "com.kaspersky.android-components:kaspres
 # Compose testing
 androidx-compose-ui-test = { module = "androidx.compose.ui:ui-test" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
+# Debug diagnostics
+leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakCanary" }
 # Code quality
 detekt-plugin = { module = "dev.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 detekt-rules-compose = { module = "ru.kode:detekt-rules-compose", version.ref = "detektRulesCompose" }
