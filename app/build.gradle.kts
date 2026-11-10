@@ -1,6 +1,7 @@
 plugins {
   id("android-application-convention")
   id("android-test-convention")
+  alias(libs.plugins.google.services)
 }
 
 android {
