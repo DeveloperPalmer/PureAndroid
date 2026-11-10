@@ -35,6 +35,7 @@ include(
   ":openapi-schema",
   ":database",
   ":build-config",
+  ":auth-session:domain",
   ":core:data",
   ":core:domain",
   ":core:resources",
