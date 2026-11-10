@@ -36,6 +36,7 @@ include(
   ":database",
   ":build-config",
   ":auth-session:domain",
+  ":auth-session:data",
   ":core:data",
   ":core:domain",
   ":core:resources",
