@@ -50,6 +50,7 @@ include(
   ":feature:login:domain",
   ":feature:login:data",
   ":feature:login:ui",
+  ":feature:login:routing",
   ":feature:main:domain",
   ":feature:main:data",
   ":feature:main:routing",

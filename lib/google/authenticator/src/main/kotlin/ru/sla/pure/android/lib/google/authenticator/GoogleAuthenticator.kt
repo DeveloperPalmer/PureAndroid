@@ -26,10 +26,10 @@ import ru.sla.pure.android.core.domain.di.ActivityContext
 
 class GoogleAuthenticator @Inject constructor(
   @ActivityContext
-  private val context: Activity,
+  private val activity: Activity,
   private val buildConfig: BuildConfigProvider
 ) {
-  private val credentialManager = CredentialManager.create(context)
+  private val credentialManager = CredentialManager.create(activity)
   private val firebaseAuth = Firebase.auth
 
   @Suppress("TooGenericExceptionCaught")
@@ -65,7 +65,7 @@ class GoogleAuthenticator @Inject constructor(
         .addCredentialOption(signInWithGoogle)
         .build()
       credentialManager.getCredential(
-        context = context,
+        context = activity,
         request = request
       )
     }.getOrElse { e ->
@@ -74,7 +74,7 @@ class GoogleAuthenticator @Inject constructor(
       } else {
         credentialManager.getCredential(
           request = createGoogleIdRequest(clientId),
-          context = context
+          context = activity
         )
       }
     }

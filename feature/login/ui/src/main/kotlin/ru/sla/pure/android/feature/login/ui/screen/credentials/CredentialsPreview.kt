@@ -9,8 +9,8 @@ import ru.sla.pure.android.uikit.theme.AppTheme
 @Composable
 private fun CredentialsScreenPreviewLight() {
   AppTheme {
-    CredentialsScreen(
-      googleInProgress = true,
+    CredentialsContent(
+      state = CredentialsState(googleInProgress = true),
       onSignInByEmail = {},
       onSignInByGoogle = {},
     )
@@ -21,8 +21,8 @@ private fun CredentialsScreenPreviewLight() {
 @Composable
 private fun CredentialsScreenPreviewDark() {
   AppTheme {
-    CredentialsScreen(
-      googleInProgress = false,
+    CredentialsContent(
+      state = CredentialsState(),
       onSignInByEmail = {},
       onSignInByGoogle = {},
     )

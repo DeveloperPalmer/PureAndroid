@@ -5,4 +5,6 @@
     <string name="credentials_enter_by_google">Войдите через Google</string>
     <string name="credentials_enter_by_email">Войти по email</string>
     <string name="credentials_or">или</string>
+    <string name="credentials_sign_in_failed">Не удалось войти. Попробуйте ещё раз.</string>
+    <string name="credentials_email_unavailable">Вход по email пока недоступен.</string>
 </resources>

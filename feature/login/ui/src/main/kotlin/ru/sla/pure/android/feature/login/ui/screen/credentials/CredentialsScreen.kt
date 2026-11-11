@@ -35,31 +35,28 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.orbitmvi.orbit.compose.collectAsState
 import ru.sla.pure.android.feature.login.ui.R
 import ru.sla.pure.android.uikit.spacer.HSpacer
 import ru.sla.pure.android.uikit.spacer.VSpacer
 
 @Composable
-fun CredentialsScreen(
-  googleInProgress: Boolean,
-  onSignInByEmail: () -> Unit,
-  onSignInByGoogle: () -> Unit,
-) {
+fun CredentialsScreen(viewModel: CredentialsViewModel) {
+  val state by viewModel.collectAsState()
   CredentialsContent(
-    colors = if (isSystemInDarkTheme()) DarkCredentialsColors else LightCredentialsColors,
-    googleInProgress = googleInProgress,
-    onSignInByEmail = onSignInByEmail,
-    onSignInByGoogle = onSignInByGoogle,
+    state = state,
+    onSignInByEmail = { viewModel.onSignInByEmail() },
+    onSignInByGoogle = { viewModel.onSignInByGoogle() },
   )
 }
 
 @Composable
-private fun CredentialsContent(
-  colors: CredentialsColors,
-  googleInProgress: Boolean,
+internal fun CredentialsContent(
+  state: CredentialsState,
   onSignInByEmail: () -> Unit,
   onSignInByGoogle: () -> Unit,
 ) {
+  val colors = if (isSystemInDarkTheme()) DarkCredentialsColors else LightCredentialsColors
   Column(
     modifier = Modifier
       .fillMaxSize()
@@ -91,7 +88,7 @@ private fun CredentialsContent(
       text = stringResource(R.string.credentials_enter_by_google),
       containerColor = PrimaryButtonColor,
       contentColor = Color.White,
-      showLoading = googleInProgress,
+      showLoading = state.googleInProgress,
       onClick = onSignInByGoogle,
     )
     VSpacer(16.dp)
@@ -112,6 +109,16 @@ private fun CredentialsContent(
       border = BorderStroke(Dp.Hairline, colors.cardSecondary),
       onClick = onSignInByEmail,
     )
+    state.message?.let { message ->
+      VSpacer(16.dp)
+      Text(
+        modifier = Modifier.padding(horizontal = 24.dp),
+        text = stringResource(message),
+        color = colors.contentPrimary,
+        style = CredentialsTypography.body1,
+        textAlign = TextAlign.Center,
+      )
+    }
   }
 }
 

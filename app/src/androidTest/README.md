@@ -18,7 +18,7 @@ MainActivity → navigation → ViewModel → MainModel → CharacterRepositoryI
 `TestAppGraph` исключает только `NetworkConfigurationModule` и `DatabaseModule`:
 
 - production URL заменяется адресом локального `MockWebServer`;
-- файловая Room заменяется на `Room.inMemoryDatabaseBuilder` для изоляции тестов;
+- файловая Room заменяется на `Room.inMemoryDatabaseBuilder` для изоляции тестов, перед запуском Main в неё записывается тестовая активная сессия;
 - `CharacterRepository`, ViewModel, API, мапперы, DAO и остальные bindings остаются настоящими;
 - MockK и feature-репозитории в тестовом окружении app не используются.
 

@@ -1,13 +1,14 @@
 package ru.sla.pure.android.core.routing
 
 import androidx.lifecycle.ViewModel
-import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metrox.viewmodel.ManualViewModelAssistedFactory
 import dev.zacsweers.metrox.viewmodel.MetroViewModelFactory
 import dev.zacsweers.metrox.viewmodel.ViewModelAssistedFactory
 import dev.zacsweers.metrox.viewmodel.ViewModelGraph
 import kotlinx.coroutines.CoroutineScope
+import ru.sla.pure.android.core.routing.di.AppFlowScope
 import kotlin.reflect.KClass
 
 /**
@@ -27,12 +28,10 @@ interface FlowComponent : ViewModelGraph {
    * он совпал бы со scope родительского графа
    */
   fun coroutineScope(): CoroutineScope
-
-  @Binds
-  val FlowViewModelFactory.bindMetroViewModelFactory: MetroViewModelFactory
 }
 
 /** Фабрика ViewModel графа флоу: создаёт ViewModel, вложенные в скоуп этого флоу */
+@ContributesBinding(AppFlowScope::class)
 class FlowViewModelFactory @Inject constructor(
   override val viewModelProviders: Map<KClass<out ViewModel>, () -> ViewModel>,
   override val assistedFactoryProviders: Map<KClass<out ViewModel>, () -> ViewModelAssistedFactory>,

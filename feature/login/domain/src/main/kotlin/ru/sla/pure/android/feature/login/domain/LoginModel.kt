@@ -7,15 +7,16 @@ import kotlinx.coroutines.CoroutineScope
 import ru.sla.pure.android.auth.session.domain.AuthSessionRepository
 import ru.sla.pure.android.core.domain.ReactiveModel
 import ru.sla.pure.android.feature.login.domain.di.LoginScope
-import ru.sla.pure.android.feature.login.domain.entity.AuthResult
 
 @SingleIn(LoginScope::class)
 class LoginModel @Inject constructor(
   @ForScope(LoginScope::class)
   parentScope: CoroutineScope,
-  private val authSessionRepository: AuthSessionRepository
+  private val authSessionRepository: AuthSessionRepository,
+  private val loginRepository: LoginRepository
 ) : ReactiveModel(parentScope) {
-  val startSession = task<AuthResult, Unit>(name = "startSession") { result ->
+  suspend fun saveSession() {
+    val result = loginRepository.signInByGoogle()
     authSessionRepository.startNew(
       userId = result.userId,
       tokens = result.tokens

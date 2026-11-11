@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
     viewModelFactory {
       initializer {
         val app = application as PureApplication
-        val foregroundComponent = app.foregroundFactory.create()
+        val foregroundComponent = app.foregroundFactory.create(this@MainActivity)
         AppFlowViewModel(foregroundComponent)
       }
     }

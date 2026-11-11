@@ -42,7 +42,7 @@ import ru.sla.pure.android.feature.main.domain.CharacterRepository
 import ru.sla.pure.android.feature.main.domain.MainModel
 import ru.sla.pure.android.feature.main.domain.entity.Character
 import ru.sla.pure.android.feature.main.domain.entity.CharacterPage
-import ru.sla.pure.android.feature.main.ui.routing.MainFlowEvent
+import ru.sla.pure.android.feature.main.ui.routing.FlowEvent
 import ru.sla.pure.android.feature.main.ui.screen.characterdetails.CharacterDetailsContent
 import ru.sla.pure.android.feature.main.ui.screen.characterdetails.CharacterDetailsScreen
 import ru.sla.pure.android.feature.main.ui.screen.characterdetails.CharacterDetailsViewModel
@@ -277,7 +277,7 @@ class CharacterDetailsScreenTest : BaseTestCase() {
     }
     steps.step("ViewModel отправляет ровно одно событие закрытия деталей") {
       waitUntil(timeoutMillis = 5_000) { navigationEvents.isNotEmpty() }
-      assertEquals(listOf(MainFlowEvent.CharacterDetailsDismissed), navigationEvents)
+      assertEquals(listOf(FlowEvent.CharacterDetailsDismissed), navigationEvents)
       assertRequests(1)
     }
   }
@@ -298,8 +298,8 @@ class CharacterDetailsScreenTest : BaseTestCase() {
     val selectedId = mutableStateOf<Int?>(null)
     val eventSink = FlowEventSink { event ->
       when (event) {
-        is MainFlowEvent.CharacterDetailsRequested -> selectedId.value = event.characterId
-        MainFlowEvent.CharacterDetailsDismissed -> selectedId.value = null
+        is FlowEvent.CharacterDetailsRequested -> selectedId.value = event.characterId
+        FlowEvent.CharacterDetailsDismissed -> selectedId.value = null
       }
     }
 

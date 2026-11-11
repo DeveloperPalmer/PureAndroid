@@ -14,7 +14,7 @@ import ru.sla.pure.android.core.ui.toUiLceState
 import ru.sla.pure.android.feature.main.domain.MainModel
 import ru.sla.pure.android.feature.main.domain.di.MainScope
 import ru.sla.pure.android.feature.main.domain.paging.asLceState
-import ru.sla.pure.android.feature.main.ui.routing.MainFlowEvent
+import ru.sla.pure.android.feature.main.ui.routing.FlowEvent
 
 @ViewModelKey
 @ContributesIntoMap(MainScope::class, binding<ViewModel>())
@@ -27,7 +27,7 @@ class MainViewModel @Inject constructor(
   }
 
   fun onOpenCharacter(characterId: Int) = intent {
-    flowEventSink.sendEvent(MainFlowEvent.CharacterDetailsRequested(characterId))
+    flowEventSink.sendEvent(FlowEvent.CharacterDetailsRequested(characterId))
   }
 
   fun onLoadStatesChanged(loadStates: CombinedLoadStates) = intent {

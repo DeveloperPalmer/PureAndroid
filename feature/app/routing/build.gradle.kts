@@ -11,5 +11,6 @@ android {
 dependencies {
   api(projects.core.routing)
   api(projects.feature.app.ui)
+  api(projects.feature.login.routing)
   api(projects.feature.main.routing)
 }

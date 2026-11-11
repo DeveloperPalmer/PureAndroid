@@ -19,7 +19,7 @@ import ru.sla.pure.android.core.ui.lce.asLceState
 import ru.sla.pure.android.core.ui.mvi.BaseViewModel
 import ru.sla.pure.android.feature.main.domain.MainModel
 import ru.sla.pure.android.feature.main.domain.di.MainScope
-import ru.sla.pure.android.feature.main.ui.routing.MainFlowEvent
+import ru.sla.pure.android.feature.main.ui.routing.FlowEvent
 
 class CharacterDetailsViewModel @AssistedInject constructor(
   @Assisted
@@ -51,7 +51,7 @@ class CharacterDetailsViewModel @AssistedInject constructor(
   }
 
   fun onNavigateBack() = intent {
-    flowEventSink.sendEvent(MainFlowEvent.CharacterDetailsDismissed)
+    flowEventSink.sendEvent(FlowEvent.CharacterDetailsDismissed)
   }
 
   fun onRetry() = intent {

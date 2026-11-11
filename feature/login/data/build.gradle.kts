@@ -12,6 +12,5 @@ dependencies {
   api(projects.lib.google.authenticator)
   implementation(projects.authSession.domain)
   implementation(projects.core.data)
-  implementation(projects.core.routing)
   implementation(libs.kotlinx.coroutines.play.services)
 }

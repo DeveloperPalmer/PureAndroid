@@ -10,6 +10,7 @@ import ru.sla.pure.android.core.routing.EntryProviderInstaller
 import ru.sla.pure.android.core.routing.flow
 import ru.sla.pure.android.feature.app.routing.AppRoute
 import ru.sla.pure.android.feature.app.ui.screen.initialresolve.InitialResolveScreen
+import ru.sla.pure.android.feature.login.routing.di.LoginEntryProviderInstaller
 import ru.sla.pure.android.feature.main.routing.di.MainEntryProviderInstaller
 
 @ContributesIntoSet(ForegroundScope::class)
@@ -21,6 +22,7 @@ class AppEntryProviderInstaller @Inject constructor(
       initial = AppRoute.InitialResolve,
       component = componentFactory::create,
     ) { appComponent ->
+      with(LoginEntryProviderInstaller(appComponent.loginFlowFactory())) { install() }
       with(MainEntryProviderInstaller(appComponent.mainFlowFactory())) { install() }
 
       entry<AppRoute.InitialResolve> {
