@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="credentials_enter">Sign in</string>
+    <string name="credentials_enter_description">Sign in to your PureAndroid account to continue.</string>
+    <string name="credentials_enter_by_google">Sign in with Google</string>
+    <string name="credentials_enter_by_email">Sign in with email</string>
+    <string name="credentials_or">or</string>
+</resources>

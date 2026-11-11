@@ -47,6 +47,7 @@ include(
   ":feature:app",
   ":feature:login:domain",
   ":feature:login:data",
+  ":feature:login:ui",
   ":feature:main:domain",
   ":feature:main:data",
   ":feature:main:routing",
