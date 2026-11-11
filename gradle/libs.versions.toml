@@ -8,11 +8,16 @@ ksp = "2.3.12"
 
 # Kotlin libraries
 kotlinxCoroutines = "1.11.0"
+kotlinResult = "1.1.17"
+credentials = "1.6.0"
+googleId = "1.2.0"
+firebaseAuth = "24.2.0"
 kotlinxSerialization = "1.12.0"
 
 # AndroidX core and lifecycle
 activity = "1.13.0"
 annotation = "1.9.1"
+drawerLayout = "1.1.1"
 lifecycle = "2.11.0"
 savedstate = "1.4.0"
 
@@ -55,12 +60,19 @@ spotless = "8.10.3"
 [libraries]
 # Kotlin libraries
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutines" }
+kotlin-result-coroutines = { module = "com.michael-bull.kotlin-result:kotlin-result-coroutines", version.ref = "kotlinResult" }
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
+androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
+google-id = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleId" }
+firebase-auth = { module = "com.google.firebase:firebase-auth", version.ref = "firebaseAuth" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 # AndroidX core and lifecycle
 androidx-activity = { module = "androidx.activity:activity", version.ref = "activity" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
+androidx-drawerlayout = { module = "androidx.drawerlayout:drawerlayout", version.ref = "drawerLayout" }
 androidx-lifecycle-common = { module = "androidx.lifecycle:lifecycle-common", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }

@@ -4,7 +4,7 @@ import android.content.Context
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Provides
-import ru.sla.pure.android.feature.app.di.AppFlowComponent
+import ru.sla.pure.android.core.domain.di.ApplicationContext
 
 /**
  * Корневой граф: живёт столько же, сколько процесс. `@DependencyGraph(AppScope::class)` добавляет
@@ -12,13 +12,15 @@ import ru.sla.pure.android.feature.app.di.AppFlowComponent
  * здесь перечислено только то, что нужно самому приложению
  */
 @DependencyGraph(AppScope::class)
-interface AppGraph {
-  fun appFlowFactory(): AppFlowComponent.Factory
+interface AppComponent {
+  fun foregroundFactory(): ForegroundComponent.Factory
 
   @DependencyGraph.Factory
   interface Factory {
     fun create(
-      @Provides applicationContext: Context
-    ): AppGraph
+      @Provides
+      @ApplicationContext
+      context: Context
+    ): AppComponent
   }
 }

@@ -10,6 +10,7 @@ android {
 
 dependencies {
   api(projects.core.routing)
+  api(projects.feature.login.data)
   api(projects.feature.main.routing)
   api(projects.feature.map.routing)
   implementation(libs.androidx.annotation)

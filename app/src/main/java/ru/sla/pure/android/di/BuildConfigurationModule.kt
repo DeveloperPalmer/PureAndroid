@@ -9,12 +9,15 @@ import ru.sla.pure.android.BuildConfig
 import ru.sla.pure.android.R
 import ru.sla.pure.android.buildconfig.BuildConfigProvider
 import ru.sla.pure.android.buildconfig.BuildType
+import ru.sla.pure.android.core.domain.di.ApplicationContext
 
 @ContributesTo(AppScope::class)
 interface BuildConfigurationModule {
   @Provides
   @SingleIn(AppScope::class)
-  fun provideBuildConfigProvider(applicationContext: Context): BuildConfigProvider {
+  fun provideBuildConfigProvider(
+    @ApplicationContext context: Context
+  ): BuildConfigProvider {
     return object : BuildConfigProvider {
       override val buildType: BuildType = when (BuildConfig.BUILD_TYPE) {
         "debug" -> BuildType.Debug
@@ -22,7 +25,7 @@ interface BuildConfigurationModule {
         else -> error("Unsupported build type: ${BuildConfig.BUILD_TYPE}")
       }
 
-      override val googleWebClientId: String = applicationContext.getString(R.string.default_web_client_id)
+      override val googleWebClientId: String = context.getString(R.string.default_web_client_id)
     }
   }
 }

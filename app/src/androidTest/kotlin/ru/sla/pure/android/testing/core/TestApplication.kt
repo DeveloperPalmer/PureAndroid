@@ -1,5 +1,6 @@
 package ru.sla.pure.android.testing.core
 
+import android.content.Context
 import androidx.room3.Room
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import dev.zacsweers.metro.AppScope
@@ -12,35 +13,35 @@ import ru.sla.pure.android.PureApplication
 import ru.sla.pure.android.app.data.di.ApiBaseUrl
 import ru.sla.pure.android.app.data.di.DatabaseModule
 import ru.sla.pure.android.app.data.di.NetworkConfigurationModule
+import ru.sla.pure.android.core.domain.di.ApplicationContext
 import ru.sla.pure.android.database.CharacterDatabase
 import ru.sla.pure.android.database.dao.CharacterDao
-import ru.sla.pure.android.feature.app.di.AppFlowComponent
+import ru.sla.pure.android.di.ForegroundComponent
 import ru.sla.pure.android.testing.AppUnderTest
 
 class TestApplication : PureApplication(), AppUnderTest {
-  private var testFlow: AppFlowComponent? = null
+  private var testGraph: TestAppGraph? = null
   private var testDatabase: CharacterDatabase? = null
 
-  override val appFlowComponent: AppFlowComponent
-    get() = checkNotNull(testFlow) { "Set up the test graph before launching MainActivity" }
+  override val foregroundFactory: ForegroundComponent.Factory
+    get() = checkNotNull(testGraph) { "Настройте тестовый граф до запуска MainActivity" }.foregroundFactory()
 
   override fun install(baseUrl: String) {
-    check(testFlow == null) { "The test graph is already installed" }
+    check(testGraph == null) { "The test graph is already installed" }
     val database = Room.inMemoryDatabaseBuilder(this, CharacterDatabase::class.java)
       .setDriver(AndroidSQLiteDriver())
       .build()
     testDatabase = database
-    testFlow = createGraphFactory<TestAppGraph.Factory>()
+    testGraph = createGraphFactory<TestAppGraph.Factory>()
       .create(
+        applicationContext = applicationContext,
         apiBaseUrl = ApiBaseUrl(baseUrl),
         database = database,
       )
-      .appFlowFactory()
-      .create()
   }
 
   override fun reset() {
-    testFlow = null
+    testGraph = null
     testDatabase?.close()
     testDatabase = null
   }
@@ -53,7 +54,7 @@ class TestApplication : PureApplication(), AppUnderTest {
   excludes = [NetworkConfigurationModule::class, DatabaseModule::class],
 )
 internal interface TestAppGraph {
-  fun appFlowFactory(): AppFlowComponent.Factory
+  fun foregroundFactory(): ForegroundComponent.Factory
 
   @Provides
   @SingleIn(AppScope::class)
@@ -62,6 +63,7 @@ internal interface TestAppGraph {
   @DependencyGraph.Factory
   interface Factory {
     fun create(
+      @Provides @ApplicationContext applicationContext: Context,
       @Provides apiBaseUrl: ApiBaseUrl,
       @Provides database: CharacterDatabase,
     ): TestAppGraph

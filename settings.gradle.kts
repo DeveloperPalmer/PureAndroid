@@ -29,6 +29,7 @@ rootProject.name = "PureAndroid"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 include(
+  ":lib:google:authenticator",
   ":app",
   ":app:data",
   ":app:testing",
@@ -45,6 +46,7 @@ include(
   ":core:testing",
   ":feature:app",
   ":feature:login:domain",
+  ":feature:login:data",
   ":feature:main:domain",
   ":feature:main:data",
   ":feature:main:routing",

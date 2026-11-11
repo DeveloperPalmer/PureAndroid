@@ -46,6 +46,12 @@ android {
 }
 
 dependencies {
+  constraints {
+    debugImplementation(libs.androidx.drawerlayout) {
+      because("Для ресурсов Material в Android-тестах нужен атрибут drawerLayoutStyle")
+    }
+  }
+
   implementation(libs.androidx.activity)
   implementation(libs.androidx.activity.compose)
   implementation(libs.androidx.annotation)
