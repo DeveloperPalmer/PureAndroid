@@ -6,9 +6,11 @@
 
 | Задача | Где смотреть |
 | --- | --- |
-| Запуск приложения, Activity, корневой граф Metro | [`:app`](../app/src/main), `PureApplication`, `MainActivity`, `AppGraph` и `AndroidManifest.xml` |
-| Вкладки, стеки, нижняя панель и переходы | [`:feature:app`](../feature/app), `TopLevelDestination`, `AppFlowHost`, `NavigationState`, `AppNavigator`, `NavigationBarSceneDecoratorStrategy`, `SlideTransitions` |
-| Контракты навигации и общий DI-граф экранов одного флоу | [`:core:routing`](../core/routing), `Navigator`, `EntryProviderInstaller`, `FlowEntryScope`, `FlowNavEntryDecorator`, `FlowComponent` |
+| Запуск приложения, Activity, корневой граф Metro | [`:app`](../app/src/main), `PureApplication`, `MainActivity`, `AppComponent` и `AndroidManifest.xml` |
+| Стеки, переходы и DI корневого флоу | [`:app:routing`](../app/routing), `AppFlowHost`, `NavigationState`, `AppNavigator`, `NavigationBarSceneDecoratorStrategy`, `SlideTransitions` |
+| Граф флоу приложения и проверка сессии | [`:feature:app:routing`](../feature/app/routing), `AppFlowComponent` |
+| Вкладки и нижняя панель | `MainEntryProviderInstaller` в [`:feature:main:routing`](../feature/main/routing) задаёт список вкладок. `AppNavigationBar` находится в [`:app:routing`](../app/routing) |
+| Контракты навигации и общий DI-граф экранов одного флоу | [`:core:routing`](../core/routing), `Navigator`, `EntryProviderInstaller`, `FlowEntryScope`, `FlowHost`, `FlowComponent` |
 | Список персонажей и экран деталей | [`:feature:main:ui`](../feature/main/ui/src/main), `screen/main` и `screen/characterdetails` содержат Compose-экран, ViewModel и `ViewState`. MVI на Orbit, общая база `BaseViewModel` в [`:core:ui`](../core/ui) |
 | Ключи, экраны флоу «Главная» и обработка его событий | [`:feature:main:routing`](../feature/main/routing), `MainRoute`, `MainFlow`, `MainEntryProviderInstaller`, `MainFlowComponent` |
 | Вкладка «Карта» | [`:feature:map:routing`](../feature/map/routing) регистрирует `MapRoute.Map` через `MapEntryProviderInstaller`. [`:feature:map:ui`](../feature/map/ui) содержит `MapScreen`, экран-заглушку |
@@ -20,10 +22,10 @@
 
 ## Как проследить маршрут и DI
 
-1. **От запуска до экрана.** `PureApplication` создаёт `AppGraph` и `AppFlowComponent`. `MainActivity` передаёт навигатор и набор `EntryProviderInstaller` в `AppFlowHost`, который собирает `entryProvider` для `NavDisplay`. Установщики фич входят в набор через `@ContributesIntoSet(AppFlowScope::class)`.
-2. **От клика до перехода.** `MainViewModel` отправляет `MainFlowEvent.CharacterDetailsRequested(characterId)` через `FlowEventSink`. `AppFlowComponent` связывает `FlowEventSink` с `MainFlow`, а `Navigator` с `AppNavigator`. `MainFlow` переводит событие в `Navigator.navigateTo(MainRoute.CharacterDetails(characterId))`. Запись деталей в `MainEntryProviderInstaller` передаёт ID в assisted-фабрику `CharacterDetailsViewModel`. `CharacterDetailsDismissed` вызывает `navigateBack()`.
-3. **От вкладки до стека.** `TopLevelDestination` объявляет вкладки в порядке отображения. `MainRoute.Main` идёт первой и служит стартовой. `NavigationState` держит отдельный стек на вкладку, `AppNavigator` переключает вкладки и добавляет обычные маршруты в активный стек. Назад с деталей убирает верхнюю запись, назад с корня карты возвращает на стартовую вкладку. Нижняя панель включается метаданными `showNavigationBar()` у записи.
-4. **От записи до ViewModel.** `MainEntryProviderInstaller` объявляет `flow(root = MainRoute.Main, ...)` с `MainFlowComponent`. `FlowNavEntryDecorator` хранит общий граф в хранилище корневой записи и отменяет scope флоу при очистке. У каждой записи своё хранилище ViewModel. В `ui` привязку `MainViewModel` можно найти по `@ViewModelKey`, а фабрику деталей — по `@ManualViewModelAssistedFactoryKey`. Для реализации интерфейса ищи `@ContributesBinding` или `@Binds`, для провайдера — `@Provides`.
+1. **От запуска до экрана.** `PureApplication` создаёт `AppComponent`, а `MainActivity` сохраняет `ForegroundComponent` в `AppFlowViewModel`. `AppEntryProviderInstaller` регистрирует контейнер по маршруту `AppRoute.Flow`. В `onEntry()` флоу задаёт стартовый экран. После проверки сессии ViewModel отправляет событие через `FlowEventSink`, а `AppFlow.transition(event)` заменяет `InitialResolve` на контейнер `MainRoute.Flow` в сохраняемом стеке. Back с корня Main передаётся системе.
+2. **От клика до перехода.** `MainViewModel` отправляет `MainFlowEvent.CharacterDetailsRequested(characterId)` через `FlowEventSink`. `MainFlowComponent` связывает `FlowEventSink` с `MainFlow`. `AppFlowHost` передаёт навигатор контейнера в фабрику `MainFlowComponent`. `MainFlow` переводит событие в `Navigator.navigateTo(MainRoute.CharacterDetails(characterId))`. Запись деталей в `MainEntryProviderInstaller` передаёт ID в assisted-фабрику `CharacterDetailsViewModel`. `CharacterDetailsDismissed` вызывает `navigateBack()`.
+3. **От вкладки до стека.** `MainEntryProviderInstaller` объявляет `NavigationTab` в порядке отображения. `MainFlow.onEntry()` задаёт стартовую вкладку. `NavigationState` держит отдельный стек для каждой вкладки. Назад с деталей убирает верхнюю запись, назад с корня карты возвращает на стартовую вкладку. Нижняя панель включается метаданными `showNavigationBar()` у записи.
+4. **От записи до ViewModel.** `MainEntryProviderInstaller` объявляет `flow(route = MainRoute.Flow, ...)` с `MainFlowComponent`. `FlowComponentViewModel` хранит общий граф в хранилище корневой записи и отменяет scope при очистке. Начало и завершение флоу видны в Logcat с тегом `FlowLifecycle`. У каждой записи своё хранилище ViewModel. В `ui` привязку `MainViewModel` можно найти по `@ViewModelKey`, а фабрику деталей — по `@ManualViewModelAssistedFactoryKey`. Для реализации интерфейса ищи `@ContributesBinding` или `@Binds`, для провайдера — `@Provides`.
 
 ## Где искать тесты и настройки сборки
 

@@ -15,13 +15,16 @@ import ru.sla.pure.android.app.data.di.DatabaseModule
 import ru.sla.pure.android.app.data.di.NetworkConfigurationModule
 import ru.sla.pure.android.core.domain.di.ApplicationContext
 import ru.sla.pure.android.database.CharacterDatabase
+import ru.sla.pure.android.database.SettingsDatabase
 import ru.sla.pure.android.database.dao.CharacterDao
+import ru.sla.pure.android.database.dao.SettingsDao
 import ru.sla.pure.android.di.ForegroundComponent
 import ru.sla.pure.android.testing.AppUnderTest
 
 class TestApplication : PureApplication(), AppUnderTest {
   private var testGraph: TestAppGraph? = null
   private var testDatabase: CharacterDatabase? = null
+  private var testSettingsDatabase: SettingsDatabase? = null
 
   override val foregroundFactory: ForegroundComponent.Factory
     get() = checkNotNull(testGraph) { "Настройте тестовый граф до запуска MainActivity" }.foregroundFactory()
@@ -31,12 +34,17 @@ class TestApplication : PureApplication(), AppUnderTest {
     val database = Room.inMemoryDatabaseBuilder(this, CharacterDatabase::class.java)
       .setDriver(AndroidSQLiteDriver())
       .build()
+    val settingsDatabase = Room.inMemoryDatabaseBuilder(this, SettingsDatabase::class.java)
+      .setDriver(AndroidSQLiteDriver())
+      .build()
     testDatabase = database
+    testSettingsDatabase = settingsDatabase
     testGraph = createGraphFactory<TestAppGraph.Factory>()
       .create(
         applicationContext = applicationContext,
         apiBaseUrl = ApiBaseUrl(baseUrl),
         database = database,
+        settingsDatabase = settingsDatabase,
       )
   }
 
@@ -44,6 +52,8 @@ class TestApplication : PureApplication(), AppUnderTest {
     testGraph = null
     testDatabase?.close()
     testDatabase = null
+    testSettingsDatabase?.close()
+    testSettingsDatabase = null
   }
 
   override fun mainActivityClass() = MainActivity::class.java
@@ -60,12 +70,17 @@ internal interface TestAppGraph {
   @SingleIn(AppScope::class)
   fun provideCharacterDao(database: CharacterDatabase): CharacterDao = database.characterDao()
 
+  @Provides
+  @SingleIn(AppScope::class)
+  fun provideSettingsDao(database: SettingsDatabase): SettingsDao = database.settingsDao()
+
   @DependencyGraph.Factory
   interface Factory {
     fun create(
       @Provides @ApplicationContext applicationContext: Context,
       @Provides apiBaseUrl: ApiBaseUrl,
       @Provides database: CharacterDatabase,
+      @Provides settingsDatabase: SettingsDatabase,
     ): TestAppGraph
   }
 }

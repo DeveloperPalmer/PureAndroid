@@ -17,14 +17,16 @@ import kotlin.reflect.KClass
  * в записях через `metroViewModel()`. Поэтому методов для ViewModel в графе флоу нет.
  *
  * Сколько живёт: пока корень флоу лежит в стеке. Когда корень уходит, граф отменяет
- * [flowCoroutineScope], и вместе с ним все корутины моделей флоу.
+ * [coroutineScope], и вместе с ним все корутины моделей флоу.
  */
 interface FlowComponent : ViewModelGraph {
+  fun flow(): Flow
+
   /**
    * Scope моделей флоу. Граф флоу фичи отдаёт свой `@ForScope(<скоуп флоу>)` scope: без квалификатора
    * он совпал бы со scope родительского графа
    */
-  fun flowCoroutineScope(): CoroutineScope
+  fun coroutineScope(): CoroutineScope
 
   @Binds
   val FlowViewModelFactory.bindMetroViewModelFactory: MetroViewModelFactory

@@ -8,6 +8,7 @@ android {
 }
 
 dependencies {
+  api(projects.authSession.data)
   api(projects.core.data)
   api(projects.database)
 }

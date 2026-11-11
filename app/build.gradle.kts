@@ -55,9 +55,11 @@ dependencies {
   implementation(libs.androidx.activity)
   implementation(libs.androidx.activity.compose)
   implementation(libs.androidx.annotation)
+  implementation(libs.androidx.core.splashscreen)
   implementation(projects.app.data)
+  implementation(projects.app.routing)
   implementation(projects.buildConfig)
-  implementation(projects.feature.app)
+  implementation(projects.feature.app.routing)
 
   debugImplementation(libs.androidx.concurrent.futures)
   debugImplementation(libs.androidx.espresso.idling.resource)

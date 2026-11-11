@@ -12,5 +12,6 @@ dependencies {
   api(projects.feature.main.data)
   api(projects.feature.main.domain)
   api(projects.feature.main.ui)
+  api(projects.feature.map.routing)
   implementation(projects.core.routing)
 }
