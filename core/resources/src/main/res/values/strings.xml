@@ -27,4 +27,5 @@
 
     <!-- Карта -->
     <string name="map_title">Карта</string>
+  <string name="G" translatable="false">G</string>
 </resources>

@@ -1,0 +1,131 @@
+package ru.sla.pure.android.uikit.component.button
+
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
+import ru.sla.pure.android.core.resources.R
+import ru.sla.pure.android.uikit.spacer.VSpacer
+import ru.sla.pure.android.uikit.theme.AppTheme
+import ru.sla.pure.android.uikit.theme.ColorTheme
+
+@Composable
+fun PrimaryIconButtonSmall(
+  @DrawableRes
+  iconRes: Int,
+  text: String,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+  style: ButtonStyle = ButtonStyle.Default,
+  enabled: Boolean = true,
+  showLoading: Boolean = false,
+  showElevation: Boolean = false
+) {
+  IconButtonInternal(
+    modifier = modifier,
+    size = ButtonSize.Small,
+    iconRes = iconRes,
+    text = text,
+    enabled = enabled,
+    showLoading = showLoading,
+    showElevation = showElevation,
+    colors = when (style) {
+      ButtonStyle.Default -> ButtonDefaults.primaryDefaultColors()
+      ButtonStyle.Error -> ButtonDefaults.primaryErrorColors()
+      ButtonStyle.Success -> ButtonDefaults.primarySuccessColors()
+    },
+    onClick = onClick
+  )
+}
+
+@Composable
+fun PrimaryIconButton(
+  @DrawableRes
+  iconRes: Int,
+  text: String,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+  style: ButtonStyle = ButtonStyle.Default,
+  enabled: Boolean = true,
+  showLoading: Boolean = false,
+  showElevation: Boolean = false
+) {
+  IconButtonInternal(
+    modifier = modifier,
+    size = ButtonSize.Medium,
+    iconRes = iconRes,
+    text = text,
+    enabled = enabled,
+    showLoading = showLoading,
+    showElevation = showElevation,
+    colors = when (style) {
+      ButtonStyle.Default -> ButtonDefaults.primaryDefaultColors()
+      ButtonStyle.Error -> ButtonDefaults.primaryErrorColors()
+      ButtonStyle.Success -> ButtonDefaults.primarySuccessColors()
+    },
+    onClick = onClick
+  )
+}
+
+@Preview
+@Composable
+private fun PrimaryIconButtonsPreviewLight(
+  @PreviewParameter(ButtonPreviewStateProvider::class)
+  state: ButtonPreviewState
+) {
+  AppTheme(colorTheme = ColorTheme.Light) {
+    PrimaryIconButtonsPreviewContent(state)
+  }
+}
+
+@Preview
+@Composable
+private fun PrimaryIconButtonsPreviewDark(
+  @PreviewParameter(ButtonPreviewStateProvider::class)
+  state: ButtonPreviewState
+) {
+  AppTheme(colorTheme = ColorTheme.Dark) {
+    PrimaryIconButtonsPreviewContent(state)
+  }
+}
+
+@Composable
+private fun PrimaryIconButtonsPreviewContent(state: ButtonPreviewState) {
+  Column(
+    modifier = Modifier
+      .background(AppTheme.colors.backgroundPrimary)
+      .padding(start = 16.dp, end = 16.dp),
+    horizontalAlignment = Alignment.CenterHorizontally
+  ) {
+    VSpacer(8.dp)
+    PrimaryIconButtonSmall(
+      modifier = Modifier.fillMaxWidth(),
+      iconRes = R.drawable.ic_back_24,
+      text = "Продолжить",
+      style = state.style,
+      enabled = state.enabled,
+      showLoading = state.showLoading,
+      showElevation = state.showElevation,
+      onClick = {}
+    )
+    VSpacer(8.dp)
+    PrimaryIconButton(
+      modifier = Modifier.fillMaxWidth(),
+      iconRes = R.drawable.ic_back_24,
+      text = "Продолжить",
+      style = state.style,
+      enabled = state.enabled,
+      showLoading = state.showLoading,
+      showElevation = state.showElevation,
+      onClick = {}
+    )
+    VSpacer(8.dp)
+  }
+}

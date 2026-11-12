@@ -1,6 +1,14 @@
 package ru.sla.pure.android.app.routing
 
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -22,6 +30,7 @@ import ru.sla.pure.android.core.routing.FlowHost
 import ru.sla.pure.android.core.routing.LocalFlowHost
 import ru.sla.pure.android.core.routing.NavigationTab
 import ru.sla.pure.android.core.routing.Navigator
+import ru.sla.pure.android.uikit.theme.AppTheme
 
 @Composable
 fun AppFlowHost(
@@ -42,12 +51,20 @@ fun AppFlowHost(
   val appFlowContainer = remember(navigator) { AppFlowContainer(navigator) }
   val hostNavigator = remember { AppNavigator() }
   CompositionLocalProvider(LocalFlowHost provides appFlowContainer) {
-    NavigationContent(
-      modifier = modifier,
-      state = state,
-      navigator = hostNavigator,
-      entryProvider = entryProvider,
-    )
+    Box(
+      modifier = modifier
+        .fillMaxSize()
+        .background(AppTheme.colors.backgroundPrimary)
+        // Нижним inset управляет сцена: фон NavigationBar доходит до края окна.
+        .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)),
+    ) {
+      NavigationContent(
+        modifier = Modifier.fillMaxSize(),
+        state = state,
+        navigator = hostNavigator,
+        entryProvider = entryProvider,
+      )
+    }
   }
 }
 
