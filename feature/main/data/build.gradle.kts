@@ -8,6 +8,8 @@ android {
 }
 
 dependencies {
+  implementation(projects.authSession.domain)
   implementation(projects.core.data)
   implementation(projects.feature.main.domain)
+  implementation(projects.lib.google.authenticator)
 }

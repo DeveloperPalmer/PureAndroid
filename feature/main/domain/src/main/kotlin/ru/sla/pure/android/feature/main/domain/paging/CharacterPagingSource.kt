@@ -5,11 +5,11 @@ import androidx.paging.PagingState
 import kotlinx.coroutines.CancellationException
 import ru.sla.pure.android.core.domain.entity.ApiError
 import ru.sla.pure.android.core.domain.entity.ConnectivityError
-import ru.sla.pure.android.feature.main.domain.CharacterRepository
+import ru.sla.pure.android.feature.main.domain.MainRepository
 import ru.sla.pure.android.feature.main.domain.entity.Character
 
 internal class CharacterPagingSource(
-  private val repository: CharacterRepository
+  private val repository: MainRepository
 ) : PagingSource<Int, Character>() {
   // Paging receives load failures as values; coroutine cancellation must still propagate.
   @Suppress("TooGenericExceptionCaught")

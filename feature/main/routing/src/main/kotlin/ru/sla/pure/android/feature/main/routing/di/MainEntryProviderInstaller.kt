@@ -17,6 +17,7 @@ import ru.sla.pure.android.feature.main.routing.MainRoute
 import ru.sla.pure.android.feature.main.ui.screen.characterdetails.CharacterDetailsScreen
 import ru.sla.pure.android.feature.main.ui.screen.characterdetails.CharacterDetailsViewModel
 import ru.sla.pure.android.feature.main.ui.screen.main.MainScreen
+import ru.sla.pure.android.feature.main.ui.screen.profile.ProfileScreen
 import ru.sla.pure.android.feature.map.routing.MapEntryProviderInstaller
 import ru.sla.pure.android.feature.map.routing.MapRoute
 
@@ -34,6 +35,10 @@ class MainEntryProviderInstaller(
 
       entry<MainRoute.Main>(metadata = showNavigationBar()) {
         MainScreen(viewModel = metroViewModel())
+      }
+
+      entry<MainRoute.Profile> {
+        ProfileScreen(viewModel = metroViewModel())
       }
 
       entry<MainRoute.CharacterDetails> { route ->

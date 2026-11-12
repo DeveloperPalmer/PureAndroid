@@ -7,6 +7,7 @@ import dev.zacsweers.metro.SingleIn
 import dev.zacsweers.metro.binding
 import ru.sla.pure.android.core.routing.Flow
 import ru.sla.pure.android.core.routing.Navigator
+import ru.sla.pure.android.core.routing.di.AppFlowScope
 import ru.sla.pure.android.core.ui.Event
 import ru.sla.pure.android.core.ui.FlowEventSink
 import ru.sla.pure.android.feature.main.domain.di.MainScope
@@ -23,7 +24,9 @@ import ru.sla.pure.android.feature.main.ui.routing.FlowEvent
 )
 class MainFlow @Inject constructor(
   @ForScope(MainScope::class)
-  private val navigator: Navigator
+  private val navigator: Navigator,
+  @ForScope(AppFlowScope::class)
+  private val appEvents: FlowEventSink,
 ) : Flow {
   override fun onEntry() {
     navigator.setRoot(MainRoute.Main)
@@ -36,6 +39,15 @@ class MainFlow @Inject constructor(
       }
       is FlowEvent.CharacterDetailsDismissed -> {
         navigator.navigateBack()
+      }
+      FlowEvent.ProfileRequested -> {
+        navigator.navigateTo(MainRoute.Profile)
+      }
+      FlowEvent.ProfileDismissed -> {
+        navigator.navigateBack()
+      }
+      FlowEvent.LogoutSucceeded -> {
+        appEvents.sendEvent(event)
       }
     }
   }

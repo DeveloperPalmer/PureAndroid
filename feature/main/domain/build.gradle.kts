@@ -5,6 +5,7 @@ plugins {
 }
 
 dependencies {
+  api(projects.authSession.domain)
   implementation(projects.core.domain)
   implementation(libs.paging.common)
 

@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import ru.sla.pure.android.core.domain.entity.ApiError
 import ru.sla.pure.android.core.domain.entity.ConnectivityError
-import ru.sla.pure.android.feature.main.domain.CharacterRepository
+import ru.sla.pure.android.feature.main.domain.MainRepository
 import ru.sla.pure.android.feature.main.domain.PAGE_SIZE
 import ru.sla.pure.android.feature.main.domain.entity.Character
 import ru.sla.pure.android.feature.main.domain.entity.CharacterGender
@@ -24,7 +24,7 @@ import ru.sla.pure.android.feature.main.domain.entity.CharacterLocation
 import ru.sla.pure.android.feature.main.domain.entity.CharacterStatus
 
 class CharacterPagingSourceTest {
-  private val repository = mockk<CharacterRepository>()
+  private val repository = mockk<MainRepository>()
   private val source = CharacterPagingSource(repository)
 
   @Test

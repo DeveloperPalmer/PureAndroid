@@ -15,6 +15,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -24,6 +26,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -36,6 +39,7 @@ import ru.sla.pure.android.core.resources.R
 import ru.sla.pure.android.core.ui.entity.ContentLoadState
 import ru.sla.pure.android.feature.main.domain.entity.Character
 import ru.sla.pure.android.feature.main.domain.entity.CharacterStatus
+import ru.sla.pure.android.uikit.spacer.WSpacer
 import ru.sla.pure.android.uikit.theme.AppTheme
 
 @Composable
@@ -60,6 +64,7 @@ fun MainScreen(viewModel: MainViewModel) {
     contentLoadState = state.contentLoadState,
     refreshInProgress = state.refreshInProgress,
     onOpenCharacter = { id -> viewModel.onOpenCharacter(id) },
+    onOpenProfile = viewModel::onOpenProfile,
   )
 }
 
@@ -69,6 +74,7 @@ internal fun MainContent(
   characters: LazyPagingItems<Character>,
   contentLoadState: ContentLoadState,
   onOpenCharacter: (Int) -> Unit,
+  onOpenProfile: () -> Unit,
   refreshInProgress: Boolean = false,
 ) {
   Column(
@@ -88,6 +94,14 @@ internal fun MainContent(
         text = stringResource(id = R.string.characters_title),
         style = AppTheme.typography.headline,
       )
+      WSpacer(weight = 1f)
+      IconButton(onClick = onOpenProfile) {
+        Icon(
+          painter = painterResource(R.drawable.ic_profile_24),
+          contentDescription = stringResource(R.string.profile_title),
+          tint = AppTheme.colors.contentPrimary,
+        )
+      }
     }
     PullToRefreshBox(
       modifier = Modifier
