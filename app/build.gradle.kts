@@ -26,6 +26,13 @@ android {
       signingConfig = signingConfigs.getByName("debug")
       isDebuggable = true
     }
+    create("internal") {
+      applicationIdSuffix = ".internal"
+      signingConfig = signingConfigs.getByName("debug")
+      isDebuggable = false
+      optimization { enable = true }
+      matchingFallbacks += "release"
+    }
     release {
       isDebuggable = false
     }

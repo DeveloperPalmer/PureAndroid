@@ -21,6 +21,7 @@ interface BuildConfigurationModule {
     return object : BuildConfigProvider {
       override val buildType: BuildType = when (BuildConfig.BUILD_TYPE) {
         "debug" -> BuildType.Debug
+        "internal" -> BuildType.Internal
         "release" -> BuildType.Release
         else -> error("Unsupported build type: ${BuildConfig.BUILD_TYPE}")
       }
