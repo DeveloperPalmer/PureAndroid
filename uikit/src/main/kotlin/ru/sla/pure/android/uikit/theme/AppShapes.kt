@@ -5,15 +5,15 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.dp
 
-/** Скругления. Здесь только те, что повторяются; разовую форму компонент задаёт сам */
+// NOTE: Avoid putting every possible shape here. Only the most reused ones.
 @Immutable
 class AppShapes {
-  val round8 = RoundedCornerShape(size = 8.dp)
   val round12 = RoundedCornerShape(size = 12.dp)
   val round16 = RoundedCornerShape(size = 16.dp)
   val round24 = RoundedCornerShape(size = 24.dp)
+  val round32 = RoundedCornerShape(size = 32.dp)
 }
 
 internal val LocalAppShapes = staticCompositionLocalOf<AppShapes> {
-  error("No AppShapes provided: оберните экран в AppTheme")
+  error("No AppShapes provided")
 }

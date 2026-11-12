@@ -1,0 +1,121 @@
+package ru.sla.pure.android.uikit.component.button
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
+import ru.sla.pure.android.uikit.spacer.VSpacer
+import ru.sla.pure.android.uikit.theme.AppTheme
+import ru.sla.pure.android.uikit.theme.ColorTheme
+
+@Composable
+fun SecondaryButtonSmall(
+  text: String,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+  style: ButtonStyle = ButtonStyle.Default,
+  enabled: Boolean = true,
+  showLoading: Boolean = false,
+  showElevation: Boolean = false
+) {
+  OutlinedButtonInternal(
+    modifier = modifier,
+    size = ButtonSize.Small,
+    text = text,
+    enabled = enabled,
+    showLoading = showLoading,
+    showElevation = showElevation,
+    colors = when (style) {
+      ButtonStyle.Default -> ButtonDefaults.secondaryDefaultColors()
+      ButtonStyle.Error -> ButtonDefaults.secondaryErrorColors()
+      ButtonStyle.Success -> ButtonDefaults.secondarySuccessColors()
+    },
+    onClick = onClick
+  )
+}
+
+@Composable
+fun SecondaryButton(
+  text: String,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+  style: ButtonStyle = ButtonStyle.Default,
+  enabled: Boolean = true,
+  showLoading: Boolean = false,
+  showElevation: Boolean = false
+) {
+  OutlinedButtonInternal(
+    modifier = modifier,
+    size = ButtonSize.Medium,
+    text = text,
+    enabled = enabled,
+    showLoading = showLoading,
+    showElevation = showElevation,
+    colors = when (style) {
+      ButtonStyle.Default -> ButtonDefaults.secondaryDefaultColors()
+      ButtonStyle.Error -> ButtonDefaults.secondaryErrorColors()
+      ButtonStyle.Success -> ButtonDefaults.secondarySuccessColors()
+    },
+    onClick = onClick
+  )
+}
+
+@Preview
+@Composable
+private fun SecondaryButtonsPreviewLight(
+  @PreviewParameter(ButtonPreviewStateProvider::class)
+  state: ButtonPreviewState
+) {
+  AppTheme(colorTheme = ColorTheme.Light) {
+    SecondaryButtonsPreviewContent(state)
+  }
+}
+
+@Preview
+@Composable
+private fun SecondaryButtonsPreviewDark(
+  @PreviewParameter(ButtonPreviewStateProvider::class)
+  state: ButtonPreviewState
+) {
+  AppTheme(colorTheme = ColorTheme.Dark) {
+    SecondaryButtonsPreviewContent(state)
+  }
+}
+
+@Composable
+private fun SecondaryButtonsPreviewContent(state: ButtonPreviewState) {
+  Column(
+    modifier = Modifier
+      .background(AppTheme.colors.backgroundPrimary)
+      .padding(start = 16.dp, end = 16.dp),
+    horizontalAlignment = Alignment.CenterHorizontally
+  ) {
+    VSpacer(8.dp)
+    SecondaryButtonSmall(
+      modifier = Modifier.fillMaxWidth(),
+      text = "Продолжить",
+      style = state.style,
+      enabled = state.enabled,
+      showLoading = state.showLoading,
+      showElevation = state.showElevation,
+      onClick = {}
+    )
+    VSpacer(8.dp)
+    SecondaryButton(
+      modifier = Modifier.fillMaxWidth(),
+      text = "Продолжить",
+      style = state.style,
+      enabled = state.enabled,
+      showLoading = state.showLoading,
+      showElevation = state.showElevation,
+      onClick = {}
+    )
+    VSpacer(8.dp)
+  }
+}

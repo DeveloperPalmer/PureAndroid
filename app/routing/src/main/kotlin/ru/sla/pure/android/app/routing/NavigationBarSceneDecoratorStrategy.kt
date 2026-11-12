@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -19,6 +20,7 @@ import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneDecoratorStrategy
 import androidx.navigation3.scene.SceneDecoratorStrategyScope
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
+import ru.sla.pure.android.core.routing.FlowContainerKey
 import ru.sla.pure.android.core.routing.NavigationBarKey
 import ru.sla.pure.android.core.routing.showNavigationBar
 
@@ -27,6 +29,8 @@ import ru.sla.pure.android.core.routing.showNavigationBar
  * а декоратор сцен оборачивает сцену общим UI. Панель получают только записи с [showNavigationBar].
  * Панель — часть сцены, а не слой поверх `NavDisplay`: при переходе к записи без панели сцена
  * со списком уходит вместе с панелью, а новый экран приходит на весь экран.
+ * Экраны без панели получают нижний safeDrawing inset. Контейнеры флоу передают эту
+ * ответственность вложенным сценам, чтобы не ограничивать область рисования их панели.
  *
  * Схема из рецепта Responsive Navigation Scene Decorator в android/nav3-recipes.
  */
@@ -35,10 +39,16 @@ class NavigationBarSceneDecoratorStrategy<T : Any>(
   private val navigationBar: @Composable () -> Unit,
 ) : SceneDecoratorStrategy<T> {
   override fun SceneDecoratorStrategyScope<T>.decorateScene(scene: Scene<T>): Scene<T> {
-    return if (scene.entries.all { it.metadata[NavigationBarKey] == true }) {
-      NavigationBarScene(scene, sharedTransitionScope, navigationBar)
-    } else {
-      scene
+    return when {
+      scene.entries.all { it.metadata[NavigationBarKey] == true } -> {
+        NavigationBarScene(scene, sharedTransitionScope, navigationBar)
+      }
+      scene.entries.all { it.metadata[FlowContainerKey] == true } -> {
+        scene
+      }
+      else -> {
+        DefaultScene(scene)
+      }
     }
   }
 }
@@ -89,6 +99,21 @@ private data class NavigationBarScene<T : Any>(
           navigationBar()
         }
       }
+    }
+  }
+}
+
+private data class DefaultScene<T : Any>(private val scene: Scene<T>) : Scene<T> by scene {
+  override val key: Any = scene::class to scene.key
+
+  override val content: @Composable () -> Unit = {
+    Box(
+      modifier = Modifier
+        .fillMaxSize()
+        // Нижний безопасный отступ для сцены по умолчанию.
+        .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom)),
+    ) {
+      scene.content()
     }
   }
 }

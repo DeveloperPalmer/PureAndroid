@@ -1,16 +1,12 @@
 package ru.sla.pure.android.feature.main.ui.screen.main
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -80,9 +76,7 @@ internal fun MainContent(
   Column(
     modifier = modifier
       .testTag(MainScreenTestTags.SCREEN)
-      .fillMaxSize()
-      .background(AppTheme.colors.backgroundPrimary)
-      .windowInsetsPadding(insets = WindowInsets.safeDrawing),
+      .fillMaxSize(),
   ) {
     Row(
       modifier = Modifier

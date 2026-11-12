@@ -2,6 +2,7 @@ package ru.sla.pure.android.core.routing
 
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.metadata as navMetadata
 
 /** Регистрирует контейнер флоу в родительском стеке по маршруту [initial]. */
 fun <C : FlowComponent> EntryProviderScope<NavKey>.flow(
@@ -11,7 +12,10 @@ fun <C : FlowComponent> EntryProviderScope<NavKey>.flow(
   metadata: Map<String, Any> = emptyMap(),
   entries: EntryProviderScope<NavKey>.(C) -> Unit,
 ) {
-  entry(key = initial, metadata = metadata) {
+  entry(
+    key = initial,
+    metadata = metadata + navMetadata { put(FlowContainerKey, true) }
+  ) {
     LocalFlowHost.current.Content(tabs, component, entries)
   }
 }

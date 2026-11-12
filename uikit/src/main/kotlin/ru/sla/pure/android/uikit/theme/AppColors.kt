@@ -1,41 +1,65 @@
 package ru.sla.pure.android.uikit.theme
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-/**
- * Цвета по ролям: экран говорит «основной текст» или «акцент», а не «серый 900». Тема меняет
- * только то, какой цвет палитры стоит за ролью, поэтому светлая и тёмная схемы переключаются
- * без правок в экранах
- */
 @Immutable
 data class AppColors(
   val isLight: Boolean,
-  /** Фон экрана */
   val backgroundPrimary: Color,
-  /** Фон второго уровня: секции, подложки */
   val backgroundSecondary: Color,
-  /** Поверхности поверх фона: панели, карточки */
-  val surfacePrimary: Color,
-  /** Основной текст и иконки */
+  val backgroundTertiary: Color,
+  val backgroundAccentPrimary: Color,
+  val backgroundAccentSecondary: Color,
+  val brandPrimary: Color,
+  val brandSecondary: Color,
+  val cardPrimary: Color,
+  val cardSecondary: Color,
+  val cardTertiary: Color,
+  val cardQuaternary: Color,
+  val cardQuinary: Color,
+  val cardSenary: Color,
+  val cardAccent: Color,
+  val cardAccentSecondary: Color,
+  val cardAccentVariant: Color,
   val contentPrimary: Color,
-  /** Вспомогательный текст */
   val contentSecondary: Color,
-  /** Подсказки и недоступные элементы */
   val contentTertiary: Color,
-  /** Акцент: кнопки, выбранные элементы */
-  val accentPrimary: Color,
-  /** Мягкий акцент: подложка выбранного элемента */
-  val accentSecondary: Color,
-  /** Текст и иконки поверх [accentPrimary] */
-  val contentOnAccent: Color,
-  /** Разделители и обводки */
-  val divider: Color,
+  val contentQuaternary: Color,
+  val contentAccentPrimary: Color,
+  val contentAccentSecondary: Color,
+  val contentAccentTertiary: Color,
+  val contentAccentVariant: Color,
+  val contentAccentDark: Color,
+  val contentAccentDarkSecondary: Color,
+  val contentBlue: Color,
+  val contentGoldPrimary: Color,
+  val contentAccentReadable: Color,
   val errorPrimary: Color,
+  val errorSecondary: Color,
   val successPrimary: Color,
+  val successSecondary: Color,
+  val buttonPrimaryBg: Color,
+  val buttonPrimaryVariantBg: Color,
+  val buttonPrimaryContent: Color,
+  val buttonPrimaryVariantContent: Color,
+  val buttonPrimaryBgDisabled: Color,
+  val buttonPrimaryVariantBgDisabled: Color,
+  val buttonPrimaryContentDisabled: Color,
+  val buttonPrimaryVariantContentDisabled: Color,
+  val buttonSecondaryBg: Color,
+  val buttonSecondaryBgDisabled: Color,
+  val buttonSecondaryContent: Color,
+  val buttonSecondaryContentDisabled: Color,
+  val buttonTertiaryContent: Color,
+  val buttonTertiaryContentDisabled: Color,
+  val shimmerColor: Color,
+  val shimmerHighlightColor: Color,
+  val graphLane1: Color,
+  val graphLane2: Color,
+  val graphLane3: Color,
+  val graphLane4: Color,
+  val graphLane5: Color,
+  val graphLane6: Color,
+  val graphMergeContent: Color
 )
-
-internal val LocalAppColors = staticCompositionLocalOf<AppColors> {
-  error("No AppColors provided: оберните экран в AppTheme")
-}

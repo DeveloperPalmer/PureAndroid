@@ -10,4 +10,6 @@ android {
 dependencies {
   api(projects.core.ui)
   api(projects.core.resources)
+  implementation(libs.coil.compose)
+  implementation(libs.coil.network.okhttp)
 }

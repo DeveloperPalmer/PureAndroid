@@ -1,13 +1,9 @@
 package ru.sla.pure.android.feature.main.ui.screen.characterdetails
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -44,8 +40,6 @@ internal fun CharacterDetailsContent(
     modifier = Modifier
       .testTag(CharacterDetailsTestTags.SCREEN)
       .fillMaxSize()
-      .background(AppTheme.colors.backgroundPrimary)
-      .windowInsetsPadding(WindowInsets.safeDrawing)
       .padding(16.dp),
     verticalArrangement = Arrangement.spacedBy(8.dp),
   ) {
