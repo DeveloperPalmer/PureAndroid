@@ -1,3 +1,8 @@
+---
+name: android-studio-cli
+description: Доступ к Android Studio для PureAndroid через Android CLI, проверка подключения и согласованный рендер Compose Preview.
+---
+
 # Android Studio через Android CLI
 
 Android CLI установлен в окружении разработчика. Загрузчик находится в `%LOCALAPPDATA%\Android\Sdk\cmdline-tools\latest\bin\android.exe`, сама установка — в `%USERPROFILE%\.android`. Каталог загрузчика добавлен в пользовательский `PATH`. Уже открытым терминалам и Codex может потребоваться перезапуск для обновления окружения.
@@ -15,9 +20,9 @@ android studio check
 & "$env:LOCALAPPDATA/Android/Sdk/cmdline-tools/latest/bin/android.exe" studio check
 ```
 
-Для PureAndroid указывай `--project=PureAndroid` и сверяй путь проекта в выводе `studio check`. Для задач с индексом или рендером требуется состояние `READY` и актуальная модель проекта в Studio. Синхронизацию, сборку и анализ запускай по [правилам проекта](code-quality.md).
+Для PureAndroid указывай `--project=PureAndroid` и сверяй путь проекта в выводе `studio check`. Для задач с индексом или рендером требуется состояние `READY` и актуальная модель проекта в Studio. Синхронизацию, сборку и анализ запускай по [правилам проекта](../code-quality/SKILL.md).
 
-Пример рендера существующего Preview из корня проекта. Его выполняют после согласования проверки по [чек-листу UI](compose-ui-review.md).
+Пример рендера существующего Preview из корня проекта. Его выполняют после согласования проверки по [чек-листу UI](../compose-ui-review/SKILL.md).
 
 ```powershell
 $previewImage = Join-Path $env:TEMP 'PureAndroid-MainContentPreview.png'
