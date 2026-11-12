@@ -30,6 +30,10 @@ class MainViewModel @Inject constructor(
     flowEventSink.sendEvent(FlowEvent.CharacterDetailsRequested(characterId))
   }
 
+  fun onOpenProfile() = intent {
+    flowEventSink.sendEvent(FlowEvent.ProfileRequested)
+  }
+
   fun onLoadStatesChanged(loadStates: CombinedLoadStates) = intent {
     val contentLoadState = loadStates
       .asLceState()

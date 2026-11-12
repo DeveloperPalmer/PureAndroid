@@ -12,11 +12,12 @@
 | Вкладки и нижняя панель | `MainEntryProviderInstaller` в [`:feature:main:routing`](../feature/main/routing) задаёт список вкладок. `AppNavigationBar` находится в [`:app:routing`](../app/routing) |
 | Контракты навигации и общий DI-граф экранов одного флоу | [`:core:routing`](../core/routing), `Navigator`, `EntryProviderInstaller`, `FlowEntryScope`, `FlowHost`, `FlowComponent` |
 | Список персонажей и экран деталей | [`:feature:main:ui`](../feature/main/ui/src/main), `screen/main` и `screen/characterdetails` содержат Compose-экран, ViewModel и `ViewState`. MVI на Orbit, общая база `BaseViewModel` в [`:core:ui`](../core/ui) |
+| Профиль и выход из аккаунта | [`:feature:main:ui`](../feature/main/ui/src/main), `screen/profile`: `ProfileScreen` и `ProfileViewModel`. Задача `MainModel.logout` в `:feature:main:domain` вызывает `MainRepository.logout` для выхода из Google, затем сбрасывает сессию с очисткой кэша через `AuthSessionRepository`. `MainRepositoryImpl` привязан в `MainScope`. `MainFlow` передаёт `LogoutSucceeded` в `AppFlow`, который заменяет корень на экран входа |
 | Ключи, экраны флоу «Главная» и обработка его событий | [`:feature:main:routing`](../feature/main/routing), `MainRoute`, `MainFlow`, `MainEntryProviderInstaller`, `MainFlowComponent` |
 | Вход и сохранение сессии | [`:feature:login:routing`](../feature/login/routing), `LoginFlow` и `LoginFlowComponent`. Экран и Orbit-интенты находятся в [`:feature:login:ui`](../feature/login/ui), сохранение сессии проходит через `LoginModel`. |
 | Вкладка «Карта» | [`:feature:map:routing`](../feature/map/routing) регистрирует `MapRoute.Map` через `MapEntryProviderInstaller`. [`:feature:map:ui`](../feature/map/ui) содержит `MapScreen`, экран-заглушку |
-| Загрузка списка, Paging и контракт репозитория | [`:feature:main:domain`](../feature/main/domain), `MainModel`, `CharacterPagingSource`, `CharacterRepository` и модели `Character` и `CharacterPage`. Общие модели ошибок, `ReactiveModel` и `LazyStartTask` в [`:core:domain`](../core/domain) |
-| Реализация репозитория и маппинг данных | [`:feature:main:data`](../feature/main/data), `CharacterRepositoryImpl`, `CharacterNetworkModule` и мапперы в `network/mapper` и `cache/mapper`. При `ConnectivityError` репозиторий пробует прочитать кэш Room |
+| Загрузка списка, Paging и контракт репозитория | [`:feature:main:domain`](../feature/main/domain), `MainModel`, `CharacterPagingSource`, `MainRepository` и модели `Character` и `CharacterPage`. Общие модели ошибок, `ReactiveModel` и `LazyStartTask` в [`:core:domain`](../core/domain) |
+| Реализация репозитория и маппинг данных | [`:feature:main:data`](../feature/main/data), `MainRepositoryImpl`, `CharacterNetworkModule` и мапперы в `network/mapper` и `cache/mapper`. При `ConnectivityError` репозиторий пробует прочитать кэш Room |
 | Настройки HTTP и подключение БД к графу | [`:app:data`](../app/data), `NetworkConfigurationModule` задаёт URL, `NetworkModule` настраивает OkHttp и Retrofit, `DatabaseModule` предоставляет Room и DAO |
 | JSON, обработка сетевых ошибок, API и хранение | [`:core:data`](../core/data) содержит `ServerJson`, `ApiErrorCallAdapterFactory` и `NetworkErrorConverter`. В [`:openapi-schema`](../openapi-schema/README.md) лежат `CharacterApi` и JSON-модели, в [`:database`](../database) — `CharacterDatabase`, `CharacterDao` и сущности Room |
 | Тема, цвета, типографика и общие ресурсы | [`:uikit`](../uikit), `AppTheme` и токены в `theme/`. Строки и иконки вкладок в [`:core:resources`](../core/resources/src/main/res). Общие типы состояния и маппинг UI-ошибок в `:core:ui` |
@@ -40,5 +41,5 @@
 ```powershell
 rg --files feature -g '*ViewModel.kt' -g '*Route.kt' -g '*EntryProviderInstaller.kt' -g '!**/build/**'
 rg -n 'MainFlowEvent|MainRoute\.CharacterDetails' app core feature -g '*.kt' -g '!**/build/**'
-rg -n 'CharacterRepository|@ContributesBinding' app feature -g '*.kt' -g '!**/build/**'
+rg -n 'MainRepository|@ContributesBinding' app feature -g '*.kt' -g '!**/build/**'
 ```

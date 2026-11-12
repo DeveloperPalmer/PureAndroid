@@ -222,6 +222,7 @@ class MainScreenTest : BaseTestCase() {
           contentLoadState = contentLoadState,
           refreshInProgress = refreshInProgress,
           onOpenCharacter = {},
+          onOpenProfile = {},
         )
       }
     }

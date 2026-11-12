@@ -14,6 +14,7 @@ import ru.sla.pure.android.feature.app.ui.routing.FlowEvent
 import ru.sla.pure.android.feature.login.routing.LoginRoute
 import ru.sla.pure.android.feature.main.routing.MainRoute
 import ru.sla.pure.android.feature.login.ui.routing.FlowEvent as LoginFlowEvent
+import ru.sla.pure.android.feature.main.ui.routing.FlowEvent as MainFlowEvent
 
 @SingleIn(AppFlowScope::class)
 @ContributesBinding(
@@ -35,7 +36,8 @@ class AppFlow @Inject constructor(private val navigator: Navigator) : Flow {
       is FlowEvent.ActiveSessionResolved -> {
         navigator.replaceRoot(MainRoute.Main)
       }
-      is FlowEvent.InactiveSessionResolved -> {
+      is FlowEvent.InactiveSessionResolved,
+      is MainFlowEvent.LogoutSucceeded -> {
         navigator.replaceRoot(LoginRoute.Credentials)
       }
     }

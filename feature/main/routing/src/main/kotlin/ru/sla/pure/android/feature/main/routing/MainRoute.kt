@@ -9,5 +9,8 @@ sealed interface MainRoute : NavKey {
   data object Main : MainRoute
 
   @Serializable
+  data object Profile : MainRoute
+
+  @Serializable
   data class CharacterDetails(val characterId: Int) : MainRoute
 }

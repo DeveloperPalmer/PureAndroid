@@ -1,6 +1,7 @@
 package ru.sla.pure.android.feature.main.domain
 
 import androidx.paging.testing.asSnapshot
+import io.mockk.mockk
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import ru.sla.pure.android.auth.session.domain.AuthSessionRepository
 import ru.sla.pure.android.core.domain.createCoroutineScope
 import ru.sla.pure.android.feature.main.domain.entity.Character
 import ru.sla.pure.android.feature.main.domain.entity.CharacterGender
@@ -27,7 +29,8 @@ class MainModelTest {
   fun setUp() {
     model = MainModel(
       coroutineScope = coroutineScope,
-      repository = FakeCharacterRepository()
+      mainRepository = FakeMainRepository(),
+      authSessionRepository = mockk<AuthSessionRepository>(),
     )
   }
 
@@ -60,7 +63,7 @@ class MainModelTest {
   private fun firstPageIds(): List<Int> = (1..PAGE_SIZE).toList()
 }
 
-private class FakeCharacterRepository : CharacterRepository {
+private class FakeMainRepository : MainRepository {
   override suspend fun readPage(page: Int): CharacterPage = CharacterPage(
     characters = idsOfPage(page).map(::character),
     page = page,
@@ -71,6 +74,8 @@ private class FakeCharacterRepository : CharacterRepository {
   )
 
   override suspend fun readCharacter(id: Int): Character = character(id)
+
+  override suspend fun logout() = Unit
 
   private fun idsOfPage(page: Int): IntRange = (page - 1) * PAGE_SIZE + 1..page * PAGE_SIZE
 

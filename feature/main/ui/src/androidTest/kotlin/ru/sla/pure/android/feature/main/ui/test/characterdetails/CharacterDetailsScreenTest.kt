@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import ru.sla.pure.android.auth.session.domain.AuthSessionRepository
 import ru.sla.pure.android.core.domain.createCoroutineScope
 import ru.sla.pure.android.core.domain.entity.ApiError
 import ru.sla.pure.android.core.domain.entity.ConnectivityError
@@ -38,8 +39,8 @@ import ru.sla.pure.android.core.ui.Event
 import ru.sla.pure.android.core.ui.FlowEventSink
 import ru.sla.pure.android.core.ui.entity.ContentLoadState
 import ru.sla.pure.android.core.ui.entity.UiError
-import ru.sla.pure.android.feature.main.domain.CharacterRepository
 import ru.sla.pure.android.feature.main.domain.MainModel
+import ru.sla.pure.android.feature.main.domain.MainRepository
 import ru.sla.pure.android.feature.main.domain.entity.Character
 import ru.sla.pure.android.feature.main.domain.entity.CharacterPage
 import ru.sla.pure.android.feature.main.ui.routing.FlowEvent
@@ -56,7 +57,8 @@ import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalTestApi::class)
 class CharacterDetailsScreenTest : BaseTestCase() {
-  private val repository by lazy { mockk<CharacterRepository>() }
+  private val repository by lazy { mockk<MainRepository>() }
+  private val authSessionRepository by lazy { mockk<AuthSessionRepository>() }
   private val modelScope = createCoroutineScope()
   private val navigationEvents = CopyOnWriteArrayList<Event>()
 
@@ -294,7 +296,7 @@ class CharacterDetailsScreenTest : BaseTestCase() {
     val characters = listOf(testCharacter(1), testCharacter(2))
     coEvery { repository.readPage(1) } returns CharacterPage(characters, 1, characters.size, 1, null, null)
     coEvery { repository.readCharacter(any()) } answers { characters.single { it.id == firstArg<Int>() } }
-    val model = MainModel(modelScope, repository)
+    val model = MainModel(modelScope, repository, authSessionRepository)
     val selectedId = mutableStateOf<Int?>(null)
     val eventSink = FlowEventSink { event ->
       when (event) {
@@ -374,7 +376,7 @@ class CharacterDetailsScreenTest : BaseTestCase() {
   }
 
   private fun AndroidComposeUiTest<ComponentActivity>.showScreen(): CharacterDetailsScreen {
-    val model = MainModel(modelScope, repository)
+    val model = MainModel(modelScope, repository, authSessionRepository)
     setContent {
       AppTheme {
         // Activity owns the ViewModelStore, so Compose test teardown also clears the ViewModel.
