@@ -1,6 +1,7 @@
 package ru.sla.pure.android.app.routing
 
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -23,14 +24,15 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import ru.sla.pure.android.core.routing.FlowContainerKey
 import ru.sla.pure.android.core.routing.NavigationBarKey
 import ru.sla.pure.android.core.routing.showNavigationBar
+import ru.sla.pure.android.uikit.theme.AppTheme
 
 /**
  * Добавляет нижнюю панель к сценам. Navigation 3 показывает записи стека в сценах (`Scene`),
  * а декоратор сцен оборачивает сцену общим UI. Панель получают только записи с [showNavigationBar].
  * Панель — часть сцены, а не слой поверх `NavDisplay`: при переходе к записи без панели сцена
  * со списком уходит вместе с панелью, а новый экран приходит на весь экран.
- * Экраны без панели получают нижний safeDrawing inset. Контейнеры флоу передают эту
- * ответственность вложенным сценам, чтобы не ограничивать область рисования их панели.
+ * Системные отступы применяются внутри экранной сцены, чтобы масштабироваться вместе с ней.
+ * Контейнеры флоу передают эту ответственность вложенным сценам.
  *
  * Схема из рецепта Responsive Navigation Scene Decorator в android/nav3-recipes.
  */
@@ -68,7 +70,6 @@ fun <T : Any> rememberNavigationBarSceneDecoratorStrategy(
   }
 }
 
-/** Сцена «контент + панель снизу». Data class: Navigation 3 сравнивает сцены по equals */
 private data class NavigationBarScene<T : Any>(
   private val scene: Scene<T>,
   private val sharedTransitionScope: SharedTransitionScope,
@@ -78,7 +79,12 @@ private data class NavigationBarScene<T : Any>(
 
   override val content: @Composable () -> Unit = {
     with(sharedTransitionScope) {
-      Column(Modifier.fillMaxSize()) {
+      Column(
+        Modifier
+          .fillMaxSize()
+          .then(sceneSurface(scene))
+          .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)),
+      ) {
         Box(
           // Низ экрана закрывает панель, поэтому экранам сцены нижний отступ не нужен
           modifier = Modifier
@@ -110,11 +116,21 @@ private data class DefaultScene<T : Any>(private val scene: Scene<T>) : Scene<T>
     Box(
       modifier = Modifier
         .fillMaxSize()
-        // Нижний безопасный отступ для сцены по умолчанию.
-        .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom)),
+        // Фон покрывает insets; внешний predictive-декоратор масштабирует всю поверхность.
+        .then(sceneSurface(scene))
+        .windowInsetsPadding(WindowInsets.safeDrawing),
     ) {
       scene.content()
     }
+  }
+}
+
+@Composable
+private fun sceneSurface(scene: Scene<*>): Modifier {
+  return if (scene.entries.all { it.metadata[FlowContainerKey] == true }) {
+    Modifier
+  } else {
+    Modifier.background(AppTheme.colors.backgroundPrimary)
   }
 }
 

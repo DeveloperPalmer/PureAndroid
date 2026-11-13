@@ -1,5 +1,6 @@
 package ru.sla.pure.android
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,6 +12,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import ru.sla.pure.android.app.routing.AppFlowHost
 import ru.sla.pure.android.feature.app.routing.AppRoute
 import ru.sla.pure.android.uikit.theme.AppTheme
+import ru.sla.pure.android.uikit.window.setNavigationBarColorCompat
 
 /**
  * Единственная Activity: запускает корневой флоу приложения.
@@ -30,6 +32,7 @@ class MainActivity : ComponentActivity() {
     val splashScreen = installSplashScreen()
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
+    window.setNavigationBarColorCompat(Color.TRANSPARENT, contrastEnforced = false)
 
     val foregroundComponent = appFlowViewModel.foregroundComponent
     val appNavigator = foregroundComponent.appNavigator()
