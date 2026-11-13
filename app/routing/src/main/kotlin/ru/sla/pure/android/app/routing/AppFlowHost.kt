@@ -1,17 +1,10 @@
 package ru.sla.pure.android.app.routing
 
-import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -21,7 +14,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.ui.NavDisplay
 import dev.zacsweers.metrox.viewmodel.LocalMetroViewModelFactory
 import ru.sla.pure.android.core.routing.EntryProviderInstaller
 import ru.sla.pure.android.core.routing.FlowComponent
@@ -54,9 +46,7 @@ fun AppFlowHost(
     Box(
       modifier = modifier
         .fillMaxSize()
-        .background(AppTheme.colors.backgroundPrimary)
-        // Нижним inset управляет сцена: фон NavigationBar доходит до края окна.
-        .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)),
+        .background(AppTheme.colors.backgroundPrimary),
     ) {
       NavigationContent(
         modifier = Modifier.fillMaxSize(),
@@ -102,39 +92,6 @@ private class AppFlowContainer(
         tabs = tabs,
       )
     }
-  }
-}
-
-@Composable
-private fun NavigationContent(
-  state: NavigationState,
-  navigator: AppNavigator,
-  entryProvider: EntryProvider,
-  modifier: Modifier = Modifier,
-  tabs: List<NavigationTab> = emptyList(),
-) {
-  DisposableEffect(navigator, state) {
-    navigator.attach(state)
-    onDispose { navigator.detach(state) }
-  }
-  SharedTransitionLayout(modifier) {
-    val navigationBarDecorator = rememberNavigationBarSceneDecoratorStrategy<NavKey>(
-      sharedTransitionScope = this,
-      navigationBar = {
-        if (tabs.isNotEmpty()) {
-          AppNavigationBar(tabs, state.topLevelRoute, navigator::navigateTo)
-        }
-      },
-    )
-    NavDisplay(
-      entries = state.entries(entryProvider),
-      onBack = navigator::navigateBack,
-      sceneDecoratorStrategies = listOf(navigationBarDecorator),
-      sharedTransitionScope = this,
-      transitionSpec = SlideTransitions.forward(),
-      popTransitionSpec = SlideTransitions.back(),
-      predictivePopTransitionSpec = SlideTransitions.predictiveBack(),
-    )
   }
 }
 
