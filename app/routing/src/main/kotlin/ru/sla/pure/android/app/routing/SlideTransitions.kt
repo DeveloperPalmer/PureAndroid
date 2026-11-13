@@ -2,6 +2,7 @@ package ru.sla.pure.android.app.routing
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
@@ -9,8 +10,7 @@ import androidx.navigation3.scene.Scene
 
 /**
  * Анимации переходов `NavDisplay`: горизонтальный сдвиг вместо стандартного затухания.
- * `NavDisplay` сам выбирает, какую применить: переход вперёд, назад или назад жестом
- * (predictive back — анимация идёт вслед за пальцем)
+ * Predictive back рисует слои сцен отдельно от этих обычных переходов.
  */
 internal object SlideTransitions {
   /** Вперёд: новый экран въезжает справа, текущий уходит влево */
@@ -23,8 +23,16 @@ internal object SlideTransitions {
     slideInHorizontally { fw -> -fw } togetherWith slideOutHorizontally { fw -> fw }
   }
 
-  /** Назад жестом: та же анимация, что и [back], но её прогресс задаёт жест */
-  fun <T : Any> predictiveBack(): AnimatedContentTransitionScope<Scene<T>>.(Int) -> ContentTransform = {
-    slideInHorizontally { fw -> -fw } togetherWith slideOutHorizontally { fw -> fw }
+  /** Как у pager: направление определяется положением вкладок, включая сохранённые экраны их стеков. */
+  fun <T : Any> AnimatedContentTransitionScope<Scene<T>>.betweenTabs(policy: TabNavigationPolicy): ContentTransform? {
+    val direction = policy.direction(
+      initialState.entries.last().contentKey,
+      targetState.entries.last().contentKey,
+    ) ?: return null
+    return slideInHorizontally(
+      animationSpec = tween(300)
+    ) { it * direction } togetherWith slideOutHorizontally(
+      animationSpec = tween(300)
+    ) { -it * direction }
   }
 }
