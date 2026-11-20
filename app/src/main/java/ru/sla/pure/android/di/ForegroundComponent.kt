@@ -11,6 +11,7 @@ import ru.sla.pure.android.app.routing.NavigationHostState
 import ru.sla.pure.android.core.domain.di.ActivityContext
 import ru.sla.pure.android.core.domain.di.ForegroundScope
 import ru.sla.pure.android.core.routing.EntryProviderInstaller
+import ru.sla.pure.android.core.routing.deeplink.PendingDeepLink
 import ru.sla.pure.android.feature.app.routing.AppFlow
 
 @GraphExtension(ForegroundScope::class)
@@ -24,7 +25,11 @@ interface ForegroundComponent {
   @GraphExtension.Factory
   interface Factory {
     fun create(
-      @Provides @ActivityContext activity: Activity
+      @Provides
+      @ActivityContext
+      activity: Activity,
+      @Provides
+      pendingDeepLink: PendingDeepLink,
     ): ForegroundComponent
   }
 }
@@ -33,7 +38,7 @@ interface ForegroundComponent {
 interface ForegroundModule {
   @Provides
   @SingleIn(ForegroundScope::class)
-  fun provideNavigationHostState(): NavigationHostState {
-    return NavigationHostState(AppFlow.navKey)
+  fun provideNavigationHostState(pendingDeepLink: PendingDeepLink): NavigationHostState {
+    return NavigationHostState(AppFlow.navKey, pendingDeepLink)
   }
 }

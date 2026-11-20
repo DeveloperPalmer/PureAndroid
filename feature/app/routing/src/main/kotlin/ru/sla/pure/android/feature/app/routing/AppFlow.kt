@@ -10,6 +10,7 @@ import ru.sla.pure.android.auth.session.domain.entity.AuthSessionState
 import ru.sla.pure.android.core.routing.Flow
 import ru.sla.pure.android.core.routing.FlowNavKey
 import ru.sla.pure.android.core.routing.Navigator
+import ru.sla.pure.android.core.routing.deeplink.PendingDeepLink
 import ru.sla.pure.android.core.routing.di.AppFlowScope
 import ru.sla.pure.android.core.ui.Event
 import ru.sla.pure.android.core.ui.FlowEventSink
@@ -28,7 +29,10 @@ import ru.sla.pure.android.feature.main.ui.routing.FlowEvent as MainFlowEvent
   AppFlowScope::class,
   binding<@ForScope(AppFlowScope::class) FlowEventSink>(),
 )
-class AppFlow @Inject constructor(private val navigator: Navigator) : Flow {
+class AppFlow @Inject constructor(
+  private val navigator: Navigator,
+  private val pendingDeepLink: PendingDeepLink,
+) : Flow {
   override fun onEntry(): List<NavKey> {
     return listOf(AppRoute.InitialResolve)
   }
@@ -42,6 +46,7 @@ class AppFlow @Inject constructor(private val navigator: Navigator) : Flow {
         navigator.setRoot(MainFlow.navKey)
       }
       is MainFlowEvent.LogoutSucceeded -> {
+        pendingDeepLink.clear()
         navigator.setRoot(LoginFlow.navKey)
       }
     }

@@ -35,6 +35,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onRoot
+import androidx.lifecycle.SavedStateHandle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -52,6 +53,7 @@ import org.junit.jupiter.api.function.Executable
 import ru.sla.pure.android.core.routing.EntryProviderInstaller
 import ru.sla.pure.android.core.routing.FlowContainerKey
 import ru.sla.pure.android.core.routing.FlowNavKey
+import ru.sla.pure.android.core.routing.deeplink.PendingDeepLink
 import ru.sla.pure.android.core.routing.showNavigationBar
 import ru.sla.pure.android.core.testing.BaseTestCase
 import ru.sla.pure.android.uikit.theme.AppTheme
@@ -473,7 +475,8 @@ class PredictiveBackTransitionTest : BaseTestCase() {
         )
       }
     }
-    val hostState = NavigationHostState(flowKey)
+    val pendingDeepLink = PendingDeepLink(SavedStateHandle()) { listOf(it) }
+    val hostState = NavigationHostState(flowKey, pendingDeepLink)
     runOnUiThread {
       checkNotNull(activity).apply {
         enableEdgeToEdge()

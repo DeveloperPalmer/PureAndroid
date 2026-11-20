@@ -2,9 +2,13 @@ package ru.sla.pure.android.app.routing
 
 import androidx.navigation3.runtime.NavKey
 import ru.sla.pure.android.core.routing.FlowNavKey
+import ru.sla.pure.android.core.routing.deeplink.PendingDeepLink
 
 /** Подключённые стеки и отложенные изменения корня и флоу одного хоста. */
-class NavigationHostState(internal val root: FlowNavKey) {
+class NavigationHostState(
+  internal val root: FlowNavKey,
+  private val pendingDeepLink: PendingDeepLink,
+) {
   private val containers = mutableMapOf<FlowNavKey, NavigationState>()
   private val pendingFlowRemovals = mutableMapOf<FlowNavKey, MutableSet<FlowNavKey>>()
   private var rootReplacement: RootReplacement? = null
@@ -26,6 +30,11 @@ class NavigationHostState(internal val root: FlowNavKey) {
 
   internal val activeState: NavigationState?
     get() = activeFlowKey?.let(containers::get)
+
+  fun applyDeepLink(backStack: List<NavKey>) {
+    pendingDeepLink.accept(backStack)
+    applyPendingDeepLink()
+  }
 
   internal fun replaceRoot(route: NavKey?) {
     rootReplacement = RootReplacement(route)
@@ -61,6 +70,7 @@ class NavigationHostState(internal val root: FlowNavKey) {
       }
     }
     pendingFlowRemovals.remove(flowKey)?.forEach { state.removeFlow(it) }
+    applyPendingDeepLink()
   }
 
   internal fun detach(flowKey: FlowNavKey, state: NavigationState) {
@@ -80,6 +90,17 @@ class NavigationHostState(internal val root: FlowNavKey) {
     update(state)
     if (flowKey == root && state.firstRoute != previousRoot) {
       rootReplacement = RootReplacement(state.firstRoute)
+    }
+  }
+
+  private fun applyPendingDeepLink() {
+    val state = activeState ?: return
+    val backStack = pendingDeepLink.backStack ?: return
+    val firstRoute = backStack.firstOrNull() ?: return
+    if (firstRoute in state.topLevelBackStacks) {
+      state.setRoot(firstRoute)
+      backStack.drop(1).forEach(state::push)
+      pendingDeepLink.clear()
     }
   }
 
