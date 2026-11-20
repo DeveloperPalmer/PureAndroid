@@ -2,7 +2,7 @@
 
 # Build plugins
 agp = "9.4.1"
-googleServices = "4.5.0"
+googleServices = "4.6.0"
 kotlin = "2.4.21"
 ksp = "2.3.12"
 
@@ -10,8 +10,9 @@ ksp = "2.3.12"
 kotlinxCoroutines = "1.11.0"
 kotlinResult = "1.1.17"
 credentials = "1.6.0"
-googleId = "1.2.0"
-firebaseAuth = "24.2.0"
+googleId = "1.2.1"
+firebaseAuth = "25.0.0"
+firebaseMessaging = "26.0.2"
 kotlinxSerialization = "1.12.0"
 
 # AndroidX core and lifecycle
@@ -68,6 +69,7 @@ androidx-credentials = { module = "androidx.credentials:credentials", version.re
 androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
 google-id = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleId" }
 firebase-auth = { module = "com.google.firebase:firebase-auth", version.ref = "firebaseAuth" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebaseMessaging" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 # AndroidX core and lifecycle
