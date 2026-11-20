@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
@@ -36,8 +39,10 @@ fun AppFlowHost(
     topLevelRoutes = setOf(hostState.root)
   )
   val entryProvider = remember(entryProviderInstallers) {
-    entryProvider<NavKey> {
-      entryProviderInstallers.forEach { installer -> with(installer) { install() } }
+    entryProvider {
+      entryProviderInstallers.forEach { installer ->
+        with(installer) { install() }
+      }
     }
   }
   val appFlowContainer = remember(hostState) { AppFlowContainer(hostState) }
@@ -76,14 +81,25 @@ private class AppFlowContainer(private val hostState: NavigationHostState) : Flo
     } else {
       firstRoute?.takeIf { it in tabRoutes } ?: tabRoutes.first()
     }
-    val state = rememberNavigationState(startRoute, tabRoutes.ifEmpty { setOf(startRoute) }, holder.entryRoutes)
+    val state = rememberNavigationState(
+      startRoute = startRoute,
+      entryRoutes = holder.entryRoutes,
+      topLevelRoutes = tabRoutes.ifEmpty { setOf(startRoute) }
+    )
     val entryProvider = remember(holder, entries) {
-      entryProvider<NavKey> { entries(holder.component) }
+      entryProvider { entries(holder.component) }
     }
+    var isAttached by remember(hostState, flowKey, state) { mutableStateOf(false) }
+
     DisposableEffect(hostState, flowKey, state) {
       hostState.attach(flowKey, state)
+      isAttached = true
       onDispose { hostState.detach(flowKey, state) }
     }
+
+    // При подключении хост применяет отложенный диплинк до первого показа стека.
+    if (!isAttached) return
+
     CompositionLocalProvider(LocalMetroViewModelFactory provides holder.viewModelFactory) {
       NavigationContent(
         state = state,

@@ -1,6 +1,7 @@
 plugins {
   id("android-library-convention")
   id("compose-convention")
+  id("di-convention")
 }
 
 android {

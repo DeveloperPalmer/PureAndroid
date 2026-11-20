@@ -49,6 +49,19 @@ class NavigationState(
     }
   }
 
+  internal fun setDeepLinkBackStack(backStack: List<NavKey>): Boolean {
+    val root = backStack.firstOrNull()?.takeIf { it in topLevelBackStacks } ?: return false
+    Snapshot.withMutableSnapshot {
+      setRoot(root)
+      if (root != startRoute) {
+        // Стартовая вкладка остаётся предыдущим экраном для корня открытой вкладки.
+        topLevelBackStacks.getValue(startRoute).add(startRoute)
+      }
+      backStack.drop(1).forEach(::push)
+    }
+    return true
+  }
+
   internal fun push(route: NavKey) {
     when (route) {
       in topLevelBackStacks -> {

@@ -47,10 +47,10 @@ class MainFlow @Inject constructor(
       is FlowEvent.CharacterDetailsDismissed -> {
         navigator.pop()
       }
-      FlowEvent.ProfileRequested -> {
+      is FlowEvent.ProfileRequested -> {
         navigator.push(MainRoute.Profile)
       }
-      FlowEvent.ProfileDismissed -> {
+      is FlowEvent.ProfileDismissed -> {
         navigator.pop()
       }
       is FlowEvent.NotificationSettingsRequested -> {
@@ -59,7 +59,7 @@ class MainFlow @Inject constructor(
           .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
       }
-      FlowEvent.LogoutSucceeded -> {
+      is FlowEvent.LogoutSucceeded -> {
         appEvents.sendEvent(event)
       }
     }
