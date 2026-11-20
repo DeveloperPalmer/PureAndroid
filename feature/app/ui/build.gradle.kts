@@ -11,6 +11,6 @@ android {
 
 dependencies {
   api(projects.uikit)
+  api(projects.authSession.domain)
   implementation(projects.core.routing)
-  implementation(projects.authSession.domain)
 }

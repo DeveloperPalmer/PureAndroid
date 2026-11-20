@@ -6,12 +6,10 @@ import dev.zacsweers.metro.ForScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.binding
 import dev.zacsweers.metrox.viewmodel.ViewModelKey
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import org.orbitmvi.orbit.viewmodel.orbitContainer
 import ru.sla.pure.android.auth.session.domain.AuthSessionModel
-import ru.sla.pure.android.auth.session.domain.entity.AuthSessionState
+import ru.sla.pure.android.auth.session.domain.firstOrInactive
 import ru.sla.pure.android.core.routing.di.AppFlowScope
 import ru.sla.pure.android.core.ui.FlowEventSink
 import ru.sla.pure.android.core.ui.mvi.BaseViewModel
@@ -28,17 +26,7 @@ class InitialResolveViewModel @Inject constructor(
     initialState = Unit,
     buildSettings = { intentLaunchingDispatcher = { Dispatchers.Main.immediate } },
   ) {
-    val sessionState = try {
-      sessionModel.sessionState.first()
-    } catch (exception: CancellationException) {
-      throw exception
-    } catch (_: Exception) {
-      AuthSessionState.Inactive
-    }
-    val event = when (sessionState) {
-      AuthSessionState.Active -> FlowEvent.ActiveSessionResolved
-      AuthSessionState.Inactive -> FlowEvent.InactiveSessionResolved
-    }
-    events.sendEvent(event)
+    val sessionState = sessionModel.sessionState.firstOrInactive()
+    events.sendEvent(FlowEvent.SessionResolved(sessionState))
   }
 }

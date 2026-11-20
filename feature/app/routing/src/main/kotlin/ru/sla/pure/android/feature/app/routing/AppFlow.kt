@@ -6,6 +6,7 @@ import dev.zacsweers.metro.ForScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import dev.zacsweers.metro.binding
+import ru.sla.pure.android.auth.session.domain.entity.AuthSessionState
 import ru.sla.pure.android.core.routing.Flow
 import ru.sla.pure.android.core.routing.FlowNavKey
 import ru.sla.pure.android.core.routing.Navigator
@@ -34,11 +35,12 @@ class AppFlow @Inject constructor(private val navigator: Navigator) : Flow {
 
   override fun transition(event: Event) {
     when (event) {
-      is LoginFlowEvent.LoginSucceeded,
-      is FlowEvent.ActiveSessionResolved -> {
+      is FlowEvent.SessionResolved -> {
+        navigator.setRoot(selectRoot(event.session))
+      }
+      is LoginFlowEvent.LoginSucceeded -> {
         navigator.setRoot(MainFlow.navKey)
       }
-      is FlowEvent.InactiveSessionResolved,
       is MainFlowEvent.LogoutSucceeded -> {
         navigator.setRoot(LoginFlow.navKey)
       }
@@ -48,4 +50,9 @@ class AppFlow @Inject constructor(private val navigator: Navigator) : Flow {
   companion object {
     val navKey = FlowNavKey("appFlow")
   }
+}
+
+internal fun selectRoot(session: AuthSessionState): FlowNavKey = when (session) {
+  AuthSessionState.Active -> MainFlow.navKey
+  AuthSessionState.Inactive -> LoginFlow.navKey
 }
