@@ -4,10 +4,9 @@ import android.app.Application
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
 import dev.zacsweers.metro.createGraphFactory
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.launch
 import ru.sla.pure.android.di.AppComponent
 import ru.sla.pure.android.di.ForegroundComponent
+import ru.sla.pure.android.pushmessages.android.configureNotificationDisplay
 import ru.sla.pure.android.pushmessages.data.PushMessagingSink
 import ru.sla.pure.android.pushmessages.data.di.PushMessagingSinkHolder
 
@@ -22,17 +21,11 @@ open class PureApplication : Application(), PushMessagingSinkHolder {
 
   override fun onCreate() {
     super.onCreate()
-    appComponent.applicationScope().launch(start = CoroutineStart.UNDISPATCHED) {
-      appComponent.pushMessagesRepository().messages.collect { result ->
-        result
-          .onSuccess { message ->
-            if (BuildConfig.DEBUG) {
-              Log.d("PureFCM", "Mapped push message: id=${message.id}")
-            }
-          }
-          .onFailure { error -> Log.w("PureFCM", "Invalid push message", error) }
-      }
-    }
+    configureNotificationDisplay(
+      context = this,
+      scope = appComponent.applicationScope(),
+      pushMessagesRepository = appComponent.pushMessagesRepository()
+    )
     FirebaseMessaging.getInstance()
       .register()
       .addOnFailureListener { error -> Log.e("PureFCM", "FCM registration failed", error) }
