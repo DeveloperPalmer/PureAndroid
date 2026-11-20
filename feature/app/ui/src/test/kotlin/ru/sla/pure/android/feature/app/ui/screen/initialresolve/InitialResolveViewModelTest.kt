@@ -45,7 +45,7 @@ class InitialResolveViewModelTest {
       runOnCreate().join()
       cancelAndIgnoreRemainingItems()
     }
-    assertEquals(listOf(FlowEvent.ActiveSessionResolved), events)
+    assertEquals(listOf(FlowEvent.SessionResolved(AuthSessionState.Active)), events)
   }
 
   @Test
@@ -57,7 +57,7 @@ class InitialResolveViewModelTest {
       runOnCreate().join()
       cancelAndIgnoreRemainingItems()
     }
-    assertEquals(listOf(FlowEvent.InactiveSessionResolved), events)
+    assertEquals(listOf(FlowEvent.SessionResolved(AuthSessionState.Inactive)), events)
   }
 
   @Test
@@ -69,6 +69,6 @@ class InitialResolveViewModelTest {
       runOnCreate().join()
       cancelAndIgnoreRemainingItems()
     }
-    assertEquals(listOf(FlowEvent.InactiveSessionResolved), events)
+    assertEquals(listOf(FlowEvent.SessionResolved(AuthSessionState.Inactive)), events)
   }
 }
