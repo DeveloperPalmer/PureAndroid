@@ -65,4 +65,8 @@ class ProfileViewModel @Inject constructor(
     }
     mainModel.logout.start(queueingStrategy = QueueingStrategy.SkipNew)
   }
+
+  fun onNotificationSettings() = intent {
+    flowEventSink.sendEvent(FlowEvent.NotificationSettingsRequested)
+  }
 }

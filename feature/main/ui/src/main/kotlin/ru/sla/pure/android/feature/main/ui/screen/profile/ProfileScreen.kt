@@ -28,6 +28,7 @@ fun ProfileScreen(viewModel: ProfileViewModel) {
   ProfileContent(
     state = state,
     onNavigateBack = viewModel::onNavigateBack,
+    onNotificationSettings = viewModel::onNotificationSettings,
     onLogout = viewModel::onLogout,
   )
 }
@@ -36,6 +37,7 @@ fun ProfileScreen(viewModel: ProfileViewModel) {
 internal fun ProfileContent(
   state: ViewState,
   onNavigateBack: () -> Unit,
+  onNotificationSettings: () -> Unit,
   onLogout: () -> Unit,
 ) {
   Column(
@@ -60,6 +62,13 @@ internal fun ProfileContent(
       }
     }
     VSpacer(height = 24.dp)
+    TextButton(
+      onClick = onNotificationSettings,
+      enabled = !state.logoutInProgress,
+    ) {
+      Text(stringResource(R.string.profile_notification_settings))
+    }
+    VSpacer(height = 16.dp)
     if (state.logoutFailed) {
       Text(
         text = stringResource(R.string.profile_logout_failed),
@@ -88,6 +97,7 @@ private fun ProfileContentPreview() {
     ProfileContent(
       state = ViewState(),
       onNavigateBack = {},
+      onNotificationSettings = {},
       onLogout = {}
     )
   }
