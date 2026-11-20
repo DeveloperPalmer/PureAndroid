@@ -17,17 +17,17 @@ import ru.sla.pure.android.buildconfig.BuildType
 class PushMessagingService @Inject constructor(
   private val buildConfigProvider: BuildConfigProvider,
 ) : PushMessagingSink {
-  private val rawMessages = MutableSharedFlow<RawMessage>()
+  private val rawMessages = MutableSharedFlow<RawMessage>(extraBufferCapacity = 12)
   private val currentInstallationId = MutableStateFlow<String?>(null)
 
   val messages = rawMessages.asSharedFlow()
   val installationId = currentInstallationId.asStateFlow()
 
-  override suspend fun onNewRawMessage(message: RawMessage) {
+  override fun onNewRawMessage(message: RawMessage) {
     if (buildConfigProvider.buildType == BuildType.Debug) {
       Log.d("PureFCM", "FCM message received: id=${message.messageId ?: "no messageId"}, dataKeys=${message.data.keys}")
     }
-    rawMessages.emit(message)
+    rawMessages.tryEmit(message)
   }
 
   override fun onRegistered(installationId: String) {
