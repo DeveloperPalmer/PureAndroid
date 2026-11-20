@@ -3,16 +3,20 @@ package ru.sla.pure.android.app.routing
 import androidx.compose.runtime.mutableStateOf
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import ru.sla.pure.android.core.routing.FlowNavKey
+import ru.sla.pure.android.core.routing.deeplink.PendingDeepLink
 
 class AppNavigatorTest {
   private enum class Route : NavKey { Initial, Main, Details, Map }
 
   private val appFlowKey = FlowNavKey("app")
-  private val hostState = NavigationHostState(appFlowKey)
+  private val pendingDeepLink = mockk<PendingDeepLink> { every { backStack } returns null }
+  private val hostState = NavigationHostState(appFlowKey, pendingDeepLink)
 
   @Test
   fun rootReplacementRemovesInitialResolveFromBackStack() {
