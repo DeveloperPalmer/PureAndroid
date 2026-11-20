@@ -7,5 +7,6 @@ sealed interface FlowEvent : Event {
   data object CharacterDetailsDismissed : FlowEvent
   data object ProfileRequested : FlowEvent
   data object ProfileDismissed : FlowEvent
+  data object NotificationSettingsRequested : FlowEvent
   data object LogoutSucceeded : FlowEvent
 }
