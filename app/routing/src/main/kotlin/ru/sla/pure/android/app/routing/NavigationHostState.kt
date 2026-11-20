@@ -13,11 +13,8 @@ class NavigationHostState(
   private val pendingFlowRemovals = mutableMapOf<FlowNavKey, MutableSet<FlowNavKey>>()
   private var rootReplacement: RootReplacement? = null
 
-  val isRootAttached: Boolean
+  private val isRootAttached: Boolean
     get() = root in containers
-
-  val currentRoute: NavKey?
-    get() = containers[root]?.currentRoute
 
   private val activeFlowKey: FlowNavKey?
     get() {
@@ -30,6 +27,9 @@ class NavigationHostState(
 
   internal val activeState: NavigationState?
     get() = activeFlowKey?.let(containers::get)
+
+  val currentRoute: NavKey?
+    get() = activeState?.currentRoute
 
   fun applyDeepLink(backStack: List<NavKey>) {
     pendingDeepLink.accept(backStack)
@@ -96,10 +96,7 @@ class NavigationHostState(
   private fun applyPendingDeepLink() {
     val state = activeState ?: return
     val backStack = pendingDeepLink.backStack ?: return
-    val firstRoute = backStack.firstOrNull() ?: return
-    if (firstRoute in state.topLevelBackStacks) {
-      state.setRoot(firstRoute)
-      backStack.drop(1).forEach(state::push)
+    if (state.setDeepLinkBackStack(backStack)) {
       pendingDeepLink.clear()
     }
   }

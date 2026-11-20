@@ -30,5 +30,7 @@
 
     <!-- Карта -->
     <string name="map_title">Карта</string>
+    <string name="map_back">Назад</string>
+    <string name="map_next">Дальше</string>
   <string name="G" translatable="false">G</string>
 </resources>

@@ -3,9 +3,11 @@
 
     <style name="Theme.PureAndroid" parent="android:Theme.Material.Light.NoActionBar" />
 
-    <style name="Theme.PureAndroid.Starting" parent="Theme.SplashScreen.IconBackground">
+    <style name="Base.Theme.PureAndroid.Starting" parent="Theme.SplashScreen.IconBackground">
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
         <item name="windowSplashScreenIconBackgroundColor">@color/splash_icon_background</item>
         <item name="postSplashScreenTheme">@style/Theme.PureAndroid</item>
     </style>
+
+    <style name="Theme.PureAndroid.Starting" parent="Base.Theme.PureAndroid.Starting" />
 </resources>

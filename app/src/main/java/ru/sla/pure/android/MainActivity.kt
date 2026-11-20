@@ -52,7 +52,8 @@ class MainActivity : ComponentActivity() {
     val hostState = foregroundComponent.navigationHostState()
 
     splashScreen.setKeepOnScreenCondition {
-      !hostState.isRootAttached || hostState.currentRoute == AppRoute.InitialResolve
+      val route = hostState.currentRoute
+      route == null || route == AppRoute.InitialResolve
     }
 
     setContent {
