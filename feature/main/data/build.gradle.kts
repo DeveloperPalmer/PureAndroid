@@ -8,6 +8,8 @@ android {
 }
 
 dependencies {
+  api(projects.pushMessages.domain)
+  api(libs.kotlinx.serialization.json)
   implementation(projects.authSession.domain)
   implementation(projects.core.data)
   implementation(projects.feature.main.domain)

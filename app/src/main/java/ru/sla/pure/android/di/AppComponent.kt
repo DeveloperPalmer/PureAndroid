@@ -10,9 +10,15 @@ import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineScope
 import ru.sla.pure.android.core.domain.createCoroutineScope
 import ru.sla.pure.android.core.domain.di.ApplicationContext
+import ru.sla.pure.android.pushmessages.data.PushMessagingSink
+import ru.sla.pure.android.pushmessages.domain.PushMessagesRepository
 
 @DependencyGraph(AppScope::class)
 interface AppComponent {
+  @ForScope(AppScope::class)
+  fun applicationScope(): CoroutineScope
+  fun pushMessagesRepository(): PushMessagesRepository
+  fun pushMessagingSink(): PushMessagingSink
   fun foregroundFactory(): ForegroundComponent.Factory
 
   @DependencyGraph.Factory
