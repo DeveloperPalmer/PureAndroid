@@ -51,6 +51,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
 import ru.sla.pure.android.core.routing.EntryProviderInstaller
 import ru.sla.pure.android.core.routing.FlowContainerKey
+import ru.sla.pure.android.core.routing.FlowNavKey
 import ru.sla.pure.android.core.routing.showNavigationBar
 import ru.sla.pure.android.core.testing.BaseTestCase
 import ru.sla.pure.android.uikit.theme.AppTheme
@@ -442,11 +443,11 @@ class PredictiveBackTransitionTest : BaseTestCase() {
   private fun AndroidComposeUiTest<ComponentActivity>.showNavigation(): TestScene {
     val scene = TestScene()
     val clock = { mainClock.currentTime }
+    val flowKey = FlowNavKey("test")
     val installer = EntryProviderInstaller {
-      entry(Route.Flow, metadata = metadata { put(FlowContainerKey, true) }) {
+      entry(flowKey, metadata = metadata { put(FlowContainerKey, true) }) {
         NavigationContent(
           state = scene.state,
-          navigator = scene.navigator,
           gestureUptimeMillis = clock,
           entryProvider = entryProvider<NavKey> {
             listOf(Route.A, Route.B).forEach { route ->
@@ -472,7 +473,7 @@ class PredictiveBackTransitionTest : BaseTestCase() {
         )
       }
     }
-    val rootNavigator = AppNavigator()
+    val hostState = NavigationHostState(flowKey)
     runOnUiThread {
       checkNotNull(activity).apply {
         enableEdgeToEdge()
@@ -482,8 +483,7 @@ class PredictiveBackTransitionTest : BaseTestCase() {
     setContent {
       AppTheme {
         AppFlowHost(
-          flowRoute = Route.Flow,
-          navigator = rootNavigator,
+          hostState = hostState,
           entryProviderInstallers = setOf(installer),
         )
       }
@@ -494,7 +494,7 @@ class PredictiveBackTransitionTest : BaseTestCase() {
   }
 
   private fun AndroidComposeUiTest<ComponentActivity>.push(scene: TestScene, interrupted: Boolean) {
-    runOnIdle { scene.navigator.navigateTo(Route.B) }
+    runOnIdle { scene.state.push(Route.B) }
     // First compose B and start the spring; do not let waitForIdle finish it automatically.
     mainClock.advanceTimeByFrame()
     mainClock.advanceTimeBy(if (interrupted) INTERRUPTED_PUSH_MS else SETTLE_MS)
@@ -646,12 +646,11 @@ class PredictiveBackTransitionTest : BaseTestCase() {
     BackEventCompat(0f, touchY, progress, swipeEdge)
 
   @Serializable
-  private enum class Route : NavKey { Flow, A, B }
+  private enum class Route : NavKey { A, B }
 
   private class TestScene {
     val stack = NavBackStack<NavKey>(Route.A)
     val state = NavigationState(Route.A, mutableStateOf<NavKey>(Route.A), mapOf(Route.A to stack))
-    val navigator = AppNavigator()
     val coordinates = mutableMapOf<Route, LayoutCoordinates>()
     val instances = mutableMapOf<Route, Any>()
     val counters = mutableMapOf<Route, MutableIntState>()

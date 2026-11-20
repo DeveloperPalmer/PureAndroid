@@ -9,8 +9,9 @@ import androidx.navigation3.runtime.NavKey
 interface FlowHost {
   @Composable
   fun <C : FlowComponent> Content(
+    flowKey: FlowNavKey,
     tabs: List<NavigationTab>,
-    component: (Navigator) -> C,
+    component: () -> C,
     entries: EntryProviderScope<NavKey>.(C) -> Unit,
   )
 }

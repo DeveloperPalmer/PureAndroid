@@ -6,38 +6,42 @@ import androidx.navigation3.runtime.NavKey
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
+import ru.sla.pure.android.core.routing.FlowNavKey
 
 class AppNavigatorTest {
   private enum class Route : NavKey { Initial, Main, Details, Map }
 
+  private val appFlowKey = FlowNavKey("app")
+  private val hostState = NavigationHostState(appFlowKey)
+
   @Test
   fun rootReplacementRemovesInitialResolveFromBackStack() {
-    val navigator = AppNavigator()
+    val navigator = AppNavigator(hostState)
     val stack = NavBackStack<NavKey>(Route.Initial)
-    assertNull(navigator.currentRoute)
-    navigator.attach(initialState(stack))
-    assertEquals(Route.Initial, navigator.currentRoute)
+    assertNull(hostState.currentRoute)
+    hostState.attach(appFlowKey, initialState(stack))
+    assertEquals(Route.Initial, hostState.currentRoute)
 
-    navigator.replaceRoot(Route.Main)
-    navigator.replaceRoot(Route.Main)
-    navigator.navigateBack()
+    navigator.setRoot(Route.Main)
+    navigator.setRoot(Route.Main)
+    navigator.pop()
 
     assertEquals(listOf(Route.Main), stack.toList())
-    assertEquals(Route.Main, navigator.currentRoute)
+    assertEquals(Route.Main, hostState.currentRoute)
   }
 
   @Test
   fun rootReplacementRequestedWhileDetachedAppliesOnAttach() {
-    val navigator = AppNavigator()
+    val navigator = AppNavigator(hostState)
     val previousStack = NavBackStack<NavKey>(Route.Initial)
     val previousState = initialState(previousStack)
-    navigator.attach(previousState)
-    navigator.detach(previousState)
-    navigator.replaceRoot(Route.Main)
+    hostState.attach(appFlowKey, previousState)
+    hostState.detach(appFlowKey, previousState)
+    navigator.setRoot(Route.Main)
 
     val restoredStack = NavBackStack<NavKey>(Route.Initial)
-    navigator.attach(initialState(restoredStack))
-    navigator.detach(previousState)
+    hostState.attach(appFlowKey, initialState(restoredStack))
+    hostState.detach(appFlowKey, previousState)
 
     assertEquals(listOf(Route.Initial), previousStack.toList())
     assertEquals(listOf(Route.Main), restoredStack.toList())
@@ -45,31 +49,34 @@ class AppNavigatorTest {
 
   @Test
   fun rootReplacementSurvivesReattachmentWithAnOlderSnapshot() {
-    val navigator = AppNavigator()
+    val navigator = AppNavigator(hostState)
     val originalState = initialState(NavBackStack<NavKey>(Route.Initial))
-    navigator.attach(originalState)
-    navigator.replaceRoot(Route.Main)
-    navigator.detach(originalState)
+    hostState.attach(appFlowKey, originalState)
+    navigator.setRoot(Route.Main)
+    hostState.detach(appFlowKey, originalState)
 
     val restoredStack = NavBackStack<NavKey>(Route.Initial)
-    navigator.attach(initialState(restoredStack))
+    hostState.attach(appFlowKey, initialState(restoredStack))
 
     assertEquals(listOf(Route.Main), restoredStack.toList())
   }
 
   @Test
-  fun restoredRootIsKeptWhenNavigatorAttaches() {
-    val navigator = AppNavigator()
+  fun restoredRootIsKeptWhenHostAttaches() {
     val stack = NavBackStack<NavKey>(Route.Main)
-    navigator.attach(initialState(stack))
+    hostState.attach(appFlowKey, initialState(stack))
 
     assertEquals(listOf(Route.Main), stack.toList())
-    assertEquals(Route.Main, navigator.currentRoute)
+    assertEquals(Route.Main, hostState.currentRoute)
   }
 
   @Test
   fun tabStacksSurviveSwitchingAndBackReturnsToMain() {
-    val navigator = AppNavigator()
+    val navigator = AppNavigator(hostState)
+    val mainFlowKey = FlowNavKey("main")
+    val rootStack = NavBackStack<NavKey>(Route.Initial)
+    hostState.attach(appFlowKey, initialState(rootStack))
+    navigator.setRoot(mainFlowKey)
     val mainStack = NavBackStack<NavKey>(Route.Main)
     val mapStack = NavBackStack<NavKey>(Route.Map)
     val state = NavigationState(
@@ -77,20 +84,28 @@ class AppNavigatorTest {
       topLevelRoute = mutableStateOf<NavKey>(Route.Main),
       topLevelBackStacks = linkedMapOf(Route.Main to mainStack, Route.Map to mapStack),
     )
-    navigator.attach(state)
+    hostState.attach(mainFlowKey, state)
 
-    navigator.navigateTo(Route.Details)
-    navigator.navigateTo(Route.Map)
-    navigator.navigateTo(Route.Map)
+    navigator.push(Route.Details)
+    navigator.push(Route.Map)
+    navigator.push(Route.Map)
     assertEquals(Route.Map, state.topLevelRoute)
     assertEquals(listOf(Route.Map), mapStack.toList())
 
-    navigator.navigateBack()
+    navigator.pop()
     assertEquals(Route.Main, state.topLevelRoute)
     assertEquals(listOf(Route.Main, Route.Details), mainStack.toList())
 
-    navigator.navigateBack()
+    navigator.pop()
     assertEquals(listOf(Route.Main), mainStack.toList())
+
+    navigator.push(Route.Details)
+    navigator.setRoot(Route.Initial)
+    navigator.push(Route.Map)
+    assertEquals(listOf(Route.Initial, Route.Map), rootStack.toList())
+    navigator.pop()
+    assertEquals(listOf(Route.Initial), rootStack.toList())
+    assertEquals(listOf(Route.Main, Route.Details), mainStack.toList())
   }
 
   private fun initialState(stack: NavBackStack<NavKey>) = NavigationState(

@@ -9,6 +9,7 @@ import androidx.navigation3.ui.NavDisplay
 import dev.zacsweers.metrox.viewmodel.metroViewModel
 import ru.sla.pure.android.core.routing.EntryProviderInstaller
 import ru.sla.pure.android.core.routing.flow
+import ru.sla.pure.android.feature.login.routing.LoginFlow
 import ru.sla.pure.android.feature.login.routing.LoginRoute
 import ru.sla.pure.android.feature.login.ui.screen.credentials.CredentialsScreen
 
@@ -17,7 +18,7 @@ class LoginEntryProviderInstaller(
 ) : EntryProviderInstaller {
   override fun EntryProviderScope<NavKey>.install() {
     flow(
-      initial = LoginRoute.Credentials,
+      key = LoginFlow.navKey,
       component = componentFactory::createLoginFlowComponent,
       metadata = NavDisplay.transitionSpec { EnterTransition.None togetherWith ExitTransition.None },
     ) { _ ->

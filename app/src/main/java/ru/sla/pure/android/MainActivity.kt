@@ -35,20 +35,16 @@ class MainActivity : ComponentActivity() {
     window.setNavigationBarColorCompat(Color.TRANSPARENT, contrastEnforced = false)
 
     val foregroundComponent = appFlowViewModel.foregroundComponent
-    val appNavigator = foregroundComponent.appNavigator()
+    val hostState = foregroundComponent.navigationHostState()
 
     splashScreen.setKeepOnScreenCondition {
-      when (appNavigator.currentRoute) {
-        null, AppRoute.InitialResolve -> true
-        else -> false
-      }
+      !hostState.isRootAttached || hostState.currentRoute == AppRoute.InitialResolve
     }
 
     setContent {
       AppTheme {
         AppFlowHost(
-          flowRoute = AppRoute.InitialResolve,
-          navigator = appNavigator,
+          hostState = hostState,
           entryProviderInstallers = foregroundComponent.entryProviderInstallers()
         )
       }

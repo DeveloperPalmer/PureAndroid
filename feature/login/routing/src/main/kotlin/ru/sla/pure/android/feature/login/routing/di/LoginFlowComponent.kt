@@ -13,7 +13,6 @@ import ru.sla.pure.android.core.domain.createCoroutineScope
 import ru.sla.pure.android.core.routing.Flow
 import ru.sla.pure.android.core.routing.FlowComponent
 import ru.sla.pure.android.core.routing.FlowViewModelFactory
-import ru.sla.pure.android.core.routing.Navigator
 import ru.sla.pure.android.core.routing.di.AppFlowScope
 import ru.sla.pure.android.feature.login.domain.di.LoginScope
 
@@ -22,9 +21,7 @@ interface LoginFlowComponent : FlowComponent {
   @ContributesTo(AppFlowScope::class)
   @GraphExtension.Factory
   interface Factory {
-    fun createLoginFlowComponent(
-      @Provides @ForScope(LoginScope::class) navigator: Navigator,
-    ): LoginFlowComponent
+    fun createLoginFlowComponent(): LoginFlowComponent
   }
 
   @ForScope(LoginScope::class)

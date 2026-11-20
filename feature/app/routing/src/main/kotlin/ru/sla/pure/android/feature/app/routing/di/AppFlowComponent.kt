@@ -10,7 +10,6 @@ import ru.sla.pure.android.core.domain.createCoroutineScope
 import ru.sla.pure.android.core.domain.di.ForegroundScope
 import ru.sla.pure.android.core.routing.Flow
 import ru.sla.pure.android.core.routing.FlowComponent
-import ru.sla.pure.android.core.routing.Navigator
 import ru.sla.pure.android.core.routing.di.AppFlowScope
 import ru.sla.pure.android.feature.login.routing.di.LoginFlowComponent
 import ru.sla.pure.android.feature.main.routing.di.MainFlowComponent
@@ -20,9 +19,7 @@ interface AppFlowComponent : FlowComponent {
   @ContributesTo(ForegroundScope::class)
   @GraphExtension.Factory
   interface Factory {
-    fun create(
-      @Provides navigator: Navigator
-    ): AppFlowComponent
+    fun create(): AppFlowComponent
   }
 
   @ForScope(AppFlowScope::class)
