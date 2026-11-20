@@ -1,11 +1,13 @@
 package ru.sla.pure.android.feature.main.routing
 
+import androidx.navigation3.runtime.NavKey
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.ForScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import dev.zacsweers.metro.binding
 import ru.sla.pure.android.core.routing.Flow
+import ru.sla.pure.android.core.routing.FlowNavKey
 import ru.sla.pure.android.core.routing.Navigator
 import ru.sla.pure.android.core.routing.di.AppFlowScope
 import ru.sla.pure.android.core.ui.Event
@@ -23,32 +25,35 @@ import ru.sla.pure.android.feature.main.ui.routing.FlowEvent
   binding<FlowEventSink>()
 )
 class MainFlow @Inject constructor(
-  @ForScope(MainScope::class)
   private val navigator: Navigator,
   @ForScope(AppFlowScope::class)
   private val appEvents: FlowEventSink,
 ) : Flow {
-  override fun onEntry() {
-    navigator.setRoot(MainRoute.Main)
+  override fun onEntry(): List<NavKey> {
+    return listOf(MainRoute.Main)
   }
 
   override fun transition(event: Event) {
     when (event) {
       is FlowEvent.CharacterDetailsRequested -> {
-        navigator.navigateTo(MainRoute.CharacterDetails(event.characterId))
+        navigator.push(MainRoute.CharacterDetails(event.characterId))
       }
       is FlowEvent.CharacterDetailsDismissed -> {
-        navigator.navigateBack()
+        navigator.pop()
       }
       FlowEvent.ProfileRequested -> {
-        navigator.navigateTo(MainRoute.Profile)
+        navigator.push(MainRoute.Profile)
       }
       FlowEvent.ProfileDismissed -> {
-        navigator.navigateBack()
+        navigator.pop()
       }
       FlowEvent.LogoutSucceeded -> {
         appEvents.sendEvent(event)
       }
     }
+  }
+
+  companion object {
+    val navKey = FlowNavKey("main")
   }
 }

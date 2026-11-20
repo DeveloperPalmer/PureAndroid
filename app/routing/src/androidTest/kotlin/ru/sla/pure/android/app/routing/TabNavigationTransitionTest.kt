@@ -97,9 +97,9 @@ class TabNavigationTransitionTest : BaseTestCase() {
   @DisplayName("Back к вкладке с сохранёнными деталями использует pager-слайд и сохраняет её стек")
   fun tabBackRestoresSavedScreenWithTabSlide() = runScreenTest {
     val scene = showTabs(start = Route.Middle)
-    runOnIdle { scene.navigator.navigateTo(Route.Details) }
+    runOnIdle { scene.state.push(Route.Details) }
     settle(scene, Route.Details)
-    runOnIdle { scene.navigator.navigateTo(Route.First) }
+    runOnIdle { scene.state.push(Route.First) }
     settle(scene, Route.First)
     seekBack(0.5f)
     assertStill(scene, Route.First)
@@ -117,7 +117,7 @@ class TabNavigationTransitionTest : BaseTestCase() {
     val scene = showTabs()
     tapTab(Route.Last)
     settle(scene, Route.Last)
-    runOnIdle { scene.navigator.navigateTo(Route.Details) }
+    runOnIdle { scene.state.push(Route.Details) }
     settle(scene, Route.Details)
     seekBack(0.5f, predictive = true)
     runOnIdle {
@@ -135,7 +135,6 @@ class TabNavigationTransitionTest : BaseTestCase() {
       AppTheme {
         NavigationContent(
           state = scene.state,
-          navigator = scene.navigator,
           tabs = tabs,
           gestureUptimeMillis = clock,
           entryProvider = entryProvider<NavKey> {
@@ -211,7 +210,7 @@ class TabNavigationTransitionTest : BaseTestCase() {
   }
 
   private fun AndroidComposeUiTest<ComponentActivity>.assertStill(scene: TestScene, route: Route) = runOnIdle {
-    assertEquals(route, scene.navigator.currentRoute)
+    assertEquals(route, scene.state.currentRoute)
     assertEquals(0f, scene.x(route), TOLERANCE, "Tab must not move during predictive back")
     assertEquals(1f, scene.scale(route), TOLERANCE, "Tab must not shrink during predictive back")
   }
@@ -230,7 +229,6 @@ class TabNavigationTransitionTest : BaseTestCase() {
       Route.Last to NavBackStack<NavKey>(Route.Last),
     )
     val state = NavigationState(start, mutableStateOf<NavKey>(start), stacks)
-    val navigator = AppNavigator()
     val coordinates = mutableMapOf<Route, LayoutCoordinates>()
 
     fun x(route: Route): Float {

@@ -12,23 +12,15 @@ import ru.sla.pure.android.core.domain.createCoroutineScope
 import ru.sla.pure.android.core.routing.Flow
 import ru.sla.pure.android.core.routing.FlowComponent
 import ru.sla.pure.android.core.routing.FlowViewModelFactory
-import ru.sla.pure.android.core.routing.Navigator
 import ru.sla.pure.android.core.routing.di.AppFlowScope
 import ru.sla.pure.android.feature.main.domain.di.MainScope
 
-/**
- * Граф флоу «Главная» получает собственный навигатор и наследует граф AppFlow и хранит свои ViewModel в MainScope.
- */
 @GraphExtension(MainScope::class)
 interface MainFlowComponent : FlowComponent {
   @ContributesTo(AppFlowScope::class)
   @GraphExtension.Factory
   interface Factory {
-    fun createMainFlowComponent(
-      @Provides
-      @ForScope(MainScope::class)
-      navigator: Navigator,
-    ): MainFlowComponent
+    fun createMainFlowComponent(): MainFlowComponent
   }
 
   @ForScope(MainScope::class)

@@ -6,14 +6,16 @@ import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.GraphExtension
 import dev.zacsweers.metro.Multibinds
 import dev.zacsweers.metro.Provides
-import ru.sla.pure.android.app.routing.AppNavigator
+import dev.zacsweers.metro.SingleIn
+import ru.sla.pure.android.app.routing.NavigationHostState
 import ru.sla.pure.android.core.domain.di.ActivityContext
 import ru.sla.pure.android.core.domain.di.ForegroundScope
 import ru.sla.pure.android.core.routing.EntryProviderInstaller
+import ru.sla.pure.android.feature.app.routing.AppFlow
 
 @GraphExtension(ForegroundScope::class)
 interface ForegroundComponent {
-  fun appNavigator(): AppNavigator
+  fun navigationHostState(): NavigationHostState
 
   @Multibinds(allowEmpty = true)
   fun entryProviderInstallers(): Set<EntryProviderInstaller>
@@ -24,5 +26,14 @@ interface ForegroundComponent {
     fun create(
       @Provides @ActivityContext activity: Activity
     ): ForegroundComponent
+  }
+}
+
+@ContributesTo(ForegroundScope::class)
+interface ForegroundModule {
+  @Provides
+  @SingleIn(ForegroundScope::class)
+  fun provideNavigationHostState(): NavigationHostState {
+    return NavigationHostState(AppFlow.navKey)
   }
 }

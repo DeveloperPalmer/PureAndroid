@@ -5,15 +5,16 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.cancel
 
 /** Привязывает граф к хранилищу корня флоу и контролирует его освобождение. */
-open class FlowComponentViewModel<C : FlowComponent>(
+class FlowComponentViewModel<C : FlowComponent>(
   val component: C,
 ) : ViewModel() {
-  val viewModelFactory = component.metroViewModelFactory
   private val flow = component.flow()
   private val flowName = flow.javaClass.simpleName.ifEmpty { flow.javaClass.name }
 
+  val entryRoutes = flow.onEntry()
+  val viewModelFactory = component.metroViewModelFactory
+
   init {
-    flow.onEntry()
     Log.d(LOG_TAG, "Starting [$flowName] flow")
   }
 

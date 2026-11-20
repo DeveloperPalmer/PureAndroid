@@ -13,6 +13,7 @@ import ru.sla.pure.android.core.routing.EntryProviderInstaller
 import ru.sla.pure.android.core.routing.NavigationTab
 import ru.sla.pure.android.core.routing.flow
 import ru.sla.pure.android.core.routing.showNavigationBar
+import ru.sla.pure.android.feature.main.routing.MainFlow
 import ru.sla.pure.android.feature.main.routing.MainRoute
 import ru.sla.pure.android.feature.main.ui.screen.characterdetails.CharacterDetailsScreen
 import ru.sla.pure.android.feature.main.ui.screen.characterdetails.CharacterDetailsViewModel
@@ -27,7 +28,7 @@ class MainEntryProviderInstaller(
   override fun EntryProviderScope<NavKey>.install() {
     flow(
       tabs = tabs,
-      initial = MainRoute.Main,
+      key = MainFlow.navKey,
       component = componentFactory::createMainFlowComponent,
       metadata = NavDisplay.transitionSpec { EnterTransition.None togetherWith ExitTransition.None },
     ) { _ ->

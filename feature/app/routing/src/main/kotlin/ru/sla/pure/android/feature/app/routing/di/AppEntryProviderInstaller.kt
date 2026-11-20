@@ -8,6 +8,7 @@ import dev.zacsweers.metrox.viewmodel.metroViewModel
 import ru.sla.pure.android.core.domain.di.ForegroundScope
 import ru.sla.pure.android.core.routing.EntryProviderInstaller
 import ru.sla.pure.android.core.routing.flow
+import ru.sla.pure.android.feature.app.routing.AppFlow
 import ru.sla.pure.android.feature.app.routing.AppRoute
 import ru.sla.pure.android.feature.app.ui.screen.initialresolve.InitialResolveScreen
 import ru.sla.pure.android.feature.login.routing.di.LoginEntryProviderInstaller
@@ -19,7 +20,7 @@ class AppEntryProviderInstaller @Inject constructor(
 ) : EntryProviderInstaller {
   override fun EntryProviderScope<NavKey>.install() {
     flow(
-      initial = AppRoute.InitialResolve,
+      key = AppFlow.navKey,
       component = componentFactory::create,
     ) { appComponent ->
       with(LoginEntryProviderInstaller(appComponent.loginFlowFactory())) { install() }
