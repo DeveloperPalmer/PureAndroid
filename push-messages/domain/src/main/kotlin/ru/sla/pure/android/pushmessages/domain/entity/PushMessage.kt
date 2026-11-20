@@ -1,6 +1,9 @@
 package ru.sla.pure.android.pushmessages.domain.entity
 
-sealed interface PushMessage {
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+sealed interface PushMessage : Parcelable {
   val id: Long
   val title: String
   val description: String
@@ -8,6 +11,7 @@ sealed interface PushMessage {
 
   enum class Channel { Default }
 
+  @Parcelize
   data class OpenCharacter(
     val characterId: Int,
     override val id: Long,
