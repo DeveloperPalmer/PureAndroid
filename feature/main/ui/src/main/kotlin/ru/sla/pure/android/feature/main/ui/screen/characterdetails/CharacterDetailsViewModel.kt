@@ -5,7 +5,6 @@ import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import dev.zacsweers.metro.ContributesIntoMap
-import dev.zacsweers.metro.binding
 import dev.zacsweers.metrox.viewmodel.ManualViewModelAssistedFactory
 import dev.zacsweers.metrox.viewmodel.ManualViewModelAssistedFactoryKey
 import kotlinx.coroutines.flow.launchIn
@@ -29,7 +28,7 @@ class CharacterDetailsViewModel @AssistedInject constructor(
 ) : BaseViewModel<ViewState, Nothing>() {
   @AssistedFactory
   @ManualViewModelAssistedFactoryKey
-  @ContributesIntoMap(MainScope::class, binding<ManualViewModelAssistedFactory>())
+  @ContributesIntoMap(MainScope::class)
   fun interface Factory : ManualViewModelAssistedFactory {
     fun create(characterId: Int): CharacterDetailsViewModel
   }

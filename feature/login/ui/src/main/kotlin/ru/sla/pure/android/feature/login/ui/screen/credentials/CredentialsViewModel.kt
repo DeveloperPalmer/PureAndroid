@@ -3,7 +3,6 @@ package ru.sla.pure.android.feature.login.ui.screen.credentials
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import dev.zacsweers.metro.ContributesIntoMap
-import dev.zacsweers.metro.ForScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.binding
 import dev.zacsweers.metrox.viewmodel.ViewModelKey
@@ -18,10 +17,9 @@ import ru.sla.pure.android.feature.login.domain.entity.GoogleAuthError
 import ru.sla.pure.android.feature.login.ui.R
 import ru.sla.pure.android.feature.login.ui.routing.FlowEvent
 
-@ViewModelKey(CredentialsViewModel::class)
+@ViewModelKey
 @ContributesIntoMap(LoginScope::class, binding<ViewModel>())
 class CredentialsViewModel @Inject constructor(
-  @ForScope(LoginScope::class)
   private val events: FlowEventSink,
   private val loginModel: LoginModel,
 ) : BaseViewModel<CredentialsState, Nothing>() {

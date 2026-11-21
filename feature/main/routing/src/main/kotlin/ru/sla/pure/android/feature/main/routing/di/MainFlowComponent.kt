@@ -9,11 +9,12 @@ import dev.zacsweers.metro.SingleIn
 import dev.zacsweers.metrox.viewmodel.MetroViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import ru.sla.pure.android.core.domain.createCoroutineScope
-import ru.sla.pure.android.core.routing.Flow
 import ru.sla.pure.android.core.routing.FlowComponent
 import ru.sla.pure.android.core.routing.FlowViewModelFactory
 import ru.sla.pure.android.core.routing.di.AppFlowScope
+import ru.sla.pure.android.core.ui.FlowEventSink
 import ru.sla.pure.android.feature.main.domain.di.MainScope
+import ru.sla.pure.android.feature.main.routing.MainFlow
 
 @GraphExtension(MainScope::class)
 interface MainFlowComponent : FlowComponent {
@@ -24,9 +25,6 @@ interface MainFlowComponent : FlowComponent {
   }
 
   @ForScope(MainScope::class)
-  override fun flow(): Flow
-
-  @ForScope(MainScope::class)
   override fun coroutineScope(): CoroutineScope
 }
 
@@ -35,10 +33,11 @@ interface MainFlowModule {
   @Binds
   val FlowViewModelFactory.bindMetroViewModelFactory: MetroViewModelFactory
 
+  @Binds
+  val MainFlow.bindFlowEventSink: FlowEventSink
+
   @Provides
   @SingleIn(MainScope::class)
   @ForScope(MainScope::class)
-  fun provideCoroutineScope(): CoroutineScope {
-    return createCoroutineScope()
-  }
+  fun provideCoroutineScope(): CoroutineScope = createCoroutineScope()
 }
