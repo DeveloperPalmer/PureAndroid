@@ -8,13 +8,23 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.navigationevent.compose.LocalNavigationEventDispatcherOwner
+import androidx.navigationevent.compose.rememberNavigationEventDispatcherOwner
 import ru.sla.pure.android.app.routing.AppFlowHost
+import ru.sla.pure.android.app.routing.NavigationHostState
 import ru.sla.pure.android.core.routing.deeplink.PendingDeepLink
 import ru.sla.pure.android.feature.app.routing.AppRoute
+import ru.sla.pure.android.lib.debugpanel.routing.DebugPanelFlow
 import ru.sla.pure.android.uikit.theme.AppTheme
 import ru.sla.pure.android.uikit.window.setNavigationBarColorCompat
 
@@ -39,6 +49,14 @@ class MainActivity : ComponentActivity() {
     }
   }
 
+  private val debugPanelAdapter by lazy {
+    if (BuildConfig.DEBUG) {
+      appFlowViewModel.foregroundComponent.debugPanelAdapter()
+    } else {
+      null
+    }
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     val splashScreen = installSplashScreen()
     super.onCreate(savedInstanceState)
@@ -50,6 +68,7 @@ class MainActivity : ComponentActivity() {
 
     val foregroundComponent = appFlowViewModel.foregroundComponent
     val hostState = foregroundComponent.navigationHostState()
+    val entryProviderInstallers = foregroundComponent.entryProviderInstallers()
 
     splashScreen.setKeepOnScreenCondition {
       val route = hostState.currentRoute
@@ -58,12 +77,35 @@ class MainActivity : ComponentActivity() {
 
     setContent {
       AppTheme {
-        AppFlowHost(
-          hostState = hostState,
-          entryProviderInstallers = foregroundComponent.entryProviderInstallers()
-        )
+        val showDebugPanel = debugPanelAdapter?.isOpen?.collectAsState()?.value == true
+        val appBackDispatcher = rememberNavigationEventDispatcherOwner(enabled = !showDebugPanel)
+        Box {
+          CompositionLocalProvider(LocalNavigationEventDispatcherOwner provides appBackDispatcher) {
+            AppFlowHost(
+              hostState = hostState,
+              entryProviderInstallers = entryProviderInstallers,
+              modifier = if (showDebugPanel) Modifier.clearAndSetSemantics { } else Modifier
+            )
+          }
+          if (showDebugPanel) {
+            AppFlowHost(
+              hostState = remember { NavigationHostState(DebugPanelFlow.navKey) },
+              entryProviderInstallers = entryProviderInstallers
+            )
+          }
+        }
       }
     }
+  }
+
+  override fun onStart() {
+    super.onStart()
+    debugPanelAdapter?.start(this)
+  }
+
+  override fun onStop() {
+    debugPanelAdapter?.stop(this)
+    super.onStop()
   }
 
   override fun onNewIntent(intent: Intent) {

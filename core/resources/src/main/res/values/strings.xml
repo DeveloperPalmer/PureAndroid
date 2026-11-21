@@ -2,6 +2,11 @@
 <resources>
     <string name="main_notification_channel_title">Основные уведомления</string>
 
+    <!-- Отладочная панель -->
+    <string name="debug_panel_title">Отладочная панель</string>
+    <string name="debug_panel_close">Закрыть</string>
+    <string name="debug_panel_build_type">Тип сборки: %1$s</string>
+
     <!-- Вкладки -->
     <string name="tab_main">Персонажи</string>
     <string name="tab_map">Карта</string>

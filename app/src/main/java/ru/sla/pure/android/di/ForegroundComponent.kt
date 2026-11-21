@@ -13,6 +13,7 @@ import ru.sla.pure.android.core.domain.di.ForegroundScope
 import ru.sla.pure.android.core.routing.EntryProviderInstaller
 import ru.sla.pure.android.core.routing.deeplink.PendingDeepLink
 import ru.sla.pure.android.feature.app.routing.AppFlow
+import ru.sla.pure.android.lib.debugpanel.routing.DebugPanelAdapter
 
 @GraphExtension(ForegroundScope::class)
 interface ForegroundComponent {
@@ -32,6 +33,7 @@ interface ForegroundComponent {
   fun entryProviderInstallers(): Set<EntryProviderInstaller>
 
   fun navigationHostState(): NavigationHostState
+  fun debugPanelAdapter(): DebugPanelAdapter
 }
 
 @ContributesTo(ForegroundScope::class)
