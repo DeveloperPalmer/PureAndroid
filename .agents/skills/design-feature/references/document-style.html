@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Документ решения</title>
+<style>
+  :root {
+    --paper:        #f2f5f4;
+    --surface:      #ffffff;
+    --surface-sunk: #e8edeb;
+    --ink:          #16201f;
+    --ink-soft:     #46534f;
+    --ink-faint:    #75837e;
+    --rule:         #d3dbd8;
+    --rule-strong:  #b3bfbb;
+    --accent:       #0d6360;
+    --accent-soft:  #d9e9e6;
+    --warn:         #8f5b10;
+    --warn-soft:    #f5e7cd;
+    --risk:         #93372f;
+    --risk-soft:    #f6dfdb;
+    --ok:           #3f6b34;
+    --ok-soft:      #dfeed8;
+    --done:         #00a63e;
+    --done-soft:    #d4f7e0;
+    --done-line:    #7fd9a2;
+
+    color-scheme: light dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:        #101615;
+      --surface:      #182120;
+      --surface-sunk: #0b100f;
+      --ink:          #e6ecea;
+      --ink-soft:     #a9b6b2;
+      --ink-faint:    #7c8985;
+      --rule:         #2b3937;
+      --rule-strong:  #3d504c;
+      --accent:       #5ec6bd;
+      --accent-soft:  #14322f;
+      --warn:         #d9a45c;
+      --warn-soft:    #362813;
+      --risk:         #e08a80;
+      --risk-soft:    #3a1e1a;
+      --ok:           #9ec98e;
+      --ok-soft:      #1e2c18;
+      --done:         #34e57c;
+      --done-soft:    #0e3a22;
+      --done-line:    #1f6b41;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper:        #101615;
+    --surface:      #182120;
+    --surface-sunk: #0b100f;
+    --ink:          #e6ecea;
+    --ink-soft:     #a9b6b2;
+    --ink-faint:    #7c8985;
+    --rule:         #2b3937;
+    --rule-strong:  #3d504c;
+    --accent:       #5ec6bd;
+    --accent-soft:  #14322f;
+    --warn:         #d9a45c;
+    --warn-soft:    #362813;
+    --risk:         #e08a80;
+    --risk-soft:    #3a1e1a;
+    --ok:           #9ec98e;
+    --ok-soft:      #1e2c18;
+    --done:         #34e57c;
+    --done-soft:    #0e3a22;
+    --done-line:    #1f6b41;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 40px 24px 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 44px;
+  }
+
+  /* ---------- masthead ---------- */
+
+  .masthead { display: flex; flex-direction: column; gap: 16px; }
+
+  .eyebrow {
+    font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: baseline;
+  }
+  .eyebrow .sep { color: var(--rule-strong); }
+
+  h1 {
+    font-family: "IBM Plex Serif", Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(30px, 4.2vw, 44px);
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .standfirst {
+    max-width: 66ch;
+    font-size: 16.5px;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    padding-top: 4px;
+    font-size: 13px;
+    color: var(--ink-faint);
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+  }
+  .meta b { color: var(--ink-soft); font-weight: 500; }
+
+  /* ---------- flow rail ---------- */
+
+  .rail-wrap { overflow-x: auto; padding-bottom: 6px; }
+  .rail {
+    display: flex;
+    align-items: stretch;
+    gap: 3px;
+    min-width: 900px;
+  }
+  .rail-step {
+    flex: 1 1 0;
+    border-top: 3px solid var(--rule);
+    padding: 10px 8px 0;
+    font-size: 12px;
+    line-height: 1.3;
+    color: var(--ink-faint);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .rail-step .n {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    color: var(--rule-strong);
+  }
+  .rail-step.in {
+    border-top-color: var(--accent);
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .rail-step.in .n { color: var(--accent); }
+  .rail-step.edge { border-top-style: dashed; }
+
+  .rail-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    margin-top: 12px;
+  }
+  .swatch {
+    display: inline-block;
+    width: 22px;
+    height: 3px;
+    vertical-align: middle;
+    margin-right: 7px;
+  }
+
+  /* ---------- sections ---------- */
+
+  section { display: flex; flex-direction: column; gap: 18px; }
+
+  h2 {
+    font-family: "IBM Plex Serif", Georgia, serif;
+    font-weight: 600;
+    font-size: 23px;
+    letter-spacing: -0.01em;
+    margin: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+
+  h3 {
+    font-family: "IBM Plex Sans Condensed", sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0;
+  }
+
+  p { margin: 0; max-width: 72ch; }
+  p.note { color: var(--ink-soft); }
+
+  /* ---------- scope split ---------- */
+
+  .scope {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .scope-col { display: flex; flex-direction: column; gap: 10px; }
+  .scope-col ul { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 7px; }
+  .scope-col li {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    font-size: 14px;
+    padding-left: 14px;
+    border-left: 2px solid var(--rule);
+  }
+  .scope-col.own li { border-left-color: var(--accent); }
+  .scope-col li .key {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    flex: 0 0 auto;
+    min-width: 84px;
+  }
+
+  /* ---------- pipeline schematic ---------- */
+
+  .pipe-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    padding: 20px 18px;
+  }
+  .pipe { display: block; min-width: 880px; width: 100%; height: auto; }
+  .pipe text { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+  .pipe .t-key   { font-size: 12.5px; fill: var(--ink); font-weight: 500; }
+  .pipe .t-sub   { font-size: 11px; fill: var(--ink-faint); }
+  .pipe .t-head  { font-family: "IBM Plex Sans Condensed", sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; fill: var(--ink-faint); }
+  .pipe .t-chip  { font-size: 10.5px; fill: var(--accent); }
+
+  /* ---------- table ---------- */
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+  }
+  table { border-collapse: collapse; width: 100%; min-width: 940px; }
+  table.narrow { min-width: 720px; }
+
+  thead th {
+    text-align: left;
+    font-family: "IBM Plex Sans Condensed", sans-serif;
+    font-weight: 600;
+    font-size: 11.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    padding: 12px 14px;
+    background: var(--surface-sunk);
+    border-bottom: 1px solid var(--rule-strong);
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    font-size: 14px;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+
+  tr.group td {
+    background: var(--surface-sunk);
+    border-bottom: 1px solid var(--rule-strong);
+    font-family: "IBM Plex Sans Condensed", sans-serif;
+    font-weight: 600;
+    font-size: 12.5px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink);
+    padding: 10px 14px;
+  }
+  tr.group td .status { text-transform: none; letter-spacing: 0; }
+
+  td.id {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    width: 1%;
+  }
+  td.name { font-weight: 500; min-width: 190px; }
+  td.what { color: var(--ink-soft); min-width: 300px; }
+  td.dep { color: var(--ink-soft); min-width: 190px; font-size: 13.5px; }
+  td.size { width: 1%; }
+  td.src { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--ink-faint); min-width: 220px; }
+  td.val { font-variant-numeric: tabular-nums; white-space: nowrap; width: 1%; font-family: "IBM Plex Mono", monospace; font-size: 13px; }
+
+  code, .mono {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.88em;
+    background: var(--surface-sunk);
+    padding: 1px 4px;
+    border-radius: 2px;
+    word-break: break-word;
+  }
+  tr.group td code { background: transparent; padding: 0; }
+  td.src code { background: transparent; padding: 0; }
+
+  .size-chip {
+    display: inline-block;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border: 1px solid var(--rule-strong);
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  .size-chip.l { border-color: var(--warn); color: var(--warn); background: var(--warn-soft); }
+  .size-chip.none { border-style: dashed; color: var(--ink-faint); }
+
+  /* ---------- tracker ---------- */
+
+  .tracker {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px 18px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+  }
+  .tracker-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 16px;
+  }
+  .tracker-count {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .tracker-count b { color: var(--done); font-weight: 500; }
+  .tracker-hint { font-size: 13px; color: var(--ink-faint); }
+  .tracker-reset {
+    margin-left: auto;
+    background: none;
+    border: 1px solid var(--rule-strong);
+    color: var(--ink-faint);
+    font: inherit;
+    font-size: 12.5px;
+    padding: 3px 10px;
+    cursor: pointer;
+  }
+  .tracker-reset:hover { color: var(--ink); border-color: var(--ink-faint); }
+  .tracker-reset.armed { color: var(--risk); border-color: var(--risk); background: var(--risk-soft); }
+  .tracker-reset:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .tracker-bar {
+    height: 6px;
+    background: var(--surface-sunk);
+    overflow: hidden;
+  }
+  .tracker-bar span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--done);
+    transition: width 220ms ease;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tracker-bar span { transition: none; }
+  }
+
+  .sync {
+    font-size: 12.5px;
+    font-family: "IBM Plex Mono", monospace;
+    color: var(--ink-faint);
+  }
+  .sync.live { color: var(--done); }
+
+  .tick {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    cursor: pointer;
+    text-align: left;
+  }
+  .tick:hover { color: var(--ink); }
+  .tick .mark {
+    width: 10px;
+    color: transparent;
+    font-size: 11px;
+  }
+  .tick:hover .mark { color: var(--rule-strong); }
+  .tick:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  tr.done td.id .tick,
+  tr.done td.id .tick:hover { color: var(--done); font-weight: 500; }
+  tr.done td.id .tick .mark { color: var(--done); }
+  tr.done td.id { box-shadow: inset 3px 0 0 var(--done); }
+  tr.done td.name { color: var(--ink-faint); }
+  tr.done td.name code { opacity: 0.75; }
+
+  .gcount {
+    display: inline-block;
+    margin-left: 10px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+  .gcount.full { color: var(--done); }
+
+  .status {
+    display: inline-block;
+    font-family: "IBM Plex Sans Condensed", sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    margin-left: 8px;
+  }
+  .status.reuse { background: var(--ok-soft); color: var(--ok); }
+  .status.new   { background: var(--accent-soft); color: var(--accent); }
+  .status.risk  { background: var(--risk-soft); color: var(--risk); }
+  .status.part  { background: var(--warn-soft); color: var(--warn); }
+
+  /* ---------- numbered prose lists ---------- */
+
+  .items { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--rule); }
+  .item {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 0 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .item .num {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px;
+    color: var(--accent);
+    padding-top: 1px;
+  }
+  .items.risky .item .num { color: var(--risk); }
+  .items.costs .item .num { color: var(--warn); }
+  .items.closed .item .num,
+  .item.closed .num { color: var(--ok); }
+  .item .body { display: flex; flex-direction: column; gap: 5px; }
+  .item .ask { font-weight: 500; }
+  .item .why { color: var(--ink-soft); font-size: 14px; max-width: 78ch; }
+
+  /* ---------- verdict callout ---------- */
+
+  .verdict {
+    border: 1px solid var(--risk);
+    background: var(--risk-soft);
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .verdict .label {
+    font-family: "IBM Plex Sans Condensed", sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--risk);
+  }
+  .verdict p { color: var(--ink); max-width: 80ch; }
+
+  /* ---------- cards ---------- */
+
+  .reuse-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .reuse-card {
+    background: var(--surface);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .reuse-card .path {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--accent);
+    word-break: break-word;
+  }
+  .reuse-card .desc { font-size: 13.5px; color: var(--ink-soft); }
+
+  /* ---------- module tree ---------- */
+
+  .tree {
+    margin: 0;
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    padding: 18px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+  }
+  .tree b { color: var(--ink); font-weight: 500; }
+  .tree i { color: var(--accent); font-style: normal; }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 18px;
+    font-size: 13px;
+    color: var(--ink-faint);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  @media (max-width: 600px) {
+    .page { padding: 28px 16px 64px; gap: 34px; }
+  }
+</style>
+</head>
+<body>
+<!-- Скопируй документ целиком, сохрани стили и скрипт. Замени примеры и KEY.
+     Оставь разделы, которые объясняют выбор или помогают выполнить работу.
+     Для плана без отметок удали .tracker, замени кнопки текстовыми номерами
+     и убери .gcount, оставив одну таблицу с работами и тестами. -->
+<div class="page">
+  <header class="masthead">
+    <div class="eyebrow"><span>PureAndroid</span><span class="sep">/</span><span>Проектирование</span></div>
+    <h1>Название решения</h1>
+    <p class="standfirst">Требование разработчика и наблюдаемый критерий приёмки.</p>
+    <div class="meta">
+      <span><b>Дата</b> ДД.ММ.ГГГГ</span>
+      <span><b>Статус</b> На согласовании</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>Последовательность работ</h2>
+    <div class="rail-wrap"><div class="rail">
+      <div class="rail-step in"><span class="n">1</span>Первый доступный шаг</div>
+      <div class="rail-step"><span class="n">2</span>Зависимый шаг</div>
+    </div></div>
+  </section>
+
+  <section>
+    <h2>Границы</h2>
+    <div class="scope">
+      <div class="scope-col own"><h3>В объёме</h3><ul><li>Сценарии и компоненты задачи.</li></ul></div>
+      <div class="scope-col"><h3>За границей</h3><ul><li>Зафиксированные ограничения задачи.</li></ul></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Текущее поведение</h2>
+    <div class="table-wrap"><table class="narrow">
+      <thead><tr><th>Факт</th><th>Величина</th><th>Где проверено</th></tr></thead>
+      <tbody><tr><td class="name">Поведение или измерение</td><td class="val">Значение и единица</td><td class="src"><code>файл:строка</code></td></tr></tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Зависимости и ограничения</h2>
+    <div class="items risky"><div class="item">
+      <div class="num">1</div>
+      <div class="body"><div class="ask">Условие начала работ</div><div class="why">Сценарий и наблюдаемое последствие.</div></div>
+    </div></div>
+  </section>
+
+  <section>
+    <h2>Решение</h2>
+    <p>Опиши выбранный подход и укажи факт, который определил выбор.</p>
+    <pre class="tree"><b>Владелец поведения</b>
+  Вход → вычисление → результат</pre>
+    <div class="table-wrap"><table class="narrow">
+      <thead><tr><th>Критерий</th><th>Результат и основание</th></tr></thead>
+      <tbody>
+        <tr><td>Поведение</td><td>Граничный сценарий и его исход</td></tr>
+        <tr><td>Риск</td><td>Условие регрессии и способ её выявить</td></tr>
+        <tr><td>Конвенции</td><td>Граница ответственности и источник</td></tr>
+      </tbody>
+    </table></div>
+    <!-- При сравнении вариантов укажи условие, которое определяет выбор. Иначе удали блок .verdict. -->
+    <div class="verdict"><div class="label">Условие выбора</div><p>Какое свойство определило выбор и когда решение стоит пересмотреть.</p></div>
+  </section>
+
+  <section>
+    <h2>Последствия решения</h2>
+    <div class="items costs"><div class="item">
+      <div class="num">1</div>
+      <div class="body"><div class="ask">Ограничение решения</div><div class="why">Размер эффекта, условия пересмотра и способ отката.</div></div>
+    </div></div>
+  </section>
+
+  <section>
+    <h2>План реализации и проверки</h2>
+    <div class="tracker">
+      <div class="tracker-top">
+        <span class="tracker-count" id="tracker-count" aria-live="polite"></span>
+        <button class="tracker-reset" id="tracker-reset" type="button">Сбросить отметки</button>
+      </div>
+      <div class="tracker-bar" aria-hidden="true"><span id="tracker-bar" style="width: 0%"></span></div>
+      <div class="sync" id="tracker-sync">Отметки хранятся в этом браузере</div>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>№</th><th>Пункт</th><th>Что входит</th><th>Объём</th><th>Причина</th></tr></thead>
+      <tbody>
+        <tr class="group" data-group-header="changes"><td colspan="5">Изменения<span class="gcount"></span></td></tr>
+        <tr data-item="1.1" data-group="changes">
+          <td class="id"><button class="tick" type="button" aria-pressed="false"><span class="mark" aria-hidden="true">✓</span>1.1</button></td>
+          <td class="name">Изменение контракта</td><td class="what">Потребители и точки входа.</td>
+          <td class="size"><span class="size-chip none">—</span></td><td class="dep">Причина изменения.</td>
+        </tr>
+        <tr class="group" data-group-header="tests"><td colspan="5">Проверки<span class="gcount"></span></td></tr>
+        <tr data-item="2.1" data-group="tests">
+          <td class="id"><button class="tick" type="button" aria-pressed="false"><span class="mark" aria-hidden="true">✓</span>2.1</button></td>
+          <td class="name"><code>сценарий и ожидаемый результат</code></td>
+          <td class="what">Проверяемое поведение и окружение.</td>
+          <td class="size"><span class="size-chip none">—</span></td><td class="dep">К пункту 1.1.</td>
+        </tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Проверки в целевом окружении</h2>
+    <div class="reuse-grid"><div class="reuse-card">
+      <div class="path">Сценарий</div><div class="desc">Условия, действия и наблюдаемый критерий.</div>
+    </div></div>
+  </section>
+
+  <section>
+    <h2>Что осталось неподтверждённым</h2>
+    <div class="reuse-grid"><div class="reuse-card">
+      <div class="path">Свойство или открытый вопрос</div><div class="desc">Следующая проверка или решение разработчика и что от него зависит.</div>
+    </div></div>
+  </section>
+
+  <footer><div>Источники и версии, на которых основано решение.</div></footer>
+</div>
+<script>
+  (() => {
+    const count = document.getElementById('tracker-count');
+    if (!count) return;
+
+    const KEY = 'pureandroid/<feature>-<topic>/v1';
+    const rows = Array.from(document.querySelectorAll('tr[data-item]'));
+    const groups = Array.from(document.querySelectorAll('tr[data-group-header]'));
+    const bar = document.getElementById('tracker-bar');
+    const status = document.getElementById('tracker-sync');
+    const reset = document.getElementById('tracker-reset');
+    let done = new Set();
+    let resetArmed = false;
+
+    try {
+      const stored = JSON.parse(localStorage.getItem(KEY));
+      if (Array.isArray(stored)) done = new Set(stored);
+    } catch {
+      status.textContent = 'Сохранённые отметки недоступны';
+    }
+
+    function render() {
+      let completed = 0;
+      for (const row of rows) {
+        const marked = done.has(row.dataset.item);
+        if (marked) completed += 1;
+        row.classList.toggle('done', marked);
+        const tick = row.querySelector('.tick');
+        tick.setAttribute('aria-pressed', String(marked));
+        tick.title = marked ? 'Снять отметку' : 'Отметить выполненным';
+      }
+      for (const group of groups) {
+        const items = rows.filter(row => row.dataset.group === group.dataset.groupHeader);
+        const marked = items.filter(row => done.has(row.dataset.item)).length;
+        const label = group.querySelector('.gcount');
+        label.textContent = marked + '/' + items.length;
+        label.classList.toggle('full', items.length > 0 && marked === items.length);
+      }
+      const percent = rows.length ? Math.round(100 * completed / rows.length) : 0;
+      bar.style.width = percent + '%';
+      count.textContent = 'Выполнено ' + completed + ' из ' + rows.length + ' · ' + percent + '%';
+    }
+
+    function save() {
+      try {
+        localStorage.setItem(KEY, JSON.stringify(Array.from(done)));
+        status.textContent = 'Отметки хранятся в этом браузере';
+      } catch {
+        status.textContent = 'Отметки доступны до закрытия страницы';
+      }
+      render();
+    }
+
+    for (const row of rows) {
+      row.querySelector('.tick').addEventListener('click', () => {
+        const id = row.dataset.item;
+        if (!done.delete(id)) done.add(id);
+        save();
+      });
+    }
+
+    reset.addEventListener('click', () => {
+      resetArmed = !resetArmed;
+      reset.classList.toggle('armed', resetArmed);
+      reset.textContent = resetArmed ? 'Точно сбросить?' : 'Сбросить отметки';
+      if (resetArmed) return;
+      done.clear();
+      save();
+    });
+
+    render();
+  })();
+</script>
+</body>
+</html>
