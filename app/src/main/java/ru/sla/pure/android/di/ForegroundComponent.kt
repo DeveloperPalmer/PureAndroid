@@ -16,11 +16,6 @@ import ru.sla.pure.android.feature.app.routing.AppFlow
 
 @GraphExtension(ForegroundScope::class)
 interface ForegroundComponent {
-  fun navigationHostState(): NavigationHostState
-
-  @Multibinds(allowEmpty = true)
-  fun entryProviderInstallers(): Set<EntryProviderInstaller>
-
   @ContributesTo(AppScope::class)
   @GraphExtension.Factory
   interface Factory {
@@ -32,6 +27,11 @@ interface ForegroundComponent {
       pendingDeepLink: PendingDeepLink,
     ): ForegroundComponent
   }
+
+  @Multibinds(allowEmpty = true)
+  fun entryProviderInstallers(): Set<EntryProviderInstaller>
+
+  fun navigationHostState(): NavigationHostState
 }
 
 @ContributesTo(ForegroundScope::class)
@@ -39,6 +39,9 @@ interface ForegroundModule {
   @Provides
   @SingleIn(ForegroundScope::class)
   fun provideNavigationHostState(pendingDeepLink: PendingDeepLink): NavigationHostState {
-    return NavigationHostState(AppFlow.navKey, pendingDeepLink)
+    return NavigationHostState(
+      root = AppFlow.navKey,
+      pendingDeepLink = pendingDeepLink
+    )
   }
 }

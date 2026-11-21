@@ -17,7 +17,7 @@ import ru.sla.pure.android.pushmessages.data.di.PushMessagingSinkHolder
 open class PureApplication : Application(), PushMessagingSinkHolder {
   val appComponent: AppComponent by lazy { createGraphFactory<AppComponent.Factory>().create(this) }
   open val foregroundFactory: ForegroundComponent.Factory
-    get() = appComponent.foregroundFactory()
+    get() = appComponent.foregroundComponentFactory()
 
   override fun onCreate() {
     super.onCreate()

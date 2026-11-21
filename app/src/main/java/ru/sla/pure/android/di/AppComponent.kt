@@ -15,12 +15,6 @@ import ru.sla.pure.android.pushmessages.domain.PushMessagesRepository
 
 @DependencyGraph(AppScope::class)
 interface AppComponent {
-  @ForScope(AppScope::class)
-  fun applicationScope(): CoroutineScope
-  fun pushMessagesRepository(): PushMessagesRepository
-  fun pushMessagingSink(): PushMessagingSink
-  fun foregroundFactory(): ForegroundComponent.Factory
-
   @DependencyGraph.Factory
   interface Factory {
     fun create(
@@ -29,6 +23,12 @@ interface AppComponent {
       context: Context
     ): AppComponent
   }
+
+  fun foregroundComponentFactory(): ForegroundComponent.Factory
+  @ForScope(AppScope::class)
+  fun applicationScope(): CoroutineScope
+  fun pushMessagesRepository(): PushMessagesRepository
+  fun pushMessagingSink(): PushMessagingSink
 }
 
 @ContributesTo(AppScope::class)

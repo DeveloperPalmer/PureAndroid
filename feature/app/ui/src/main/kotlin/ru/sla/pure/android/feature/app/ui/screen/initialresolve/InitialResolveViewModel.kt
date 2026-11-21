@@ -15,7 +15,7 @@ import ru.sla.pure.android.core.ui.FlowEventSink
 import ru.sla.pure.android.core.ui.mvi.BaseViewModel
 import ru.sla.pure.android.feature.app.ui.routing.FlowEvent
 
-@ViewModelKey(InitialResolveViewModel::class)
+@ViewModelKey
 @ContributesIntoMap(AppFlowScope::class, binding<ViewModel>())
 class InitialResolveViewModel @Inject constructor(
   sessionModel: AuthSessionModel,

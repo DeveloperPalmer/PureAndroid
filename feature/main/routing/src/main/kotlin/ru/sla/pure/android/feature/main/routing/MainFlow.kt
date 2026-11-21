@@ -8,7 +8,6 @@ import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.ForScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
-import dev.zacsweers.metro.binding
 import ru.sla.pure.android.core.domain.di.ApplicationContext
 import ru.sla.pure.android.core.routing.Flow
 import ru.sla.pure.android.core.routing.FlowNavKey
@@ -20,14 +19,7 @@ import ru.sla.pure.android.feature.main.domain.di.MainScope
 import ru.sla.pure.android.feature.main.ui.routing.FlowEvent
 
 @SingleIn(MainScope::class)
-@ContributesBinding(
-  MainScope::class,
-  binding<@ForScope(MainScope::class) Flow>(),
-)
-@ContributesBinding(
-  MainScope::class,
-  binding<FlowEventSink>()
-)
+@ContributesBinding(MainScope::class)
 class MainFlow @Inject constructor(
   private val navigator: Navigator,
   @ForScope(AppFlowScope::class)

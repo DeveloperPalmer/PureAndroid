@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room3.Room
 import androidx.sqlite.driver.AndroidSQLiteDriver
 import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
@@ -75,8 +75,8 @@ class TestApplication : PureApplication(), AppUnderTest {
 
 @DependencyGraph(
   AppScope::class,
+  additionalScopes = [TestAppScope::class],
   excludes = [NetworkConfigurationModule::class, DatabaseModule::class],
-  bindingContainers = [TestAppModule::class],
 )
 internal interface TestAppGraph {
   fun authSessionRepository(): AuthSessionRepository
@@ -94,8 +94,10 @@ internal interface TestAppGraph {
   }
 }
 
-@BindingContainer
-internal object TestAppModule {
+internal interface TestAppScope
+
+@ContributesTo(TestAppScope::class)
+internal interface TestAppModule {
   @Provides
   @SingleIn(AppScope::class)
   fun provideCharacterDao(database: CharacterDatabase): CharacterDao = database.characterDao()

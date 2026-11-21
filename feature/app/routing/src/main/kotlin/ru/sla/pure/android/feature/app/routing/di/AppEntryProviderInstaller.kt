@@ -23,8 +23,8 @@ class AppEntryProviderInstaller @Inject constructor(
       key = AppFlow.navKey,
       component = componentFactory::create,
     ) { appComponent ->
-      with(LoginEntryProviderInstaller(appComponent.loginFlowFactory())) { install() }
-      with(MainEntryProviderInstaller(appComponent.mainFlowFactory())) { install() }
+      with(LoginEntryProviderInstaller(appComponent.loginFlowComponentFactory())) { install() }
+      with(MainEntryProviderInstaller(appComponent.mainFlowComponentFactory())) { install() }
 
       entry<AppRoute.InitialResolve> {
         InitialResolveScreen(viewModel = metroViewModel())
