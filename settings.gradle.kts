@@ -29,6 +29,9 @@ rootProject.name = "PureAndroid"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 include(
+  ":lib:debug-panel:domain",
+  ":lib:debug-panel:routing",
+  ":lib:debug-panel:ui",
   ":lib:google:authenticator",
   ":app",
   ":app:data",

@@ -67,6 +67,7 @@ dependencies {
   implementation(projects.app.routing)
   implementation(projects.buildConfig)
   implementation(projects.feature.app.routing)
+  implementation(projects.lib.debugPanel.routing)
   implementation(projects.pushMessages.android)
 
   debugImplementation(libs.androidx.concurrent.futures)

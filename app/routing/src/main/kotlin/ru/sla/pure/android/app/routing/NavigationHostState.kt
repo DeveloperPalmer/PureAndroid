@@ -7,7 +7,7 @@ import ru.sla.pure.android.core.routing.deeplink.PendingDeepLink
 /** Подключённые стеки и отложенные изменения корня и флоу одного хоста. */
 class NavigationHostState(
   internal val root: FlowNavKey,
-  private val pendingDeepLink: PendingDeepLink,
+  private val pendingDeepLink: PendingDeepLink? = null,
 ) {
   private val containers = mutableMapOf<FlowNavKey, NavigationState>()
   private val pendingFlowRemovals = mutableMapOf<FlowNavKey, MutableSet<FlowNavKey>>()
@@ -32,7 +32,7 @@ class NavigationHostState(
     get() = activeState?.currentRoute
 
   fun applyDeepLink(backStack: List<NavKey>) {
-    pendingDeepLink.accept(backStack)
+    checkNotNull(pendingDeepLink) { "This navigation host does not accept deep links" }.accept(backStack)
     applyPendingDeepLink()
   }
 
@@ -95,6 +95,7 @@ class NavigationHostState(
 
   private fun applyPendingDeepLink() {
     val state = activeState ?: return
+    val pendingDeepLink = pendingDeepLink ?: return
     val backStack = pendingDeepLink.backStack ?: return
     if (state.setDeepLinkBackStack(backStack)) {
       pendingDeepLink.clear()
